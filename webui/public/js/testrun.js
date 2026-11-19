@@ -110,6 +110,7 @@ function renderGroup(group, term) {
   section.addEventListener('toggle', () => {
     if (term.length > 0) return;
     if (section.open) openGroups.add(group.label); else openGroups.delete(group.label);
+    updateStartbar();
   });
 
   const head = document.createElement('summary');
@@ -230,6 +231,17 @@ function renderChips() {
   clear.textContent = 'Alle abwählen';
   clear.addEventListener('click', clearSelection);
   el.appendChild(clear);
+}
+
+/** Auswahl, Suchfeld und aufgeklappte Kategorien zurücksetzen. */
+function resetSelection() {
+  state.selectedKeys.clear();
+  state.searchTerm = '';
+  $('#catalog-search').value = '';
+  openGroups.clear();
+  renderCatalog();
+  afterSelectionChange();
+  $('#catalog-search').focus();
 }
 
 function clearSelection() {
@@ -364,6 +376,7 @@ function updateStartbar() {
   $('#run').title = n === 0 ? 'Zuerst mindestens einen Test wählen.' : running ? 'Es läuft bereits ein Lauf.' : '';
   $('#cancel').hidden = !running;
   $('#select-none').hidden = n === 0;
+  $('#reset-selection').hidden = n === 0 && !state.searchTerm && openGroups.size === 0;
   $('#select-all').hidden = n > 0 && n === allCatalogTests().filter(({ test }) => allowedHere(test)).length;
 }
 
@@ -423,10 +436,11 @@ export function init() {
     state.searchTerm = e.target.value;
     renderCatalog();
     syncCategoryBoxes();
+    updateStartbar();
   });
   $('#select-all').addEventListener('click', selectAll);
   $('#select-none').addEventListener('click', clearSelection);
-  $('#refresh-catalog').addEventListener('click', () => loadCatalog(true));
+  $('#reset-selection').addEventListener('click', resetSelection);
 
   $$('#mode-cards .choice').forEach((card) => card.addEventListener('click', () => {
     if (card.disabled) return;

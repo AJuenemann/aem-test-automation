@@ -59,6 +59,9 @@ main:focus { outline: none; }
   border-bottom: 3px solid transparent; margin-bottom: -1px;
 }
 .tabs a:hover { color: var(--text); }
+/* Fokusrahmen nur per Tastatur, nach innen versetzt: so liegt er über dem Reiter-Strich
+   und wirkt nicht wie zusätzliche Linien links und rechts davon. */
+.tabs a:focus-visible { outline-offset: -7px; border-radius: var(--radius-sm); }
 .tabs a[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); }
 .tab-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--skip); }
 .tab-dot[data-status="passed"] { background: var(--pass); }

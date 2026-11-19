@@ -111,6 +111,22 @@ test.describe('Web-UI (neu): Testlauf', { tag: '@unit' }, () => {
     await expect(page.locator('#sb-count')).toHaveText('1 Test bereit');
   });
 
+  test('Zurücksetzen: leert Auswahl und Suchfeld und klappt die Kategorien zu', async ({ page }) => {
+    await open(page);
+    const reset = page.locator('#reset-selection');
+    await expect(reset).toBeHidden();
+    await page.locator('.cat-group', { hasText: 'Smoketest' }).locator('.cat-head').click();
+    await page.getByRole('checkbox', { name: /Login geht/ }).check();
+    await page.locator('#catalog-search').fill('login');
+    await expect(reset).toBeVisible();
+    await reset.click();
+    await expect(page.locator('#catalog-search')).toHaveValue('');
+    await expect(page.locator('#sb-count')).toHaveText('Noch nichts ausgewählt');
+    await expect(page.locator('.cat-group[open]')).toHaveCount(0);
+    await expect(page.locator('.cat-group')).toHaveCount(CATALOG.groups.length);
+    await expect(reset).toBeHidden();
+  });
+
   test('Schritte: genau ein Schritt offen, „Alle offen" öffnet alle', async ({ page }) => {
     await open(page);
     const open_ = page.locator('#steps .step[data-open="true"]');
