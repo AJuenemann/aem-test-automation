@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -10,8 +11,8 @@ import { getAemConfig } from '../../config/env.js';
  */
 const FILTER_PAGE = '/filterpage/filterpage_v2';
 
-test.describe('Regression: Tags im Suchergebnis (Publish)', { tag: '@regression' }, () => {
-  test('Filterseite liefert getaggte Treffer', async ({ page, publishPage }) => {
+test.describe('Regression: Tags im Suchergebnis (Publish)', { tag: '@regression', annotation: describeEn('Regression: tags in search results (publish)') }, () => {
+  test('Filterseite liefert getaggte Treffer', titleEn('Filter page returns tagged results'), async ({ page, publishPage }) => {
     const skip = publishPage.unavailableReason();
     test.skip(skip !== null, skip ?? '');
     const url = `${publishPage.config().url}${getAemConfig().samplesRoot}${FILTER_PAGE}.html`;

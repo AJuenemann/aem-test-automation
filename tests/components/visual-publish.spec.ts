@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { SAMPLE_COMPONENTS, samplePagePath } from '../../fixtures/samples-components.js';
 
 /**
@@ -21,9 +22,9 @@ import { SAMPLE_COMPONENTS, samplePagePath } from '../../fixtures/samples-compon
 // Wiederverwendung der bestehenden Screenshot-Masking-CSS (tests/basics).
 const stylePath = path.join(import.meta.dirname, '..', 'basics', 'screenshot.css');
 
-test.describe('Komponenten: Visuelle Regression (Publish)', { tag: ['@level2-components', '@visual'] }, () => {
+test.describe('Komponenten: Visuelle Regression (Publish)', { tag: ['@level2-components', '@visual'], annotation: describeEn('Components: visual regression (publish)') }, () => {
   for (const c of SAMPLE_COMPONENTS) {
-    test(`Gerenderte Seite "${c.label}" entspricht Baseline`, async ({ publishPage }) => {
+    test(`Gerenderte Seite "${c.label}" entspricht Baseline`, titleEn(`Rendered page "${c.label}" matches baseline`), async ({ publishPage }) => {
       const skipReason = publishPage.unavailableReason();
       test.skip(skipReason !== null, skipReason ?? '');
 

@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -19,8 +20,8 @@ import { getAemConfig } from '../../config/env.js';
  */
 const stylePath = path.join(import.meta.dirname, 'screenshot.css');
 
-test.describe('Komponenten: Visuelle Regression (Testseite)', { tag: ['@level2-components', '@visual'] }, () => {
-  test('Gerenderte Seite entspricht Baseline', async ({
+test.describe('Komponenten: Visuelle Regression (Testseite)', { tag: ['@level2-components', '@visual'], annotation: describeEn('Components: visual regression (test page)') }, () => {
+  test('Gerenderte Seite entspricht Baseline', titleEn('Rendered page matches baseline'), async ({
     sitesConsole,
     pageEditor,
     makeTestPage,

@@ -269,7 +269,8 @@ const CATALOG = {
     {
       tag: 'smoke', label: 'Smoketest', labelEn: 'Smoke test',
       description: 'Umgebung bereit?', descriptionEn: 'Environment ready?',
-      files: [{ label: 'Smoke', file: 'smoke.spec.ts', tests: [mkTest('Login ok'), mkTest('Seite laden', { line: 9 })] }],
+      // 'Login ok' hat einen englischen Namen, 'Seite laden' bewusst nicht (bleibt deutsch, lang="de").
+      files: [{ label: 'Smoke', labelEn: 'Smoke suite', file: 'smoke.spec.ts', tests: [mkTest('Login ok', { titleEn: 'Login works' }), mkTest('Seite laden', { line: 9 })] }],
     },
     {
       tag: 'integration', label: 'Integrationstest', labelEn: 'Integration test',
@@ -290,7 +291,7 @@ const REPORT = {
   blocker: 'Umgebungs-Blocker: Smoketest fehlgeschlagen (Login ok). Die übrigen AEM-Tests wurden deshalb nicht ausgeführt. Ursache in der Smoketest-Zeile prüfen.',
   blockerInfo: { code: 'smoke', params: { tests: 'Login ok' } },
   rows: [
-    { level: 'smoke', title: 'login ok', file: 'smoke.spec.ts', status: 'passed', durationMs: 900, attachments: [] },
+    { level: 'smoke', title: 'login ok', titleEn: 'Login works', file: 'smoke.spec.ts', status: 'passed', durationMs: 900, attachments: [] },
     { level: 'smoke', title: 'seite laden', file: 'smoke.spec.ts', status: 'failed', durationMs: 3000, retryCount: 1,
       repeatIndex: 2, repeatTotal: 3, repeatLabel: 'Durchlauf 2/3',
       errorSummary: 'Timeout beim Laden', errorDetail: 'Zeile 1', attachments: [{ name: 'screenshot', url: '/files/x.png' }] },
@@ -589,21 +590,45 @@ test.describe('Cockpit i18n: Umschalten', { tag: '@unit' }, () => {
   test('Testinhalte sind als Deutsch ausgezeichnet, solange die Oberfläche Englisch ist', async ({ page }) => {
     await open(page);
     // Deutsch: kein lang-Attribut an den Testtexten (sie erben lang="de").
-    await expect(page.locator('.test-name').first()).not.toHaveAttribute('lang', /.*/);
+    await expect(page.locator('.test-name').nth(1)).not.toHaveAttribute('lang', /.*/);
     await page.locator('#lang-toggle').click();
-    await expect(page.locator('.test-name').first()).toHaveAttribute('lang', 'de');
-    await expect(page.locator('.test-origin').first()).toHaveAttribute('lang', 'de');
+    // Ohne englischen Namen bleibt der Text deutsch und ist so ausgezeichnet.
+    await expect(page.locator('.test-name').nth(1)).toHaveText('Seite laden');
+    await expect(page.locator('.test-name').nth(1)).toHaveAttribute('lang', 'de');
+    // Mit englischem Namen erscheint er ohne lang-Attribut.
+    await expect(page.locator('.test-name').first()).toHaveText('Login works');
+    await expect(page.locator('.test-name').first()).not.toHaveAttribute('lang', /.*/);
+    await expect(page.locator('.test-origin').first()).toHaveText('Smoke suite');
+    await expect(page.locator('.test-origin').first()).not.toHaveAttribute('lang', /.*/);
+    // Das Original bleibt Schlüssel für Auswahl und --grep.
+    await expect(page.locator('.test-cb').first()).toHaveAttribute('data-title', 'Login ok');
     // Ergebnisse: Titel, Datei und Fehlertext sind deutsch, die UI-Texte außen nicht.
     await page.getByRole('tab', { name: 'Results' }).click();
     await page.locator('.run-entry').click();
     const row = page.locator('.trow').first();
     await expect(row.locator('.trow-title > span')).toHaveAttribute('lang', 'de');
-    await expect(row.locator('.trow-title small > span')).toHaveAttribute('lang', 'de');
     await expect(row.locator('.trow-title small')).not.toHaveAttribute('lang', /.*/);
     await expect(page.locator('.err-summary')).toHaveAttribute('lang', 'de');
+    // Testname mit englischer Entsprechung: englisch und ohne lang-Attribut.
+    const translated = page.locator('.trow-title > span').nth(1);
+    await expect(translated).toHaveText('Login works');
+    await expect(translated).not.toHaveAttribute('lang', /.*/);
     await page.locator('#lang-toggle').click();
     await expect(page.locator('.err-summary')).not.toHaveAttribute('lang', /.*/);
     await expect(page.locator('.trow-title > span').first()).not.toHaveAttribute('lang', /.*/);
+  });
+
+  test('Testnamen: englisch angezeigt und gesucht, das Original bleibt auffindbar', async ({ page }) => {
+    await open(page);
+    await page.locator('#lang-toggle').click();
+    await page.locator('#catalog-search').fill('login works');
+    await expect(page.locator('.test-name')).toHaveText(['Login works']);
+    await page.locator('#catalog-search').fill('Login ok');
+    await expect(page.locator('.test-name')).toHaveText(['Login works']);
+    await page.locator('#catalog-search').fill('suite');
+    await expect(page.locator('.test-name')).toHaveText(['Login works', 'Seite laden']);
+    await page.locator('#lang-toggle').click();
+    await expect(page.locator('.test-name')).toHaveText(['Login ok', 'Seite laden']);
   });
 
   test('Beenden-Dialog erscheint in der aktiven Sprache', async ({ page }) => {

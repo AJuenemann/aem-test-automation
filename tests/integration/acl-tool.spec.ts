@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -17,8 +18,8 @@ const ACTOOL_PATH = '/system/console/actool';
 // Breit gematcht, da die exakte Artefakt-Aufteilung versionsabhaengig ist.
 const ACTOOL_BUNDLE_PATTERN = /actool|accesscontroltool/i;
 
-test.describe('Integration: ACL-Tool', { tag: '@integration' }, () => {
-  test('AC-Tool-Konsole ist erreichbar', async ({ page }) => {
+test.describe('Integration: ACL-Tool', { tag: '@integration', annotation: describeEn('Integration: ACL tool') }, () => {
+  test('AC-Tool-Konsole ist erreichbar', titleEn('AC tool console is reachable'), async ({ page }) => {
     const base = getAemConfig().baseUrl;
     const response = await page.goto(`${base}${ACTOOL_PATH}`, { waitUntil: 'domcontentloaded' });
     expect(response, 'Keine HTTP-Antwort von der actool-Konsole.').not.toBeNull();
@@ -31,7 +32,7 @@ test.describe('Integration: ACL-Tool', { tag: '@integration' }, () => {
     await expect(page.locator('#username, input[name="j_username"]')).toHaveCount(0);
   });
 
-  test('AC-Tool-Bundles sind aktiv', async ({ page }) => {
+  test('AC-Tool-Bundles sind aktiv', titleEn('AC tool bundles are active'), async ({ page }) => {
     const base = getAemConfig().baseUrl;
     const res = await page.request.get(`${base}/system/console/bundles.json`);
     expect(res.ok(), `bundles.json nicht erreichbar (HTTP ${res.status()}).`).toBe(true);

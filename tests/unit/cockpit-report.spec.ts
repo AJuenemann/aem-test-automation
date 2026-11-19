@@ -58,6 +58,16 @@ const sampleReport = {
 };
 
 test.describe('Cockpit: buildReportView', { tag: '@unit' }, () => {
+  test('Englischer Testname (titleEn) stammt aus der Annotation _title-en', () => {
+    const run = (annotations: object[]) => ({
+      suites: [{ specs: [{ title: 'Seite anlegen', file: 'a.spec.ts', tests: [{ projectName: 'chromium', annotations, results: [{ status: 'passed', duration: 1 }] }] }] }],
+    });
+    const row = buildReportView(run([{ type: 'skip', description: 'x' }, { type: '_title-en', description: 'Create a page' }])).rows[0];
+    expect(row.title).toBe('Seite anlegen');
+    expect(row.titleEn).toBe('Create a page');
+    expect('titleEn' in buildReportView(run([])).rows[0]).toBe(false);
+  });
+
   test('Erzeugt Zeilen mit Status, Dauer, Fehler und Attachment', () => {
     const view = buildReportView(sampleReport);
     expect(view.rows).toHaveLength(2);

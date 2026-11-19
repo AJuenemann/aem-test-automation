@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { SAMPLE_COMPONENTS, samplePagePath } from '../../fixtures/samples-components.js';
 
 /**
@@ -16,9 +17,9 @@ const SEARCHES = [
   { label: 'Externe Links', root: '/content/externallinklib/' },
 ];
 
-test.describe('Regression: Asset-Finder-Overlays', { tag: '@regression' }, () => {
+test.describe('Regression: Asset-Finder-Overlays', { tag: '@regression', annotation: describeEn('Regression: asset finder overlays') }, () => {
   for (const { label, root } of SEARCHES) {
-    test(`Asset-Finder-Suche "${label}" liefert Treffer`, async ({ samplesComponent, overlayChecks }) => {
+    test(`Asset-Finder-Suche "${label}" liefert Treffer`, titleEn(`Asset finder search "${label}" returns results`), async ({ samplesComponent, overlayChecks }) => {
       test.setTimeout(90_000);
       await samplesComponent.open(samplePagePath(SAMPLE_COMPONENTS[0]));
       const paths = await overlayChecks.assetFinderSearch(label);

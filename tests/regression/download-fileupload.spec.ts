@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -20,8 +21,8 @@ const DOWNLOAD_PAGE = '/section/download-component';
 // Overlay-Titel ist deutsch "Herunterladen" (per Diag gegen DEV verifiziert).
 const DOWNLOAD_COMPONENT = process.env.AEM_DOWNLOAD_COMPONENT?.trim() || 'Herunterladen';
 
-test.describe('Regression: Download-Dialog Fileupload (Drag & Drop)', { tag: '@regression' }, () => {
-  test('Asset setzen (leer) und ersetzen (vorhanden)', async ({ samplesComponent, overlayChecks }) => {
+test.describe('Regression: Download-Dialog Fileupload (Drag & Drop)', { tag: '@regression', annotation: describeEn('Regression: download dialog file upload (drag & drop)') }, () => {
+  test('Asset setzen (leer) und ersetzen (vorhanden)', titleEn('Set an asset (empty) and replace it (present)'), async ({ samplesComponent, overlayChecks }) => {
     test.setTimeout(120_000);
     const pagePath = `${getAemConfig().samplesRoot}${DOWNLOAD_PAGE}`;
 

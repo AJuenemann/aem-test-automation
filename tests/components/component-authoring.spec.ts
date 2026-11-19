@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -12,8 +13,8 @@ import { getAemConfig } from '../../config/env.js';
  * cq:editConfig). Danach baut der Editor die Overlays nicht zuverlässig neu
  * auf (Diag 18.11.2026), daher wird der Editor jeweils neu geöffnet.
  */
-test.describe('Komponenten: Befüllen und veröffentlichen', { tag: '@level2-components' }, () => {
-  test('FAQ mit Textblock befüllen, im Editor und auf Publish prüfen', async ({
+test.describe('Komponenten: Befüllen und veröffentlichen', { tag: '@level2-components', annotation: describeEn('Components: fill and publish') }, () => {
+  test('FAQ mit Textblock befüllen, im Editor und auf Publish prüfen', titleEn('Fill an FAQ with a text block and verify it in the editor and on publish'), async ({
     page,
     sitesConsole,
     pageEditor,

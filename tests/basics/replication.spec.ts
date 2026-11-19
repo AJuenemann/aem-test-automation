@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 import type { APIRequestContext } from '@playwright/test';
 
@@ -23,8 +24,8 @@ async function publishStatus(request: APIRequestContext, url: string): Promise<n
   return res?.status() ?? 0;
 }
 
-test.describe('AEM-Basis: Replication (Aktivieren/Deaktivieren)', { tag: '@level1' }, () => {
-  test('Seite aktivieren und wieder deaktivieren', async ({
+test.describe('AEM-Basis: Replication (Aktivieren/Deaktivieren)', { tag: '@level1', annotation: describeEn('AEM core: replication (activate/deactivate)') }, () => {
+  test('Seite aktivieren und wieder deaktivieren', titleEn('Activate and deactivate a page'), async ({
     page,
     sitesConsole,
     publishPage,

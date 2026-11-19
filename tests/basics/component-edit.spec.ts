@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -15,8 +16,8 @@ import { getAemConfig } from '../../config/env.js';
  */
 const COMPONENT = process.env.AEM_TEST_COMPONENT?.trim() || 'Verweis';
 
-test.describe('AEM-Basis: Komponente einfügen und entfernen', { tag: '@level1' }, () => {
-  test('Komponente hinzufügen und wieder entfernen', async ({
+test.describe('AEM-Basis: Komponente einfügen und entfernen', { tag: '@level1', annotation: describeEn('AEM core: insert and remove a component') }, () => {
+  test('Komponente hinzufügen und wieder entfernen', titleEn('Add and remove a component again'), async ({
     sitesConsole,
     pageEditor,
     makeTestPage,

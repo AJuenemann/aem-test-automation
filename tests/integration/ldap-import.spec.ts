@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 /**
  * LDAP-/Visitenkarten-Import (JET-Antwort zu 5. und 6.).
@@ -18,8 +19,8 @@ const SEARCH_QUERY = process.env.LDAP_SEARCH_QUERY?.trim() || 'Max';
 // @env:test macht die Umgebungs-Einschränkung für das Cockpit sichtbar (dort
 // werden nicht passende Umgebungen ausgegraut). Die harte Absicherung bleibt
 // der test.skip unten (greift auch bei CLI-/CI-Läufen, die die UI umgehen).
-test.describe('Integration: LDAP-/Visitenkarten-Import', { tag: ['@integration', '@env:test'] }, () => {
-  test('Import ist startbar: Kontakt suchen, in Spielwiese importieren, bereinigen', async ({
+test.describe('Integration: LDAP-/Visitenkarten-Import', { tag: ['@integration', '@env:test'], annotation: describeEn('Integration: LDAP/business card import') }, () => {
+  test('Import ist startbar: Kontakt suchen, in Spielwiese importieren, bereinigen', titleEn('Import can be started: find a contact, import into the playground, clean up'), async ({
     ldapImport,
     sitesConsole,
     makeTestPage,

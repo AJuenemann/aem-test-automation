@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 
 /**
  * Sprachversionen (Publish, nur lesend) an einem echten Seitenpaar der
@@ -13,7 +14,7 @@ const PAIRS = [
   { lang: 'en', path: '/content/zv/en/data-protection-policy', switchTo: 'Deutsch' },
 ] as const;
 
-test.describe('Regression: Sprachversionen (Publish)', { tag: '@regression' }, () => {
+test.describe('Regression: Sprachversionen (Publish)', { tag: '@regression', annotation: describeEn('Regression: language versions (publish)') }, () => {
   test.beforeEach(({ publishPage }) => {
     const skip = publishPage.unavailableReason();
     test.skip(skip !== null, skip ?? '');
@@ -21,7 +22,7 @@ test.describe('Regression: Sprachversionen (Publish)', { tag: '@regression' }, (
 
   for (const [i, from] of PAIRS.entries()) {
     const to = PAIRS[1 - i];
-    test(`Sprachwahl "${from.switchTo}" öffnet die ${to.lang}-Gegenseite`, async ({ page, publishPage }) => {
+    test(`Sprachwahl "${from.switchTo}" öffnet die ${to.lang}-Gegenseite`, titleEn(`Language selector "${from.switchTo}" opens the ${to.lang} counterpart page`), async ({ page, publishPage }) => {
       const base = publishPage.config().url;
       await page.goto(`${base}${from.path}.html`, { waitUntil: 'domcontentloaded' });
       await page.locator('header').getByRole('link', { name: from.switchTo, exact: true }).filter({ visible: true }).first().click();
@@ -31,7 +32,7 @@ test.describe('Regression: Sprachversionen (Publish)', { tag: '@regression' }, (
     });
   }
 
-  test('Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander', async ({ page, publishPage }) => {
+  test('Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander', titleEn('Hreflang: the de and en versions point to each other'), async ({ page, publishPage }) => {
     const base = publishPage.config().url;
     for (const [i, from] of PAIRS.entries()) {
       const to = PAIRS[1 - i];

@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -8,8 +9,8 @@ import { getAemConfig } from '../../config/env.js';
  * Alle Operationen laufen ausschließlich unterhalb von AEM_PLAYGROUND_PATH;
  * der Pfad-Guard in den Page Objects / Fixtures erzwingt das technisch.
  */
-test.describe('AEM-Basis: Seiten-CRUD', { tag: '@level1' }, () => {
-  test('Seite anlegen, bearbeiten und löschen', async ({
+test.describe('AEM-Basis: Seiten-CRUD', { tag: '@level1', annotation: describeEn('AEM core: page CRUD') }, () => {
+  test('Seite anlegen, bearbeiten und löschen', titleEn('Create, edit and delete a page'), async ({
     sitesConsole,
     makeTestPage,
     registerCleanup,
@@ -38,7 +39,7 @@ test.describe('AEM-Basis: Seiten-CRUD', { tag: '@level1' }, () => {
     await sitesConsole.expectPageAbsent(pageData.path);
   });
 
-  test('Seite löschen über Tastatur-Shortcut (Backspace)', async ({
+  test('Seite löschen über Tastatur-Shortcut (Backspace)', titleEn('Delete a page with the keyboard shortcut (Backspace)'), async ({
     sitesConsole,
     makeTestPage,
     registerCleanup,

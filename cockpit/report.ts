@@ -6,6 +6,8 @@
  * results[].attachments[] enthält Trace/Screenshot/Video/Diff.
  */
 
+import { TITLE_EN } from '../fixtures/titles.js';
+
 export type TestStatus = 'passed' | 'failed' | 'timedOut' | 'skipped' | 'interrupted';
 
 /** Ein Attachment-Link für die UI (relativ zum Report-Root). */
@@ -19,6 +21,8 @@ export interface ReportAttachment {
 /** Eine Zeile der Ergebnis-Tabelle (ein Test in einem Projekt). */
 export interface ReportRow {
   title: string;
+  /** Englischer Anzeigename (Annotation `_title-en`, siehe fixtures/titles.ts) oder undefined. */
+  titleEn?: string;
   file: string;
   project: string;
   /** Titel des describe-Blocks (Testsuite), z.B. „AEM-Basis: Seiten-CRUD". */
@@ -211,8 +215,10 @@ export function buildReportView(raw: RawReport): ReportView {
               .join(' ') || undefined
           : undefined;
 
+        const titleEn = (test.annotations ?? []).find((a) => a.type === TITLE_EN && a.description)?.description;
         rows.push({
           title: spec.title ?? '(ohne Titel)',
+          ...(titleEn ? { titleEn } : {}),
           file: spec.file ?? '',
           project: test.projectName ?? '',
           suite: spec._suite,

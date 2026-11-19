@@ -78,7 +78,7 @@ Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und di
 
 Umfang: 59 AEM-Testfälle (12 Smoketest inkl. Login, 11 Basisfunktionen,
 24 Komponenten, 3 Integrationstest, 9 Regressionstest), dazu 11 Capture-Läufe
-und 127 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
+und 132 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 ## Cockpit: Aufbau und Fallback
@@ -116,8 +116,11 @@ pf-Weiterleitung 80 → 4321 legte direkte Verbindungen zu 4321 lahm (19.11.2026
   **Neue Texte immer in beiden Wörterbüchern, nie als Literal im JS.** Server-Texte additiv:
   `labelEn`/`descriptionEn` in `categories.json` und `environments.json`, `blockerInfo`
   (`{code, params}`), `code`/`params` bei bekannten Fehlern (`CodedError`), `repeatIndex`/
-  `repeatTotal`. Nicht übersetzt: Testtitel, Dateinamen, Playwright-Fehlertexte, `skip`-Gründe,
-  Playwright-Report; sie tragen in EN `lang="de"` (`markContent`/`contentLangAttr` in `core.js`).
+  `repeatTotal`. Testnamen: jeder Test trägt `titleEn(...)`, jede Suite `describeEn(...)`
+  (Annotationen `_title-en`/`_describe-en`, `fixtures/titles.ts`), das Cockpit zeigt sie in EN
+  (`testTitle`/`suiteLabel` in `core.js`); der deutsche Titel bleibt Schlüssel für Auswahl und
+  `--grep`. Nicht übersetzt: Dateinamen, Playwright-Fehlertexte, `skip`-Gründe, Playwright-Report;
+  sie tragen in EN `lang="de"` (`markContent`/`contentLangAttr` in `core.js`).
   Zahlen folgen der Sprache (`oneDecimal` in `logic.js`). `cockpit-ui.spec.ts` nagelt `locale: 'de-DE'` fest, `cockpit-i18n.spec.ts`
   prüft Vollständigkeit und Umschalten.
 - Tests: `tests/unit/cockpit-ui-logic.spec.ts` (Logik, Token-Kontrast) und
@@ -393,6 +396,9 @@ Name + `order`). Ohne bekannten Kategorie-Tag landet eine Datei unter "Sonstige"
   Code-Bezeichner am Anfang bekommt einen deutschen Begriff davor, z.B.
   `Blocker-Erkennung (detectBlocker): …`. Den Bezeichner nicht großschreiben.
   Baselines hängen nicht am Titel (`{arg}` im `snapshotPathTemplate`).
+  **Jeder neue Test und jede neue Suite braucht einen englischen Namen**:
+  `test('…', titleEn('…'), …)` bzw. `{ tag, annotation: describeEn('…') }` (`fixtures/titles.ts`).
+  `tests/unit/titles-en.spec.ts` schlägt sonst fehl.
 - **Cleanup**: jede angelegte Seite mit `registerCleanup` registrieren; Teardown
   löscht idempotent, auch bei Fehlschlag.
 - **Screenshots**: `toHaveScreenshot` mit `screenshot.css` (dynamische Elemente

@@ -1,4 +1,5 @@
 import { test as setup, expect } from '@playwright/test';
+import { titleEn } from '../fixtures/titles.js';
 import path from 'node:path';
 import fs from 'node:fs';
 import { getAemConfig } from '../config/env.js';
@@ -14,7 +15,7 @@ const authFile = path.join('playwright', '.auth', 'user.json');
  * Umgebung stattdessen SSO erzwingt, muss dieser Schritt an den IdP-Flow
  * angepasst werden (siehe README, offener Punkt "Login-Methode").
  */
-setup('Authentifizieren', async ({ page }) => {
+setup('Authentifizieren', titleEn('Authenticate'), async ({ page }) => {
   const cfg = getAemConfig();
 
   // Verzeichnis für den Auth-State sicherstellen.

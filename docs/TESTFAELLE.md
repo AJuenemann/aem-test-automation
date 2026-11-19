@@ -38,14 +38,14 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 | Wiederholungen | lokal 1, CI 2 |
 | Nachweis | HTML-Report + Trace/Screenshot/Video bei Fehlern |
 | Kategorie-Tags | `@smoke` (Smoketest), `@level1` (Basisfunktionen), `@level2-components` (Komponenten), `@integration` (Integrationstest), `@regression` (Regressionstest), `@unit`, `@tooling`; Facette `@visual`; Einschränkung `@env:<id>` |
-| Testnamen | beginnen immer mit einem Großbuchstaben |
+| Testnamen | beginnen immer mit einem Großbuchstaben; jeder Test trägt zusätzlich einen englischen Namen (`titleEn(...)`, jede Suite `describeEn(...)`, `fixtures/titles.ts`), den das Cockpit in der Sprache EN zeigt |
 
 ---
 
 ## Gesamtübersicht (Stand 19.11.2026)
 
 59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 127 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+nur auf Anforderung) und 132 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -652,9 +652,9 @@ Sprachversionen.
 
 ### UNIT-I18N — Zweisprachiges Cockpit, DE/EN-US (`tests/unit/cockpit-i18n.spec.ts`, ab 19.11.2026)
 - **Zweck**: sichert die Zweisprachigkeit der neuen Oberfläche ab (Sprachwahl, Wörterbücher,
-  Umschalten). Kein AEM, kein Login. Testtitel, Dateinamen und Playwright-Texte bleiben
-  unübersetzt und werden nicht geprüft.
-- **Fälle** (32, davon 12 im Browser gegen den lokalen Mock-Server):
+  Umschalten). Kein AEM, kein Login. Dateinamen, Fehlertexte und Playwright-Texte bleiben
+  unübersetzt. Die Testnamen kommen als englische Annotation aus den Tests (siehe UNIT-TITLES-EN).
+- **Fälle** (33, davon 13 im Browser gegen den lokalen Mock-Server):
   - **Sprachwahl** (`resolveLang`): Systemsprache `de*` → DE, sonst EN, die gespeicherte Wahl gewinnt.
   - **Kern**: Platzhalter, Fallback (DE, dann Schlüssel), Plural, Locale; Formatierer
     (Kernaussage, Einstellungen, Bereiche, „Heute"/„Gestern", Monat) auch auf Englisch;
@@ -676,10 +676,27 @@ Sprachversionen.
     Kategorie und Umgebung; Ergebnisse (Kernaussage, Blocker per Code, Durchlauf, Datum) und
     Historie (Auswahl bleibt); Werkzeuge (Aufräum-Ergebnis, Hinweis per Code, Auswahl bleibt);
     in EN steht kein deutscher Anzeigetext mehr in allen Reitern, Schritten und Dialogen;
-    Testtitel, Dateinamen und Fehlertexte tragen in EN `lang="de"`, in DE kein `lang`-Attribut.
+    Testnamen erscheinen in EN englisch (ohne `lang`-Attribut), ohne englischen Namen, Fehlertexte
+    und Dateinamen deutsch mit `lang="de"`; die Suche findet Original und Übersetzung, das
+    deutsche Original bleibt Schlüssel für Auswahl und `--grep`.
 - **Dazu erweitert**: `cockpit-report.spec.ts` (+4: `detectBlockerInfo`, `blockerText`,
   `repeatIndex`/`repeatTotal`), `cockpit-catalog.spec.ts` (+1: `labelEn`/`descriptionEn` additiv).
   `cockpit-ui.spec.ts` nagelt die Sprache auf `de-DE` fest.
+- **Erwartet**: alle Fälle grün.
+
+### UNIT-TITLES-EN — Englische Testnamen (`tests/unit/titles-en.spec.ts`, ab 19.11.2026)
+- **Zweck**: Jeder Test hat einen englischen Anzeigenamen und jede Suite einen englischen Suite-Namen
+  für das Cockpit (Sprache EN). Der Titel im Test bleibt deutsch (Quelle für `--grep`, Baselines,
+  Berichte). Der englische Name steht als Annotation `_title-en` bzw. `_describe-en` am Test
+  (`fixtures/titles.ts`); der Unterstrich blendet sie im Playwright-HTML-Report aus.
+- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 70 AEM-Tests
+  (inkl. Login) `_title-en` und zu jeder Suite `_describe-en`, nichts ist leer oder unübersetzt.
+  Der Katalog liefert zu jedem sichtbaren Test und jeder Datei den englischen Namen.
+- **Dazu erweitert**: `cockpit-catalog.spec.ts` (+1: liest `_title-en`/`_describe-en`, bei mehreren
+  describe-Titeln kein englischer Suite-Name), `cockpit-report.spec.ts` (+1: `titleEn` der Ergebniszeile).
+- **Neuer Test**: `test('Deutscher Titel', titleEn('English title'), async …)`, neue Suite:
+  `test.describe('Deutscher Titel', { tag: '@level1', annotation: describeEn('English title') }, …)`.
+  Fehlt der englische Name, schlägt dieser Test fehl.
 - **Erwartet**: alle Fälle grün.
 
 ---

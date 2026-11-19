@@ -47,12 +47,20 @@ export const envLabel = (env) => (english() && env?.labelEn) || env?.label || ''
 export const envShort = (label) => (label || '').split(' (')[0];
 
 /**
- * Testtitel, Dateinamen und Fehlertexte aus den Tests sind deutsch. In der englischen Oberfläche
- * bekommen diese Elemente `lang="de"`, damit Screenreader sie richtig aussprechen.
+ * Testnamen kommen aus den Tests: deutsch, in der Annotation `_title-en`/`_describe-en` auch englisch.
+ * In der englischen Oberfläche gilt der englische Name, sonst der deutsche.
  */
-export const contentLangAttr = () => (english() ? ' lang="de"' : '');
-export const markContent = (el) => {
-  if (english()) el.lang = 'de'; else el.removeAttribute('lang');
+export const testTitle = (item) => (english() && item.titleEn) || item.title;
+export const suiteLabel = (file) => (english() && file.labelEn) || file.label;
+
+/**
+ * Texte aus den Tests (Titel ohne englischen Namen, Dateinamen, Fehlertexte) sind deutsch. Zeigt die
+ * englische Oberfläche sie an, bekommen die Elemente `lang="de"`, damit Screenreader sie richtig aussprechen.
+ * `translated`: Der Text liegt bereits auf Englisch vor.
+ */
+export const contentLangAttr = (translated = false) => (english() && !translated ? ' lang="de"' : '');
+export const markContent = (el, translated = false) => {
+  if (english() && !translated) el.lang = 'de'; else el.removeAttribute('lang');
   return el;
 };
 

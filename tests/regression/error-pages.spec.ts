@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 
 /**
  * Overlay-Regression (JET-Antwort zu 7., Punkt 4): die auf das Fraunhofer-
@@ -18,8 +19,8 @@ const ERROR_PAGE =
   process.env.ERROR_PAGE_PATH?.trim() || '/content/samples/de/qa-seite-gibt-es-nicht';
 const stylePath = path.join(import.meta.dirname, '..', 'basics', 'screenshot.css');
 
-test.describe('Regression: Fehlerseite (Publish, visuell)', { tag: ['@regression', '@visual'] }, () => {
-  test('Fehlerseite (404) entspricht Baseline', async ({ publishPage }) => {
+test.describe('Regression: Fehlerseite (Publish, visuell)', { tag: ['@regression', '@visual'], annotation: describeEn('Regression: error page (publish, visual)') }, () => {
+  test('Fehlerseite (404) entspricht Baseline', titleEn('Error page (404) matches baseline'), async ({ publishPage }) => {
     const skipReason = publishPage.unavailableReason();
     test.skip(skipReason !== null, skipReason ?? '');
 

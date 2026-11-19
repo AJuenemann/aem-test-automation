@@ -207,6 +207,32 @@ test.describe('Cockpit: parseCatalog', { tag: '@unit' }, () => {
     expect(catalog.files.map((f) => f.file)).toEqual(['c.spec.ts']);
   });
 
+  test('Liest englische Test- und Suite-Namen aus den Annotationen (_title-en, _describe-en)', () => {
+    const ann = (type: string, description: string) => ({ type, description });
+    const spec = (title: string, line: number, annotations: object[]) => ({
+      title, file: 'a.spec.ts', line, tags: ['level1'], tests: [{ projectName: 'chromium', annotations }],
+    });
+    const suite = (specs: object[], suites: object[] = [{ title: 'Seiten', specs, suites: [] }]) =>
+      ({ suites: [{ file: 'a.spec.ts', specs: [], suites }] });
+    const withEn = suite([
+      spec('Seite anlegen', 3, [ann('_describe-en', 'Pages'), ann('_title-en', 'Create a page')]),
+      spec('Ohne Englisch', 9, [ann('_describe-en', 'Pages')]),
+    ]);
+    const file = parseCatalog(withEn, [{ tag: 'level1', label: 'L1', order: 20 }]).files[0];
+    expect(file.label).toBe('Seiten');
+    expect(file.labelEn).toBe('Pages');
+    expect(file.tests.map((t) => t.titleEn)).toEqual(['Create a page', undefined]);
+    // Ohne Annotationen entstehen keine leeren Felder.
+    const plain = parseCatalog(suite([spec('Seite anlegen', 3, [])])).files[0];
+    expect('labelEn' in plain).toBe(false);
+    expect('titleEn' in plain.tests[0]).toBe(false);
+    // Mehrere describe-Titel in einer Datei: der Name stammt aus dem Dateinamen, kein englischer Suite-Name.
+    const two = suite([], [
+      { title: 'A', specs: [spec('x', 1, [ann('_describe-en', 'A en')])], suites: [] },
+      { title: 'B', specs: [spec('y', 2, [ann('_describe-en', 'B en')])], suites: [] },
+    ]);
+    expect('labelEn' in parseCatalog(two).files[0]).toBe(false);
+  });
   test('Reicht englische Texte (labelEn, descriptionEn) additiv an die Gruppen durch', () => {
     const tagged = {
       suites: [

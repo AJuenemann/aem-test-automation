@@ -1,4 +1,5 @@
 import { test } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -6,8 +7,8 @@ import { getAemConfig } from '../../config/env.js';
  * Der Test legt einen eigenen Testordner an, lädt darin hoch, wartet auf die
  * Verarbeitung (Bildmaße) und löscht am Ende nur diesen Ordner.
  */
-test.describe('AEM-Basis: Asset hochladen', { tag: '@level1' }, () => {
-  test('Bild in einen Testordner der DAM hochladen und verarbeiten lassen', async ({ assetsConsole, makeTestPage }) => {
+test.describe('AEM-Basis: Asset hochladen', { tag: '@level1', annotation: describeEn('AEM core: upload an asset') }, () => {
+  test('Bild in einen Testordner der DAM hochladen und verarbeiten lassen', titleEn('Upload an image to a DAM test folder and let it process'), async ({ assetsConsole, makeTestPage }) => {
     test.setTimeout(300_000);
     const cfg = getAemConfig();
     // makeTestPage liefert nur den Namen nach Testschema, angelegt wird nichts.

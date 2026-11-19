@@ -53,7 +53,7 @@ export function isUnitOnly(testCount, projects) {
 /** Passt der Test zum Suchbegriff (Name, Suite, Datei, Kategorie, Tags)? */
 export function testMatches(test, file, group, term) {
   if (!term) return true;
-  const haystack = [test.title, file.label, file.file, group.label, group.labelEn, ...(test.tags || [])]
+  const haystack = [test.title, test.titleEn, file.label, file.labelEn, file.file, group.label, group.labelEn, ...(test.tags || [])]
     .filter(Boolean)
     .join(' ')
     .toLowerCase();

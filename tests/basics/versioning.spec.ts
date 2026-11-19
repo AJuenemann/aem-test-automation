@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -10,8 +11,8 @@ import { getAemConfig } from '../../config/env.js';
  *  3. Text auf B ändern.
  *  4. Version "v1" wiederherstellen -> Inhalt muss wieder A sein (Rollback).
  */
-test.describe('AEM-Basis: Versionierung', { tag: '@level1' }, () => {
-  test('Version erstellen und wiederherstellen', async ({
+test.describe('AEM-Basis: Versionierung', { tag: '@level1', annotation: describeEn('AEM core: versioning') }, () => {
+  test('Version erstellen und wiederherstellen', titleEn('Create and restore a version'), async ({
     sitesConsole,
     pageEditor,
     makeTestPage,

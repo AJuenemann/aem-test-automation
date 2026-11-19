@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 
 /**
@@ -6,8 +7,8 @@ import { getAemConfig } from '../../config/env.js';
  * Kopieren, Verschieben, Umbenennen und Seiteneigenschaften.
  * Gegen DEV per Diag verifiziert (18.11.2026).
  */
-test.describe('AEM-Basis: Seiten kopieren, verschieben, umbenennen, Eigenschaften', { tag: '@level1' }, () => {
-  test('Seite kopieren und im selben Ordner einfügen', async ({ sitesConsole, makeTestPage, registerCleanup }) => {
+test.describe('AEM-Basis: Seiten kopieren, verschieben, umbenennen, Eigenschaften', { tag: '@level1', annotation: describeEn('AEM core: copy, move and rename pages, properties') }, () => {
+  test('Seite kopieren und im selben Ordner einfügen', titleEn('Copy a page and paste it into the same folder'), async ({ sitesConsole, makeTestPage, registerCleanup }) => {
     const cfg = getAemConfig();
     const pageData = makeTestPage('seite-kopieren');
     registerCleanup(pageData.path);
@@ -20,7 +21,7 @@ test.describe('AEM-Basis: Seiten kopieren, verschieben, umbenennen, Eigenschafte
     await sitesConsole.expectPageVisible(pageData.path); // Original bleibt
   });
 
-  test('Unterseite unter eine andere Startseite verschieben', async ({ sitesConsole, makeTestPage, registerCleanup }) => {
+  test('Unterseite unter eine andere Startseite verschieben', titleEn('Move a subpage under another homepage'), async ({ sitesConsole, makeTestPage, registerCleanup }) => {
     test.setTimeout(240_000);
     const cfg = getAemConfig();
     // Testseiten direkt unter der Spielwiese sind Startseiten (homepage). Eine
@@ -42,7 +43,7 @@ test.describe('AEM-Basis: Seiten kopieren, verschieben, umbenennen, Eigenschafte
     await sitesConsole.expectPageAbsent(childPath);
   });
 
-  test('Seite umbenennen', async ({ sitesConsole, makeTestPage, registerCleanup }) => {
+  test('Seite umbenennen', titleEn('Rename a page'), async ({ sitesConsole, makeTestPage, registerCleanup }) => {
     test.setTimeout(180_000);
     const cfg = getAemConfig();
     const pageData = makeTestPage('seite-umbenennen');
@@ -57,7 +58,7 @@ test.describe('AEM-Basis: Seiten kopieren, verschieben, umbenennen, Eigenschafte
     await sitesConsole.expectPageAbsent(pageData.path);
   });
 
-  test('Seiteneigenschaften speichern und erneut anzeigen', async ({ sitesConsole, makeTestPage, registerCleanup }) => {
+  test('Seiteneigenschaften speichern und erneut anzeigen', titleEn('Save page properties and show them again'), async ({ sitesConsole, makeTestPage, registerCleanup }) => {
     const cfg = getAemConfig();
     const pageData = makeTestPage('seiteneigenschaften');
     registerCleanup(pageData.path);
@@ -75,7 +76,7 @@ test.describe('AEM-Basis: Seiten kopieren, verschieben, umbenennen, Eigenschafte
 
   // Tags steuern Filter- und Suchergebnisse (Filterseite war am 17.11.2026 auf
   // TEST leer, weil cq:tags fehlte). Hier der Redakteursweg: Tag setzen.
-  test('Tag in den Seiteneigenschaften setzen und erneut anzeigen', async ({ sitesConsole, makeTestPage, registerCleanup }) => {
+  test('Tag in den Seiteneigenschaften setzen und erneut anzeigen', titleEn('Set a tag in the page properties and show it again'), async ({ sitesConsole, makeTestPage, registerCleanup }) => {
     const cfg = getAemConfig();
     const pageData = makeTestPage('seiten-tag');
     registerCleanup(pageData.path);

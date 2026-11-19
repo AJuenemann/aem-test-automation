@@ -1,4 +1,5 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
+import { titleEn, describeEn } from '../../fixtures/titles.js';
 import { getAemConfig } from '../../config/env.js';
 /**
  * Overlay-Regression (JET-Antwort zu 7., Punkt 5): die "Baum
@@ -10,8 +11,8 @@ import { getAemConfig } from '../../config/env.js';
  */
 const RESTORE_PAGE = process.env.AEM_RESTORE_TREE_PAGE?.trim() || '/de';
 
-test.describe('Regression: Baum wiederherstellen (Timeline)', { tag: '@regression' }, () => {
-  test('Formular ueber die Timeline erreichbar und abbrechbar', async ({ sitesConsole }) => {
+test.describe('Regression: Baum wiederherstellen (Timeline)', { tag: '@regression', annotation: describeEn('Regression: restore tree (timeline)') }, () => {
+  test('Formular ueber die Timeline erreichbar und abbrechbar', titleEn('The form can be reached and cancelled via the timeline'), async ({ sitesConsole }) => {
     test.setTimeout(90_000);
     const pagePath = `${getAemConfig().playgroundPath}${RESTORE_PAGE}`;
 

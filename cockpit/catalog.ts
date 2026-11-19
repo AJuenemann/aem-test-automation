@@ -4,6 +4,8 @@
  * Reiner Parser (kein I/O): nimmt das geparste JSON und liefert eine flache,
  * UI-freundliche Struktur. So ist er ohne AEM/Login unit-testbar.
  */
+import { DESCRIBE_EN, TITLE_EN } from '../fixtures/titles.js';
+
 
 /** Ein einzelner Test (eine `test(...)`-Zeile), ggf. je Projekt mehrfach. */
 export interface CatalogTest {
@@ -17,6 +19,8 @@ export interface CatalogTest {
   projects: string[];
   /** Playwright-Tags ohne führendes @ (z.B. `level1`, `visual`). */
   tags: string[];
+  /** Englischer Anzeigename (Annotation `_title-en`, siehe fixtures/titles.ts). */
+  titleEn?: string;
 }
 
 /** Eine Spec-Datei mit ihren Einzeltests. */
@@ -25,6 +29,8 @@ export interface CatalogSpecFile {
   file: string;
   /** Lesbarer Anzeigename (describe-Titel oder aus dem Dateinamen abgeleitet). */
   label: string;
+  /** Englischer Anzeigename (Annotation `_describe-en`) oder undefined. */
+  labelEn?: string;
   /** Zugeordnete Kategorie (Tag) oder undefined (Sonstige). */
   categoryTag?: string;
   tests: CatalogTest[];
@@ -70,6 +76,7 @@ export interface TestCatalog {
 // Minimal nötige Form des Playwright-`--list`-JSON (nur was wir lesen).
 interface RawTest {
   projectName?: string;
+  annotations?: { type?: string; description?: string }[];
 }
 interface RawSpec {
   title: string;
@@ -86,6 +93,15 @@ interface RawSuite {
 }
 interface RawListJson {
   suites?: RawSuite[];
+}
+
+/** Beschreibung der ersten Annotation vom Typ `type` an den Tests eines Specs. */
+function annotationOf(spec: RawSpec, type: string): string | undefined {
+  for (const t of spec.tests ?? []) {
+    const hit = (t.annotations ?? []).find((a) => a.type === type && a.description);
+    if (hit) return hit.description;
+  }
+  return undefined;
 }
 
 /**
@@ -161,6 +177,7 @@ export function parseCatalog(
 ): TestCatalog {
   const fileMap = new Map<string, Map<string, CatalogTest>>();
   const titleMap = new Map<string, string[]>();
+  const describeEnMap = new Map<string, Set<string>>();
   const projectSet = new Set<string>();
 
   for (const fileSuite of raw.suites ?? []) {
@@ -189,7 +206,11 @@ export function parseCatalog(
         testsOfFile = new Map<string, CatalogTest>();
         fileMap.set(file, testsOfFile);
         titleMap.set(file, describeTitles);
+        describeEnMap.set(file, new Set());
       }
+      const describeEn = annotationOf(spec, DESCRIBE_EN);
+      if (describeEn) describeEnMap.get(file)!.add(describeEn);
+      const titleEn = annotationOf(spec, TITLE_EN);
 
       // Tags ohne führendes @ (Playwright liefert sie bereits ohne @).
       const tags = (spec.tags ?? []).map((t) => t.replace(/^@/, ''));
@@ -213,6 +234,7 @@ export function parseCatalog(
           line: spec.line,
           projects: [...new Set(projects)],
           tags: [...new Set(tags)],
+          ...(titleEn ? { titleEn } : {}),
         });
       }
     }
@@ -246,9 +268,14 @@ export function parseCatalog(
   const files: CatalogSpecFile[] = [...fileMap.entries()]
     .map(([file, tests]) => {
       const testList = [...tests.values()].sort((a, b) => a.line - b.line);
+      const label = fileLabel(titleMap.get(file) ?? [], file);
+      // Englischer Name nur, wenn der deutsche aus genau einem describe stammt (sonst Dateiname).
+      const describeEns = [...(describeEnMap.get(file) ?? [])];
+      const labelEn = new Set(titleMap.get(file) ?? []).size === 1 && describeEns.length === 1 ? describeEns[0] : undefined;
       return {
         file,
-        label: fileLabel(titleMap.get(file) ?? [], file),
+        label,
+        ...(labelEn ? { labelEn } : {}),
         categoryTag: fileCategory(testList),
         tests: testList,
       };

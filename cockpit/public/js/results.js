@@ -1,6 +1,6 @@
 // Reiter „Ergebnisse": Lauf starten, Live-Stream, Kernaussage, Filter, Ergebnisliste.
 import {
-  $, $$, state, esc, icon, api, emit, on, toast, baseRunFields, currentEnvironment, apiError, envShort, contentLangAttr,
+  $, $$, state, esc, icon, api, emit, on, toast, baseRunFields, currentEnvironment, apiError, envShort, contentLangAttr, testTitle,
 } from './core.js';
 import { t, tn, hasKey, locale, getLang } from './i18n.js';
 import {
@@ -302,7 +302,8 @@ const KIND_ICON = { failed: 'x', flaky: 'alert', skipped: 'skip', passed: 'check
 
 function rowHtml(row, openByDefault) {
   const kind = statusKind(row);
-  const title = row.title.charAt(0).toUpperCase() + row.title.slice(1);
+  const shown = testTitle(row);
+  const title = shown.charAt(0).toUpperCase() + shown.slice(1);
   const repeatText = row.repeatIndex
     ? t('res.row.repeat', { i: row.repeatIndex, n: row.repeatTotal })
     : row.repeatLabel;
@@ -316,6 +317,7 @@ function rowHtml(row, openByDefault) {
   }
   let body = '';
   const de = contentLangAttr();
+  const deTitle = contentLangAttr(!!row.titleEn);
   if (row.errorSummary) body += `<p class="err-summary"${de}>${esc(row.errorSummary)}</p>`;
   if (row.errorDetail && row.errorDetail !== row.errorSummary) body += `<pre class="err-detail"${de}>${esc(row.errorDetail)}</pre>`;
   if (row.skipReason) body += `<p class="skip-reason"${de}>${esc(row.skipReason)}</p>`;
@@ -324,7 +326,7 @@ function rowHtml(row, openByDefault) {
   if (!body) body = `<p class="muted">${esc(t('res.row.noDetails'))}</p>`;
   return `<details class="trow st-${kind}"${openByDefault ? ' open' : ''}>` +
     `<summary><span class="st-ico">${icon(KIND_ICON[kind])}</span>` +
-    `<span class="trow-title"><span${de}>${esc(title)}</span><small><span${de}>${esc(row.file)}</span>${repeat}</small></span>` +
+    `<span class="trow-title"><span${deTitle}>${esc(title)}</span><small>${esc(row.file)}${repeat}</small></span>` +
     `${badge}<span class="trow-meta">${fmtDuration(row.durationMs)}</span>${icon('chevron', 'chev')}</summary>` +
     `<div class="trow-body">${body}</div></details>`;
 }
