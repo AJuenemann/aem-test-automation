@@ -1,9 +1,9 @@
 // Deutsches Wörterbuch (Referenzsprache und Fallback). Schlüssel stehen in en.js 1:1 wieder.
-// Platzhalter {name} müssen in beiden Sprachen identisch sein (Test webui-i18n.spec.ts).
+// Platzhalter {name} müssen in beiden Sprachen identisch sein (Test cockpit-i18n.spec.ts).
 // Pluralformen: <schlüssel>.one und <schlüssel>.other, {n} ist automatisch gesetzt.
 export default {
   // --- Kopfleiste und Rahmen ------------------------------------------------
-  'app.title': 'AEM Testautomatisierung',
+  'app.title': 'AEM Test-Cockpit',
   'app.skip': 'Zum Inhalt springen',
   'nav.label': 'Bereiche',
   'tab.testlauf': 'Testlauf',

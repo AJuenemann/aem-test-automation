@@ -12,8 +12,8 @@ playwright-report/
 blob-report/
 .last-run.json
 
-# Web-UI: persistierte Lauf-Artefakte
-webui/runs/
+# Cockpit: persistierte Lauf-Artefakte
+cockpit/runs/
 
 # OS / Editor
 .DS_Store

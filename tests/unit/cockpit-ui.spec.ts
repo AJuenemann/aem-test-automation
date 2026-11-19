@@ -4,11 +4,11 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
 /**
- * Browser-Tests der neuen Web-UI gegen einen kleinen lokalen Server: er liefert
- * webui/public aus und beantwortet /api/* mit festen Daten. Kein AEM, kein Login,
+ * Browser-Tests des neuen Cockpits gegen einen kleinen lokalen Server: er liefert
+ * cockpit/public aus und beantwortet /api/* mit festen Daten. Kein AEM, kein Login,
  * kein echter Lauf. Gelöscht oder gestartet wird nichts auf einer Umgebung.
  */
-const PUBLIC = path.resolve(process.cwd(), 'webui/public');
+const PUBLIC = path.resolve(process.cwd(), 'cockpit/public');
 const MIME: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' };
 
 const ENVS = [
@@ -55,7 +55,7 @@ const REPORT = {
   ],
 };
 
-// Die Web-UI wählt ihre Sprache nach der Browser-Sprache. Diese Tests prüfen deutsche Texte.
+// Das Cockpit wählt ihre Sprache nach der Browser-Sprache. Diese Tests prüfen deutsche Texte.
 test.use({ locale: 'de-DE' });
 
 let server: Server;
@@ -119,7 +119,7 @@ async function selectTest(page: Page, group: string, name: RegExp) {
 const chooseEnv = (page: Page, name: string) => page.locator('#env-cards .choice', { hasText: name }).click();
 const step = (page: Page, n: number) => page.locator(`#steps .step[data-step="${n}"]`);
 
-test.describe('Web-UI (neu): Testlauf', { tag: '@unit' }, () => {
+test.describe('Cockpit (neu): Testlauf', { tag: '@unit' }, () => {
   test('Start braucht Test und Umgebung, die Start-Leiste nennt, was fehlt', async ({ page }) => {
     await open(page);
     await expect(page.locator('#run')).toBeDisabled();
@@ -310,7 +310,7 @@ test.describe('Web-UI (neu): Testlauf', { tag: '@unit' }, () => {
   });
 });
 
-test.describe('Web-UI (neu): Shell, Theme, Ergebnisse, Werkzeuge', { tag: '@unit' }, () => {
+test.describe('Cockpit (neu): Shell, Theme, Ergebnisse, Werkzeuge', { tag: '@unit' }, () => {
   test('Reiter: Hash-Routing, Reload behält den Reiter, Pfeiltasten wechseln', async ({ page }) => {
     await open(page);
     await page.getByRole('tab', { name: 'Werkzeuge' }).click();

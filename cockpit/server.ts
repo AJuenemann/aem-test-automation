@@ -1,10 +1,10 @@
 /**
- * Lokaler Runner-Service für die Test-Web-UI.
+ * Lokaler Runner-Service für das Test-Cockpit.
  *
  * Bewusst klein gehalten: nur Node-Bordmittel (node:http / node:child_process /
  * node:fs). Läuft ausschließlich auf localhost, kein Auth. Startet Playwright
  * als Child-Prozess im Suite-Root, streamt Logs via SSE und persistiert je Lauf
- * den JSON-Report + Metadaten unter webui/runs/<id>/.
+ * den JSON-Report + Metadaten unter cockpit/runs/<id>/.
  *
  * Grenzen: genau EIN aktiver Lauf gleichzeitig; Credentials werden nicht in der
  * UI eingegeben, sondern vom Prozess aus `.env` geerbt.
@@ -26,7 +26,7 @@ import { sortRunsNewestFirst, runSettingsFrom, RunMeta } from './history.js';
 import { isAllowedCleanupPath, selectTestPages } from './cleanup.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-// Suite-Root ist der Elternordner von webui/.
+// Suite-Root ist der Elternordner von cockpit/.
 const SUITE_ROOT = path.resolve(__dirname, '..');
 const RUNS_DIR = path.join(__dirname, 'runs');
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -38,9 +38,14 @@ const LEGACY_DIR = path.join(__dirname, 'public-legacy');
  * bewusst keine Umgebung vorgewählt).
  */
 const SERVER_START_ID = randomUUID();
-const PORT = Number(process.env.WEBUI_PORT) || 4321;
+const PORT = Number(process.env.COCKPIT_PORT) || 4321;
+/**
+ * Nur Anzeige: Adresse in der ausgegebenen/geöffneten URL. Gebunden wird immer 127.0.0.1.
+ * `*.localhost` zeigt immer auf den eigenen Rechner und ist in Chrome ein sicherer Kontext (kein „Nicht sicher").
+ */
+const PUBLIC_URL = process.env.COCKPIT_URL?.trim() || `http://cockpit.localhost:${PORT}/`;
 /** Live-Log-Reporter (relativ zum Suite-Root, Playwright lädt TS direkt). */
-const LIVE_REPORTER = './webui/live-reporter.ts';
+const LIVE_REPORTER = './cockpit/live-reporter.ts';
 
 const PW_BIN = path.join(SUITE_ROOT, 'node_modules', '.bin', 'playwright');
 
@@ -58,7 +63,7 @@ interface AemAccess {
 
 /**
  * Fehler mit maschinenlesbarem Code. Die API liefert zusätzlich zum deutschen `error`-Text
- * `code` und `params` (additiv, die alte Oberfläche ignoriert sie). Die neue Web-UI
+ * `code` und `params` (additiv, die alte Oberfläche ignoriert sie). Das neue Cockpit
  * übersetzt über den Code (Wörterbuch-Schlüssel `err.<code>`).
  */
 class CodedError extends Error {
@@ -71,7 +76,7 @@ class CodedError extends Error {
   }
 }
 
-/** Hinweis mit Code für die Web-UI (parallel zum deutschen Text in `warnings`). */
+/** Hinweis mit Code für das Cockpit (parallel zum deutschen Text in `warnings`). */
 interface ApiNote {
   code: string;
   params: Record<string, string>;
@@ -441,7 +446,7 @@ async function startRun(req: RunRequest): Promise<{ id: string; uiMode?: boolean
     PLAYWRIGHT_JSON_OUTPUT_NAME: reportPath,
     PLAYWRIGHT_HTML_OUTPUT_DIR: htmlDir,
     // Playwright würde den HTML-Report nach dem Lauf im Browser öffnen wollen;
-    // das unterbinden, der Button öffnet ihn über die Web-UI.
+    // das unterbinden, der Button öffnet ihn über das Cockpit.
     PLAYWRIGHT_HTML_OPEN: 'never',
     // Dialog-Capture: aktiviert den Capture-Modus in dialog-capture.spec.ts.
     ...(req.captureDialogs ? { CAPTURE_DIALOGS: '1' } : {}),
@@ -622,7 +627,7 @@ async function latestRunWithHtmlReport(): Promise<string | undefined> {
 // ---------------------------------------------------------------------------
 /**
  * Übersetzt einen absoluten Artefakt-Pfad in eine /files/runs-URL.
- * Artefakte liegen jetzt lauf-spezifisch unter webui/runs/<id>/artifacts/.
+ * Artefakte liegen jetzt lauf-spezifisch unter cockpit/runs/<id>/artifacts/.
  */
 function toArtifactUrl(runId: string, absPath: string): string | undefined {
   const runDir = path.join(RUNS_DIR, runId);
@@ -683,9 +688,9 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
   }
 
   // Identifikation: so erkennt ein zweiter Start, dass auf dem Port UNSERE
-  // Web-UI läuft (und nicht ein fremder Prozess). Schnell, ohne Playwright.
+  // Cockpit läuft (und nicht ein fremder Prozess). Schnell, ohne Playwright.
   if (pathname === '/api/ping' && req.method === 'GET') {
-    return sendJson(res, 200, { app: 'aem-test-webui', pid: process.pid });
+    return sendJson(res, 200, { app: 'aem-test-cockpit', pid: process.pid });
   }
 
   // Status: Gibt zurück ob ein Lauf aktiv ist (für die Reconnect-Logik nach
@@ -838,7 +843,7 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     return sendJson(res, 200, result);
   }
 
-  // Markdown-Viewer: rendert eine .md-Datei aus webui/runs/ als gestylte HTML-Seite.
+  // Markdown-Viewer: rendert eine .md-Datei aus cockpit/runs/ als gestylte HTML-Seite.
   // Nutzt marked.js via CDN — kein Download, kein Build-Step.
   if (pathname === '/view-md' && req.method === 'GET') {
     const fileUrl = decodeURIComponent(url.searchParams.get('file') ?? '');
@@ -968,7 +973,7 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     return;
   }
   // /report ohne ID: zum neuesten Lauf-Report umleiten (überlebt Neustart, da
-  // aus webui/runs/ ermittelt), sonst Fallback auf klassisches playwright-report/.
+  // aus cockpit/runs/ ermittelt), sonst Fallback auf klassisches playwright-report/.
   if (pathname === '/report' || pathname.startsWith('/report/')) {
     if (pathname === '/report') {
       const latest = await latestRunWithHtmlReport();
@@ -1112,9 +1117,9 @@ const server = createServer((req, res) => {
   });
 });
 
-/** Öffnet die UI im Standardbrowser. Abschaltbar via WEBUI_NO_OPEN=1. */
+/** Öffnet die UI im Standardbrowser. Abschaltbar via COCKPIT_NO_OPEN=1. */
 function openBrowser(targetUrl: string): void {
-  if (process.env.WEBUI_NO_OPEN === '1') {
+  if (process.env.COCKPIT_NO_OPEN === '1') {
     return;
   }
   const cmd =
@@ -1140,7 +1145,7 @@ function shutdown(reason: string): void {
   }
   shuttingDown = true;
   // eslint-disable-next-line no-console
-  console.log(`\nBeende Test-Web-UI (${reason})…`);
+  console.log(`\nBeende Test-Cockpit (${reason})…`);
 
   if (activeRun && !activeRun.finished) {
     activeRun.child.kill('SIGTERM');
@@ -1210,17 +1215,25 @@ function httpPostShutdown(timeoutMs = 1500): Promise<boolean> {
   });
 }
 
-/** Ist unsere Web-UI auf dem Port erreichbar? (Identifikation über /api/ping) */
+/** Ist unser Cockpit auf dem Port erreichbar? (Identifikation über /api/ping) */
 async function isOwnInstanceRunning(): Promise<boolean> {
   const pong = (await httpGetJson('/api/ping')) as { app?: string } | null;
-  return pong?.app === 'aem-test-webui';
+  return pong?.app === 'aem-test-cockpit';
 }
 
 /** Einmalige Prüfung: ist der Port aktuell frei? (bindet kurz und gibt frei) */
 function isPortFree(): Promise<boolean> {
   return new Promise((resolve) => {
     const probe = createServer();
-    probe.once('error', () => resolve(false));
+    probe.once('error', (err: NodeJS.ErrnoException) => {
+      if (err.code === 'EACCES') {
+        // Kein Fremdprozess: der Port braucht Rechte (z.B. Port < 1024 an 127.0.0.1 unter macOS).
+        // eslint-disable-next-line no-console
+        console.error(`\nPort ${PORT} darf ohne Administratorrechte nicht belegt werden. Anderen COCKPIT_PORT wählen.\n`);
+        process.exit(1);
+      }
+      resolve(false);
+    });
     probe.once('listening', () => probe.close(() => resolve(true)));
     probe.listen(PORT, '127.0.0.1');
   });
@@ -1244,7 +1257,7 @@ async function confirmRestart(): Promise<boolean> {
   try {
     const answer = await new Promise<string>((resolve) =>
       rl.question(
-        `Die Test-Web-UI läuft bereits auf Port ${PORT}. Neu starten? [j/N] `,
+        `Das Test-Cockpit läuft bereits auf Port ${PORT}. Neu starten? [j/N] `,
         resolve,
       ),
     );
@@ -1260,15 +1273,15 @@ function listenAndAnnounce(): void {
   server.once('error', (err: NodeJS.ErrnoException) => {
     if (err.code === 'EADDRINUSE') {
       // eslint-disable-next-line no-console
-      console.error(`\nPort ${PORT} ist belegt. Erneut versuchen oder WEBUI_PORT wählen.\n`);
+      console.error(`\nPort ${PORT} ist belegt. Erneut versuchen oder COCKPIT_PORT wählen.\n`);
       process.exit(1);
     }
     throw err;
   });
   server.listen(PORT, '127.0.0.1', () => {
-    const targetUrl = `http://localhost:${PORT}`;
+    const targetUrl = PUBLIC_URL;
     // eslint-disable-next-line no-console
-    console.log(`\nAEM Test-Web-UI läuft:  ${targetUrl}`);
+    console.log(`\nAEM Test-Cockpit läuft:  ${targetUrl}`);
     // eslint-disable-next-line no-console
     console.log(`Beenden: Strg+C im Terminal oder „Beenden"-Button in der UI.\n`);
     openBrowser(targetUrl);
@@ -1286,14 +1299,14 @@ async function start(): Promise<void> {
   if (!(await isOwnInstanceRunning())) {
     // eslint-disable-next-line no-console
     console.error(
-      `\nPort ${PORT} ist durch einen fremden Prozess belegt (nicht die Test-Web-UI).\n` +
-        `Wähle einen anderen Port über WEBUI_PORT, z.B.:  WEBUI_PORT=4322 npm run webui\n`,
+      `\nPort ${PORT} ist durch einen fremden Prozess belegt (nicht das Test-Cockpit).\n` +
+        `Wähle einen anderen Port über COCKPIT_PORT, z.B.:  COCKPIT_PORT=4322 npm run cockpit\n`,
     );
     process.exit(1);
   }
 
-  // Eigene Instanz läuft. WEBUI_FORCE überspringt die Rückfrage (Debugging).
-  const force = process.env.WEBUI_FORCE === '1';
+  // Eigene Instanz läuft. COCKPIT_FORCE überspringt die Rückfrage (Debugging).
+  const force = process.env.COCKPIT_FORCE === '1';
   if (!force) {
     const ok = await confirmRestart();
     if (!ok) {
@@ -1302,9 +1315,9 @@ async function start(): Promise<void> {
       console.error(
         process.stdin.isTTY
           ? `\nAbgebrochen — die laufende Instanz bleibt bestehen.\n`
-          : `\nDie Test-Web-UI läuft bereits auf Port ${PORT}. Kein Terminal für die ` +
-              `Rückfrage verfügbar; Start abgebrochen. Mit WEBUI_FORCE=1 erzwingen ` +
-              `oder anderen WEBUI_PORT wählen.\n`,
+          : `\nDas Test-Cockpit läuft bereits auf Port ${PORT}. Kein Terminal für die ` +
+              `Rückfrage verfügbar; Start abgebrochen. Mit COCKPIT_FORCE=1 erzwingen ` +
+              `oder anderen COCKPIT_PORT wählen.\n`,
       );
       process.exit(1);
     }
@@ -1319,7 +1332,7 @@ async function start(): Promise<void> {
     // eslint-disable-next-line no-console
     console.error(
       `\nPort ${PORT} wurde nicht rechtzeitig frei. Bitte die alte Instanz manuell ` +
-        `beenden oder einen anderen WEBUI_PORT wählen.\n`,
+        `beenden oder einen anderen COCKPIT_PORT wählen.\n`,
     );
     process.exit(1);
   }

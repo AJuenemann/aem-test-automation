@@ -35,12 +35,12 @@ export interface CategoryDef {
   tag: string;
   label: string;
   description?: string;
-  /** Englischer Anzeigename und Beschreibung (Web-UI, Sprache EN). */
+  /** Englischer Anzeigename und Beschreibung (Cockpit, Sprache EN). */
   labelEn?: string;
   descriptionEn?: string;
   order: number;
   /**
-   * true -> in der Web-UI nicht anzeigen (fachlich irrelevant für den Tester,
+   * true -> im Cockpit nicht anzeigen (fachlich irrelevant für den Tester,
    * z.B. Unit-Tests). Die Tests laufen weiter über CLI/CI, tauchen nur in der
    * Auswahl-Oberfläche nicht auf.
    */

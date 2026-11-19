@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { formatTestDuration, statusLabel } from '../../webui/live-reporter.js';
+import { formatTestDuration, statusLabel } from '../../cockpit/live-reporter.js';
 
-test.describe('Web-UI: Live-Reporter', { tag: '@unit' }, () => {
+test.describe('Cockpit: Live-Reporter', { tag: '@unit' }, () => {
   test('Dauerformat: Sekunden mit einer Nachkommastelle, ab 60 s Minuten', () => {
     expect(formatTestDuration(850)).toBe('0.9s');
     expect(formatTestDuration(12_345)).toBe('12.3s');

@@ -4,11 +4,11 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 /**
- * Logik der neuen Web-UI (webui/public/js/logic.js) und Kontrast der
+ * Logik des neuen Cockpits (cockpit/public/js/logic.js) und Kontrast der
  * Design-Tokens. Läuft ohne AEM und ohne Browser. Das Modul wird dynamisch
  * geladen, weil es reines JavaScript im Frontend-Verzeichnis ist.
  */
-const PUBLIC = path.resolve(process.cwd(), 'webui/public');
+const PUBLIC = path.resolve(process.cwd(), 'cockpit/public');
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let L: any;
 
@@ -16,7 +16,7 @@ test.beforeAll(async () => {
   L = await import(pathToFileURL(path.join(PUBLIC, 'js/logic.js')).href);
 });
 
-test.describe('Web-UI-Logik (logic.js)', { tag: '@unit' }, () => {
+test.describe('Cockpit-Logik (logic.js)', { tag: '@unit' }, () => {
   test('Theme: gespeicherte Wahl schlägt die Systemeinstellung', () => {
     expect(L.resolveTheme('dark', false)).toBe('dark');
     expect(L.resolveTheme('light', true)).toBe('light');

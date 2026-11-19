@@ -11,7 +11,7 @@ import type {
 } from '@playwright/test/reporter';
 
 /**
- * Live-Log-Reporter der Web-UI. Wie `line`, aber mit Ergebnis und Dauer HINTER
+ * Live-Log-Reporter des Cockpits. Wie `line`, aber mit Ergebnis und Dauer HINTER
  * jedem Test:
  *   [2/38] [chromium] › tests/x.spec.ts:19:3 › Suite › Test @tag  ✓ 12.3s
  * Schreibt der Test zwischendurch selbst etwas (console.log/warn), folgt das

@@ -16,7 +16,7 @@
     "update-snapshots": "playwright test --update-snapshots=all",
     "baseline:visual": "playwright test tests/basics/visual-regression.spec.ts tests/components/visual-publish.spec.ts tests/regression/error-pages.spec.ts --update-snapshots=all",
     "report": "playwright show-report",
-    "webui": "tsx webui/server.ts",
+    "cockpit": "tsx cockpit/server.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .ts"
   },

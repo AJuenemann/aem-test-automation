@@ -15,7 +15,7 @@ import { getAemConfig } from '../../config/env.js';
  * via LDAP_SEARCH_QUERY ueberschreibbar.
  */
 const SEARCH_QUERY = process.env.LDAP_SEARCH_QUERY?.trim() || 'Max';
-// @env:test macht die Umgebungs-Einschränkung für die Web-UI sichtbar (dort
+// @env:test macht die Umgebungs-Einschränkung für das Cockpit sichtbar (dort
 // werden nicht passende Umgebungen ausgegraut). Die harte Absicherung bleibt
 // der test.skip unten (greift auch bei CLI-/CI-Läufen, die die UI umgehen).
 test.describe('Integration: LDAP-/Visitenkarten-Import', { tag: ['@integration', '@env:test'] }, () => {

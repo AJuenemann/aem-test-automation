@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { buildRun, grepFromTitles } from '../../webui/runArgs.js';
+import { buildRun, grepFromTitles } from '../../cockpit/runArgs.js';
 
 const TEST_ENV = {
   id: 'test',
@@ -9,7 +9,7 @@ const TEST_ENV = {
   env: 'test',
 };
 
-test.describe('Web-UI: buildRun', { tag: '@unit' }, () => {
+test.describe('Cockpit: buildRun', { tag: '@unit' }, () => {
   test('Einzelner Test + headless + Default-Worker', () => {
     const built = buildRun({
       tests: [{ file: 'basics/page-crud.spec.ts', line: 12 }],

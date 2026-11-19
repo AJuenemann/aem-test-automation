@@ -34,7 +34,7 @@ export interface ReportRow {
   flaky: boolean;
   /** Durchlauf bei `--repeat-each`, z.B. „Durchlauf 2/3"; sonst undefined. */
   repeatLabel?: string;
-  /** Nummer und Anzahl der Durchläufe (zweisprachige Anzeige in der Web-UI). */
+  /** Nummer und Anzahl der Durchläufe (zweisprachige Anzeige im Cockpit). */
   repeatIndex?: number;
   repeatTotal?: number;
   /** Grund für einen skip (aus test.skip('…') oder test.fixme('…')). */
@@ -276,14 +276,14 @@ export function detectBlocker(view: ReportView): string | undefined {
   return info ? blockerText(info) : undefined;
 }
 
-/** Maschinenlesbarer Blocker: Die Web-UI übersetzt ihn je Sprache (Schlüssel `blocker.<code>`). */
+/** Maschinenlesbarer Blocker: Das Cockpit übersetzt ihn je Sprache (Schlüssel `blocker.<code>`). */
 export interface BlockerInfo {
   code: 'network' | 'env' | 'login' | 'smoke';
   /** network: host (optional); smoke: tests (Titel, mit „; “ getrennt). */
   params: Record<string, string>;
 }
 
-/** Deutscher Text zu einem Blocker (Quelle für `detectBlocker`, Fallback der Web-UI). */
+/** Deutscher Text zu einem Blocker (Quelle für `detectBlocker`, Fallback des Cockpits). */
 export function blockerText(info: BlockerInfo): string {
   switch (info.code) {
     case 'network': {

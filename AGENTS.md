@@ -24,10 +24,10 @@ betroffene Services (siehe Priorisierung).
   nach Testschema und löschen nur diesen.
   Zentralverwaltung `/content/zv` nur lesend.
 - Zugang über `.env` / CI-Secrets. Keine Credentials im Repo.
-- Web-UI-Presets: nur DEV (primär) und TEST. LEGACY ist kein UI-Button mehr
+- Cockpit-Presets: nur DEV (primär) und TEST. LEGACY ist kein UI-Button mehr
   (kein aktueller Nutzen); die Vorher-/Nachher-Referenz läuft per CLI mit
   `AEM_ENV=legacy`.
-- Visuelle Baselines (Vorher-Stand) erzeugen: Web-UI „Baselines aktualisieren"
+- Visuelle Baselines (Vorher-Stand) erzeugen: Cockpit „Baselines aktualisieren"
   oder `npm run baseline:visual`. Immer `--update-snapshots=all`: Ohne Modus gilt
   `changed`, das überschreibt nur Baselines, deren Vergleich fehlschlägt. Kleine
   echte Änderungen unter der Toleranz blieben dann stehen. Am 17.11.2026 wäre
@@ -36,7 +36,7 @@ betroffene Services (siehe Priorisierung).
 
 ## Aktueller Stand
 
-**Gliederung** (Web-UI-Reihenfolge, `webui/categories.json`): Smoketest ·
+**Gliederung** (Cockpit-Reihenfolge, `cockpit/categories.json`): Smoketest ·
 AEM-Basisfunktionen (Level 1) · Komponenten (Level 2) · Integrationstest ·
 Regressionstest: Bekannte Migrationsrisiken. „Level" steht nur noch in Klammern.
 
@@ -78,29 +78,39 @@ Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und di
 
 Umfang: 59 AEM-Testfälle (12 Smoketest inkl. Login, 11 Basisfunktionen,
 24 Komponenten, 3 Integrationstest, 9 Regressionstest), dazu 11 Capture-Läufe
-und 126 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
+und 127 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
-## Web-UI: Aufbau und Fallback
+## Cockpit: Aufbau und Fallback
 
-- Neue Oberfläche in `webui/public/`: `index.html` (Shell, Icon-Sprite), `tokens.css`
+Bis 19.11.2026 hieß das Cockpit „Web-UI" (Ordner `webui`, `npm run webui`, `WEBUI_*`,
+localStorage `aem-webui-*`). Alte Läufe in `cockpit/runs/` wurden migriert (Pfade in `report.json`).
+
+Adresse: `npm run cockpit` nennt und öffnet `http://cockpit.localhost:4321/` (ohne Einrichtung;
+`http://localhost:4321/` geht gleichwertig. `*.localhost` zeigt immer auf den eigenen Rechner und ist
+in Chrome ein sicherer Kontext; ein Name ohne `.localhost` zeigt „Nicht sicher"). `COCKPIT_URL`
+ändert nur die ausgegebene/geöffnete URL, gebunden wird immer `127.0.0.1`. Ohne Port geht es
+nicht sauber: Port 80 an `127.0.0.1` braucht unter macOS Root (`EACCES`), und eine
+pf-Weiterleitung 80 → 4321 legte direkte Verbindungen zu 4321 lahm (19.11.2026). Nicht wieder einführen.
+
+- Neue Oberfläche in `cockpit/public/`: `index.html` (Shell, Icon-Sprite), `tokens.css`
   (einzige Farbpalette, hell/dunkel über `data-theme`), `app.css`, `app.js` (Router,
   Theme) und `js/` (`core.js` Zustand/API, `logic.js` reine Logik, `testrun.js`,
   `results.js`, `history.js`, `tools.js`). Vanilla-ES-Module, kein Build.
 - Die Module sprechen über Ereignisse (`emit`/`on` in `core.js`), nicht über
   zyklische Importe. Reine Logik gehört nach `logic.js`: nur dort ist sie unter Node testbar.
-- Fallback: die bisherige Oberfläche liegt unverändert in `webui/public-legacy/` und
+- Fallback: die bisherige Oberfläche liegt unverändert in `cockpit/public-legacy/` und
   wird unter `/legacy/` ausgeliefert (`server.ts`). Beide nutzen dieselben `/api/*`-
   Endpunkte. **API-Änderungen nur additiv**, sonst bricht die jeweils andere UI.
-  Eigene localStorage-Schlüssel: `aem-webui-prefs-v2`, `aem-webui-theme` und `aem-webui-lang` (neu),
-  `aem-webui-prefs-v1` (alt). Entfernen von `public-legacy/` und der Weiche erst nach
+  Eigene localStorage-Schlüssel: `aem-cockpit-prefs-v2`, `aem-cockpit-theme` und `aem-cockpit-lang` (neu),
+  `aem-cockpit-prefs-v1` (alt). Entfernen von `public-legacy/` und der Weiche erst nach
   ausdrücklicher Abnahme durch den User.
 - **Zweisprachig (DE/EN-US, ab 19.11.2026)**: Texte stehen in `js/i18n/de.js` und `js/i18n/en.js`
   (flache Schlüssel, Platzhalter `{name}`, Plural `.one`/`.other`), Kern in `js/i18n.js`
   (`t`, `tn`, `locale`, DOM-frei, Default `de`). Statisches HTML nutzt `data-i18n`,
   `data-i18n-title`, `-aria-label`, `-placeholder`; `app.js` übersetzt es (`applyStatic`).
-  Der Sprachschalter `#lang-toggle` speichert `aem-webui-lang` samt Start-Kennung des Dienstes
-  (`aem-webui-lang-server`, wie bei der Umgebung): Nach einem Neustart von `npm run webui` gilt wieder
+  Der Sprachschalter `#lang-toggle` speichert `aem-cockpit-lang` samt Start-Kennung des Dienstes
+  (`aem-cockpit-lang-server`, wie bei der Umgebung): Nach einem Neustart von `npm run cockpit` gilt wieder
   die Systemsprache (`resolveLang` in `logic.js`, `syncLangWithServer` in `app.js`). Module zeichnen sich bei `lang-change` neu (idempotente
   Render-Funktionen, Zustand bleibt; Gruppen über `groupKey`, nicht über das Label).
   **Neue Texte immer in beiden Wörterbüchern, nie als Literal im JS.** Server-Texte additiv:
@@ -108,18 +118,18 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
   (`{code, params}`), `code`/`params` bei bekannten Fehlern (`CodedError`), `repeatIndex`/
   `repeatTotal`. Nicht übersetzt: Testtitel, Dateinamen, Playwright-Fehlertexte, `skip`-Gründe,
   Playwright-Report; sie tragen in EN `lang="de"` (`markContent`/`contentLangAttr` in `core.js`).
-  Zahlen folgen der Sprache (`oneDecimal` in `logic.js`). `webui-ui.spec.ts` nagelt `locale: 'de-DE'` fest, `webui-i18n.spec.ts`
+  Zahlen folgen der Sprache (`oneDecimal` in `logic.js`). `cockpit-ui.spec.ts` nagelt `locale: 'de-DE'` fest, `cockpit-i18n.spec.ts`
   prüft Vollständigkeit und Umschalten.
-- Tests: `tests/unit/webui-ui-logic.spec.ts` (Logik, Token-Kontrast) und
-  `tests/unit/webui-ui.spec.ts` (Browser gegen gemockte API). Neue Farben in
+- Tests: `tests/unit/cockpit-ui-logic.spec.ts` (Logik, Token-Kontrast) und
+  `tests/unit/cockpit-ui.spec.ts` (Browser gegen gemockte API). Neue Farben in
   `tokens.css` müssen den Kontrast-Test bestehen.
 
 ## Lauf-Archivierung und -Verwaltung
 
-Jeder über die Web-UI gestartete Lauf ist vollständig in `webui/runs/<id>/` gespeichert:
+Jeder über das Cockpit gestartete Lauf ist vollständig in `cockpit/runs/<id>/` gespeichert:
 
 ```
-webui/runs/<id>/
+cockpit/runs/<id>/
   meta.json      ← id, startedAt, environment, selection, status, summary (inkl.
                    flaky = instabil, ab 19.11.2026), sizeBytes,
                    originalRequest (Auswahl), settings (headed, slowMo, repeatEach,
@@ -135,7 +145,7 @@ webui/runs/<id>/
 - `GET /files/runs/:id/...` → serviert Artefakte und HTML-Report-Assets
 
 **`startRun()`-Verhalten:**
-- Reporter `./webui/live-reporter.ts,json,html`. `list` schreibt ohne TTY erst bei
+- Reporter `./cockpit/live-reporter.ts,json,html`. `list` schreibt ohne TTY erst bei
   Testende, `line` kennt kein Testende. Der Live-Reporter schreibt den Teststart
   sofort und hängt Status und Dauer an dieselbe Zeile an. Kommt dazwischen eigene
   Ausgabe, steht das Ergebnis in einer `↳`-Zeile. Tabelle und Report kommen
@@ -143,7 +153,7 @@ webui/runs/<id>/
 - `GET /api/status` liefert beim aktiven Lauf `startedAt`. Damit zählt die
   Statuszeile („läuft seit … · letzte Ausgabe vor …") auch nach einem Reload richtig.
 - Artefakte via Playwright-Flag `--output <pfad>` (zwei separate Argumente) auf
-  `webui/runs/<id>/artifacts/` — **nicht** `--output-dir` (kein gültiges Flag)
+  `cockpit/runs/<id>/artifacts/` — **nicht** `--output-dir` (kein gültiges Flag)
 - Größe in `meta.json` nach Abschluss via `dirSizeBytes(runDir)`
 - URL-Übersetzung: `toArtifactUrl(runId, absPath)` → `/files/runs/<id>/...`
 
@@ -161,7 +171,7 @@ webui/runs/<id>/
 - `env` ist die Kennung aus `environments.json`. Nur die Kennung kommt vom
   Browser, nie eine URL, sonst ließen sich Credentials an fremde Hosts schicken.
   Unbekannte Kennungen werden abgelehnt (`ok: false`).
-- Gelöscht wird nur, was `isAllowedCleanupPath` erlaubt (`webui/cleanup.ts`):
+- Gelöscht wird nur, was `isAllowedCleanupPath` erlaubt (`cockpit/cleanup.ts`):
   Testschema-Name direkt unter einer der drei Spielwiesen (Seiten, Visitenkarten, DAM).
 - Bis 17.11.2026 nutzte der Task immer die Umgebung der `.env`. Testseiten auf
   TEST blieben deshalb unsichtbar, solange die `.env` auf DEV stand.
@@ -330,7 +340,7 @@ Diese Eigenheiten haben viel Zeit gekostet; künftige Agenten sollen sie nicht n
 ### Tags (Kategorisierung für Auswahl/Filter)
 
 Jeder Test trägt einen Playwright-Tag, der ihn einer Kategorie zuordnet (von der
-Web-UI zur Gruppierung genutzt). Tag am `test.describe(...)` setzen, damit er für
+Cockpit zur Gruppierung genutzt). Tag am `test.describe(...)` setzen, damit er für
 alle Tests der Datei gilt:
 
 ```ts
@@ -338,23 +348,23 @@ test.describe('AEM-Basis: Seiten-CRUD', { tag: '@level1' }, () => { /* ... */ })
 ```
 
 - `@smoke` — Smoketest (Vorstufe/Gate)
-- `@level1` — AEM-Basisfunktionen (Web-UI: „AEM-Basisfunktionen (Level 1)")
+- `@level1` — AEM-Basisfunktionen (Cockpit: „AEM-Basisfunktionen (Level 1)")
 - `@level2-components` — Komponenten (Dialoge, Befüllen, Darstellung auf Publish)
 - `@integration` — Integrationstest (ACL-Tool, LDAP-Import)
 - `@regression` — Regressionstest: Bekannte Migrationsrisiken (Overlays,
   Fehlerseite, Sprachversionen)
-- `@unit` — Logik-Tests ohne AEM (in der Web-UI ausgeblendet, `hidden`)
-- `@tooling` — Werkzeug-/Capture-Läufe, kein Testfall (Web-UI ausgeblendet)
+- `@unit` — Logik-Tests ohne AEM (im Cockpit ausgeblendet, `hidden`)
+- `@tooling` — Werkzeug-/Capture-Läufe, kein Testfall (Cockpit ausgeblendet)
 - `@visual` — Facette zusätzlich zur Stufe (visuelle Regression)
-- `@env:<id>` — Umgebungs-Einschränkung (z.B. `@env:test`). Die Web-UI graut
+- `@env:<id>` — Umgebungs-Einschränkung (z.B. `@env:test`). Das Cockpit graut
   den Test bei nicht passender Umgebung aus. Ergänzt (ersetzt nicht) den
   `test.skip` im Code, der die harte Laufzeit-Absicherung bleibt. Aktuell:
   LDAP-Import `@env:test`.
 
-Kategorien mit `"hidden": true` in `webui/categories.json` erscheinen nicht in
+Kategorien mit `"hidden": true` in `cockpit/categories.json` erscheinen nicht in
 der Auswahl-Oberfläche, laufen aber weiter über CLI/CI (`@unit`, `@tooling`).
 
-Neue Stufe = neuer Tag plus Eintrag in `webui/categories.json` (Tag → lesbarer
+Neue Stufe = neuer Tag plus Eintrag in `cockpit/categories.json` (Tag → lesbarer
 Name + `order`). Ohne bekannten Kategorie-Tag landet eine Datei unter "Sonstige".
 
 ## Priorisierte Testobjekte
@@ -372,11 +382,11 @@ Name + `order`). Ohne bekannten Kategorie-Tag landet eine Datei unter "Sonstige"
   `<level>-<testslug>-<JJJJMMTT>-<HHMMSS>-<uuid4>` (z.B.
   `level1-seiten-crud-20261111-122321-f1dc`). Das `level` kommt aus dem Test-Tag
   (`TEST_LEVELS` in `fixtures/test-fixtures.ts`; neue Level auch in
-  `CLEANUP_LEVELS` der Web-UI eintragen) — fehlt ein Level-Tag, wirft `makeTestPage` bewusst
+  `CLEANUP_LEVELS` des Cockpits eintragen) — fehlt ein Level-Tag, wirft `makeTestPage` bewusst
   (kein Fallback, keine namenlosen Rückstände). Nur unter den Spielwiesen.
   Schreibpfade laufen immer durch `assertWithinPlayground`; ohne Argument
   erlaubt der Guard `AEM_PLAYGROUND_PATH` und `AEM_BUSINESSCARD_PLAYGROUND_PATH`.
-  Der Aufräum-Task der Web-UI erkennt genau dieses Schema (für DAM-Testdateien
+  Der Aufräum-Task des Cockpits erkennt genau dieses Schema (für DAM-Testdateien
   auch mit Dateiendung). Asset-Tests nutzen den Namen als Testordner unter
   `AEM_DAM_PLAYGROUND_PATH`.
 - **Testtitel** (`test`/`describe`) beginnen immer mit einem Großbuchstaben. Ein
@@ -394,9 +404,9 @@ Name + `order`). Ohne bekannten Kategorie-Tag landet eine Datei unter "Sonstige"
   `smoke` = nur `tests/smoke.spec.ts`. Ist ein Smoketest rot, überspringt Playwright
   `chromium`. Datei- und Grep-Filter wirken nicht auf Abhängigkeiten (gegen
   1.65 geprüft): Bei aktivem Gate läuft die Vorstufe immer komplett (≈ 30 s).
-  Das Gate hängt an `SMOKE_GATE`: CLI/CI an (Default), Web-UI aus (nur die
+  Das Gate hängt an `SMOKE_GATE`: CLI/CI an (Default), Cockpit aus (nur die
   Auswahl plus Login), dort per Schalter „Smoketest vorab ausführen" zuschaltbar.
-  Bei `SMOKE_GATE=0` hängt `chromium` nur am Login. Die Web-UI blendet den
+  Bei `SMOKE_GATE=0` hängt `chromium` nur am Login. Das Cockpit blendet den
   bestandenen Login in Live-Log und Tabelle aus (19.11.2026, User-Vorgabe:
   „nur ausgewählte Tests laufen"). Neue Smoketests müssen rein
   lesend und schnell sein und auf DEV und TEST laufen. Bekannte JS-Fehler stehen
@@ -428,9 +438,9 @@ Veröffentlichen, Tags setzen oder Löschen außerhalb von `/content/fhgtest` un
 `/content/businesscards/fhgtest` nur mit ausdrücklicher Freigabe. Vorher Probelauf
 oder Plan, danach Nachweis in `docs/`, das Ergebnis immer verifizieren.
 
-## Web-UI und Publish-URL
-Die Web-UI setzt bei der Umgebungswahl `AEM_BASE_URL`, `AEM_PUBLISH_URL` und
-`AEM_ENV` aus dem Preset in `webui/environments.json` (`publishUrl`). Neue
+## Cockpit und Publish-URL
+Das Cockpit setzt bei der Umgebungswahl `AEM_BASE_URL`, `AEM_PUBLISH_URL` und
+`AEM_ENV` aus dem Preset in `cockpit/environments.json` (`publishUrl`). Neue
 Umgebung = neues Preset mit allen drei Werten. Ohne `publishUrl` gilt `.env`.
 
 ## Diag-Specs
@@ -460,9 +470,9 @@ Publish. Selektoren und Abläufe siehe „AEM-UI-Patterns".
   (`AEM_BUSINESSCARD_PLAYGROUND_PATH`), die der Pfad-Guard zusätzlich erlaubt.
 - Die Erfolgsmeldung nennt `…/<karte>/jcr:content/businesscard`. Gelöscht wird
   die Seite davor.
-- Der Aufräum-Task der Web-UI durchsucht alle drei Spielwiesen (Seiten,
+- Der Aufräum-Task des Cockpits durchsucht alle drei Spielwiesen (Seiten,
   Visitenkarten, DAM; Testdateien auch mit Endung)
-  (`webui/cleanup.ts`: `CLEANUP_LEVELS` = alle Test-Level,
+  (`cockpit/cleanup.ts`: `CLEANUP_LEVELS` = alle Test-Level,
   `isAllowedCleanupPath` = nur Testseiten direkt unter einer Spielwiese).
 
 ## Umgebungs-Matrix (Erweiterung)

@@ -1,4 +1,4 @@
-/* Web-UI Styles. Farben kommen ausschließlich aus tokens.css. */
+/* Cockpit Styles. Farben kommen ausschließlich aus tokens.css. */
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }

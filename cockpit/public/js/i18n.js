@@ -1,4 +1,4 @@
-// Übersetzungskern der Web-UI (ohne DOM, unter Node importierbar).
+// Übersetzungskern des Cockpits (ohne DOM, unter Node importierbar).
 // Wörterbücher: js/i18n/de.js und js/i18n/en.js (flache Schlüssel -> Text).
 // Der Default ist Deutsch: so liefern die reinen Logik-Tests ohne Browser deutsche Texte.
 import de from './i18n/de.js';
@@ -6,9 +6,9 @@ import en from './i18n/en.js';
 
 export const LANGS = ['de', 'en'];
 export const DICTIONARIES = { de, en };
-export const LANG_KEY = 'aem-webui-lang';
+export const LANG_KEY = 'aem-cockpit-lang';
 /** Start-Kennung des Dienstes, zu der die gespeicherte Sprachwahl gehört (neuer Start = Systemsprache). */
-export const LANG_SERVER_KEY = 'aem-webui-lang-server';
+export const LANG_SERVER_KEY = 'aem-cockpit-lang-server';
 
 let current = 'de';
 

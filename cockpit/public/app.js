@@ -1,4 +1,4 @@
-// Einstieg der Web-UI: Sprache, Reiter-Routing, Theme, Lauf-Anzeige im Kopf, Beenden.
+// Einstieg des Cockpits: Sprache, Reiter-Routing, Theme, Lauf-Anzeige im Kopf, Beenden.
 // Vanilla-JS mit ES-Modulen, kein Build-Schritt. Die bisherige Oberfläche liegt
 // unverändert unter /legacy/ (Fallback bis zur Abnahme).
 import { $, $$, on, emit, state, loadPrefs, api, confirmDialog } from './js/core.js';
@@ -60,7 +60,7 @@ function initLang() {
 
 /**
  * Wie bei der Umgebung gilt die gespeicherte Sprachwahl nur, solange derselbe Dienst läuft
- * (Reload). Nach einem Neustart von `npm run webui` gilt wieder die Systemsprache.
+ * (Reload). Nach einem Neustart von `npm run cockpit` gilt wieder die Systemsprache.
  * Aufruf, sobald die Start-Kennung des Dienstes bekannt ist.
  */
 function syncLangWithServer() {
@@ -79,7 +79,7 @@ function syncLangWithServer() {
 // Theme: gespeicherte Wahl, sonst Systemeinstellung. Das Setzen vor dem ersten
 // Zeichnen passiert im <head> von index.html.
 // ---------------------------------------------------------------------------
-const THEME_KEY = 'aem-webui-theme';
+const THEME_KEY = 'aem-cockpit-theme';
 const media = window.matchMedia('(prefers-color-scheme: dark)');
 
 function storedTheme() {

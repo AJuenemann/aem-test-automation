@@ -1,4 +1,4 @@
-/* Design-Tokens der Web-UI. Hier (und nur hier) liegt die Farbpalette.
+/* Design-Tokens des Cockpits. Hier (und nur hier) liegt die Farbpalette.
    Marke: eggs-unimedia-Folienmaster (Akzentgelb #FAB900, Dunkelgrau #28262C/#3C3E43,
    Hellgrau #F4F4F4, Link-Cyan #05BCEA). Eine andere Farbwelt = nur diese Datei ändern.
    Das Theme setzt js/theme.js über data-theme="light|dark" am <html>-Element.

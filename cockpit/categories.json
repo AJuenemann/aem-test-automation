@@ -1,5 +1,5 @@
 {
-  "comment": "Ordnet Playwright-Tags lesbaren Kategorien zu. Erweiterbar: neue Stufe = neuer Eintrag. 'order' steuert die Reihenfolge in der UI. 'tag' ohne @. 'hidden': true blendet die Kategorie in der Web-UI aus (Tests laufen weiter via CLI/CI) - z.B. fachlich irrelevante Unit-Tests. 'labelEn'/'descriptionEn' sind die englischen Texte der Web-UI (Sprache EN).",
+  "comment": "Ordnet Playwright-Tags lesbaren Kategorien zu. Erweiterbar: neue Stufe = neuer Eintrag. 'order' steuert die Reihenfolge in der UI. 'tag' ohne @. 'hidden': true blendet die Kategorie im Cockpit aus (Tests laufen weiter via CLI/CI) - z.B. fachlich irrelevante Unit-Tests. 'labelEn'/'descriptionEn' sind die englischen Texte des Cockpits (Sprache EN).",
   "categories": [
     { "tag": "tooling", "label": "Werkzeuge (kein Testfall)", "labelEn": "Tools (not a test case)", "description": "Capture-/Hilfsläufe, via CLI", "descriptionEn": "Capture and helper runs, via CLI", "order": 5, "hidden": true },
     { "tag": "smoke", "label": "Smoketest", "labelEn": "Smoke test", "description": "Ist die Umgebung betriebsbereit? Erreichbarkeit, Login, Publish", "descriptionEn": "Is the environment ready? Reachability, login, publish", "order": 10 },

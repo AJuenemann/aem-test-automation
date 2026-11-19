@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { buildReportView, detectBlocker, detectBlockerInfo, blockerText } from '../../webui/report.js';
+import { buildReportView, detectBlocker, detectBlockerInfo, blockerText } from '../../cockpit/report.js';
 
 /**
  * Beispiel-Report in der Form des Playwright-JSON-Reporters
@@ -57,7 +57,7 @@ const sampleReport = {
   ],
 };
 
-test.describe('Web-UI: buildReportView', { tag: '@unit' }, () => {
+test.describe('Cockpit: buildReportView', { tag: '@unit' }, () => {
   test('Erzeugt Zeilen mit Status, Dauer, Fehler und Attachment', () => {
     const view = buildReportView(sampleReport);
     expect(view.rows).toHaveLength(2);

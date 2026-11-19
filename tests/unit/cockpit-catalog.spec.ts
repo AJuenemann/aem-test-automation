@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { parseCatalog, labelFromFile } from '../../webui/catalog.js';
+import { parseCatalog, labelFromFile } from '../../cockpit/catalog.js';
 import { levelFromTags, TEST_LEVELS } from '../../fixtures/test-fixtures.js';
 
 /**
@@ -7,7 +7,7 @@ import { levelFromTags, TEST_LEVELS } from '../../fixtures/test-fixtures.js';
  * `playwright test --list --reporter=json`-Output nachgebildet ist:
  * Datei-Suite -> describe-Suite -> specs, plus eine Datei mit direkten specs.
  */
-test.describe('Web-UI: parseCatalog', { tag: '@unit' }, () => {
+test.describe('Cockpit: parseCatalog', { tag: '@unit' }, () => {
   const raw = {
     suites: [
       {

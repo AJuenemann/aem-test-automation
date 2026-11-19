@@ -1,4 +1,4 @@
-// English (US) dictionary. Same keys and {placeholders} as de.js (checked by webui-i18n.spec.ts).
+// English (US) dictionary. Same keys and {placeholders} as de.js (checked by cockpit-i18n.spec.ts).
 //
 // Glossary (keep wording consistent):
 //   Testlauf            -> test run            Ergebnisse        -> results
@@ -10,7 +10,7 @@
 //   Headless / Sichtbar -> headless / visible  Report            -> report
 export default {
   // --- Header and shell -------------------------------------------------------
-  'app.title': 'AEM Test Automation',
+  'app.title': 'AEM Test Cockpit',
   'app.skip': 'Skip to content',
   'nav.label': 'Sections',
   'tab.testlauf': 'Test run',

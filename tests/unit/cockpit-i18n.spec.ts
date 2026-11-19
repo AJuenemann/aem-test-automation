@@ -5,12 +5,12 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 /**
- * Zweisprachige Web-UI (DE / EN-US): Wörterbücher, Sprachwahl und Umschalten.
+ * Zweisprachiges Cockpit (DE / EN-US): Wörterbücher, Sprachwahl und Umschalten.
  * Läuft ohne AEM. Der Browser-Teil nutzt einen kleinen lokalen Server mit festen API-Daten
- * (wie webui-ui.spec.ts). Testtitel, Dateinamen und Playwright-Texte bleiben bewusst unübersetzt.
+ * (wie cockpit-ui.spec.ts). Testtitel, Dateinamen und Playwright-Texte bleiben bewusst unübersetzt.
  */
-const PUBLIC = path.resolve(process.cwd(), 'webui/public');
-const WEBUI = path.resolve(process.cwd(), 'webui');
+const PUBLIC = path.resolve(process.cwd(), 'cockpit/public');
+const COCKPIT = path.resolve(process.cwd(), 'cockpit');
 const JS = path.join(PUBLIC, 'js');
 const MIME: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css' };
 
@@ -28,7 +28,7 @@ test.beforeAll(async () => {
 });
 test.afterEach(() => I?.setLang('de'));
 
-/** Quelltexte der Web-UI ohne die Wörterbücher: app.js, js/*.js, index.html. */
+/** Quelltexte des Cockpits ohne die Wörterbücher: app.js, js/*.js, index.html. */
 function sources(): Record<string, string> {
   const out: Record<string, string> = {
     'app.js': readFileSync(path.join(PUBLIC, 'app.js'), 'utf8'),
@@ -42,7 +42,7 @@ function sources(): Record<string, string> {
 const stripComments = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
 
-test.describe('Web-UI i18n: Sprachwahl und Kern', { tag: '@unit' }, () => {
+test.describe('Cockpit i18n: Sprachwahl und Kern', { tag: '@unit' }, () => {
   test('Startsprache: Systemsprache Deutsch -> DE, sonst EN, gespeicherte Wahl gewinnt', () => {
     expect(L.resolveLang(null, ['de-DE'])).toBe('de');
     expect(L.resolveLang(null, ['de'])).toBe('de');
@@ -150,7 +150,7 @@ test.describe('Web-UI i18n: Sprachwahl und Kern', { tag: '@unit' }, () => {
   });
 });
 
-test.describe('Web-UI i18n: Wörterbücher und Quelltext', { tag: '@unit' }, () => {
+test.describe('Cockpit i18n: Wörterbücher und Quelltext', { tag: '@unit' }, () => {
   test('Wörterbücher: gleiche Schlüssel, gleiche Platzhalter, keine leeren Werte', () => {
     const de = Object.keys(DE).sort();
     const en = Object.keys(EN).sort();
@@ -215,7 +215,7 @@ test.describe('Web-UI i18n: Wörterbücher und Quelltext', { tag: '@unit' }, () 
   });
 
   test('Schlüsselfamilien: Tags, Reiter, Stufen, Status, Blocker und Server-Codes haben Texte', () => {
-    const categories = JSON.parse(readFileSync(path.join(WEBUI, 'categories.json'), 'utf8')).categories as { tag: string; labelEn?: string; descriptionEn?: string }[];
+    const categories = JSON.parse(readFileSync(path.join(COCKPIT, 'categories.json'), 'utf8')).categories as { tag: string; labelEn?: string; descriptionEn?: string }[];
     const need: string[] = [];
     for (const c of categories) {
       need.push(`level.${c.tag}`);
@@ -227,7 +227,7 @@ test.describe('Web-UI i18n: Wörterbücher und Quelltext', { tag: '@unit' }, () 
     need.push(...['all', 'failed', 'flaky', 'skipped', 'passed'].map((x) => `res.filter.${x}`));
     need.push(...['network', 'env', 'login', 'smoke'].map((x) => `blocker.${x}`));
     need.push(...['de', 'en'].map((x) => `lang.name.${x}`));
-    const server = readFileSync(path.join(WEBUI, 'server.ts'), 'utf8');
+    const server = readFileSync(path.join(COCKPIT, 'server.ts'), 'utf8');
     const codes = new Set([...server.matchAll(/\bcode: '([\w.]+)'/g), ...server.matchAll(/new CodedError\('([\w.]+)'/g)].map((m) => m[1]));
     for (const code of codes) {
       if (code.startsWith('cleanup.')) continue; // Hinweise: warn.unreadable / warn.notSearched
@@ -366,14 +366,14 @@ async function allTexts(page: Page): Promise<string> {
   });
 }
 
-test.describe('Web-UI i18n: Startsprache nach Systemsprache', { tag: '@unit' }, () => {
+test.describe('Cockpit i18n: Startsprache nach Systemsprache', { tag: '@unit' }, () => {
   test.describe('Englisch (en-US)', () => {
     test.use({ locale: 'en-US' });
     test('Systemsprache Englisch -> EN, Schalter zeigt EN', async ({ page }) => {
       await open(page);
       await expect(page.locator('html')).toHaveAttribute('lang', 'en');
       await expect(page.locator('#lang-toggle')).toHaveText('EN');
-      await expect(page).toHaveTitle('Test run · AEM Test Automation');
+      await expect(page).toHaveTitle('Test run · AEM Test Cockpit');
       await expect(page.getByRole('tab', { name: 'Test run' })).toBeVisible();
     });
   });
@@ -390,12 +390,12 @@ test.describe('Web-UI i18n: Startsprache nach Systemsprache', { tag: '@unit' }, 
       await open(page);
       await expect(page.locator('html')).toHaveAttribute('lang', 'de');
       await expect(page.locator('#lang-toggle')).toHaveText('DE');
-      await expect(page).toHaveTitle('Testlauf · AEM Testautomatisierung');
+      await expect(page).toHaveTitle('Testlauf · AEM Test-Cockpit');
     });
   });
 });
 
-test.describe('Web-UI i18n: Umschalten', { tag: '@unit' }, () => {
+test.describe('Cockpit i18n: Umschalten', { tag: '@unit' }, () => {
   test.use({ locale: 'de-DE' });
 
   test('Schalter sitzt links vom Theme-Schalter, wechselt DE/EN, Wahl bleibt nach Reload', async ({ page }) => {
@@ -411,7 +411,7 @@ test.describe('Web-UI i18n: Umschalten', { tag: '@unit' }, () => {
     await expect(lang).toHaveAttribute('aria-label', 'Change language (current: English)');
     await expect(lang).toHaveAttribute('title', 'Change language (current: English)');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-    await expect(page).toHaveTitle('Test run · AEM Test Automation');
+    await expect(page).toHaveTitle('Test run · AEM Test Cockpit');
     // Die gespeicherte Wahl gewinnt gegen die Systemsprache (de-DE).
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
@@ -420,6 +420,21 @@ test.describe('Web-UI i18n: Umschalten', { tag: '@unit' }, () => {
     await expect(lang).toHaveText('DE');
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  });
+
+  test('Tab-Titel (Hover im Browsertab) folgt Reiter und Sprache, auch nach Reload', async ({ page }) => {
+    await open(page);
+    await expect(page).toHaveTitle('Testlauf · AEM Test-Cockpit');
+    await page.getByRole('tab', { name: 'Ergebnisse' }).click();
+    await expect(page).toHaveTitle('Ergebnisse · AEM Test-Cockpit');
+    await page.locator('#lang-toggle').click();
+    await expect(page).toHaveTitle('Results · AEM Test Cockpit');
+    await page.getByRole('tab', { name: 'Tools' }).click();
+    await expect(page).toHaveTitle('Tools · AEM Test Cockpit');
+    await page.reload();
+    await expect(page).toHaveTitle('Tools · AEM Test Cockpit');
+    await page.locator('#lang-toggle').click();
+    await expect(page).toHaveTitle('Werkzeuge · AEM Test-Cockpit');
   });
 
   test('Neustart des Dienstes: die gespeicherte Sprachwahl gilt nicht mehr, es gilt die Systemsprache', async ({ page }) => {
@@ -436,7 +451,7 @@ test.describe('Web-UI i18n: Umschalten', { tag: '@unit' }, () => {
     await expect(page.locator('#lang-toggle')).toHaveText('DE');
     await expect(page.locator('html')).toHaveAttribute('lang', 'de');
     await expect(page.locator('#sb-count')).toHaveText('Noch nichts ausgewählt');
-    expect(await page.evaluate(() => localStorage.getItem('aem-webui-lang'))).toBeNull();
+    expect(await page.evaluate(() => localStorage.getItem('aem-cockpit-lang'))).toBeNull();
     // Nach einer neuen Wahl gilt sie wieder für diesen Dienst.
     await page.locator('#lang-toggle').click();
     await page.reload();
@@ -444,7 +459,7 @@ test.describe('Web-UI i18n: Umschalten', { tag: '@unit' }, () => {
   });
 
   test('Sprachwahl aus einer älteren Version (ohne Start-Kennung) wird beim ersten Start zurückgesetzt', async ({ page }) => {
-    await page.addInitScript(() => localStorage.setItem('aem-webui-lang', 'en'));
+    await page.addInitScript(() => localStorage.setItem('aem-cockpit-lang', 'en'));
     await open(page);
     await expect(page.locator('#lang-toggle')).toHaveText('DE');
   });

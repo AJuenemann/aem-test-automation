@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { isAllowedCleanupPath, isTestPageName, selectTestPages } from '../../webui/cleanup.js';
+import { isAllowedCleanupPath, isTestPageName, selectTestPages } from '../../cockpit/cleanup.js';
 
-test.describe('Web-UI: Cleanup-Namenserkennung', { tag: '@unit' }, () => {
+test.describe('Cockpit: Cleanup-Namenserkennung', { tag: '@unit' }, () => {
   test('Erkennt Namen nach neuem Schema', () => {
     expect(isTestPageName('level1-seiten-crud-20261110-153045-a1b2')).toBe(true);
     expect(isTestPageName('smoke-konsole-erreichbar-20261110-000000-ffff')).toBe(true);

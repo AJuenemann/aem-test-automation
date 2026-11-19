@@ -14,13 +14,13 @@ const envName = process.env.AEM_ENV?.trim().toLowerCase() || 'test';
 
 // Optionale Verlangsamung (ms pro Aktion) für den sichtbaren Lauf, damit man
 // im Headed-Modus mitverfolgen kann, was passiert. 0 = aus. Wird von der
-// Web-UI über PWA_SLOWMO gesetzt; hat ohne --headed kaum sichtbaren Effekt.
+// Cockpit über PWA_SLOWMO gesetzt; hat ohne --headed kaum sichtbaren Effekt.
 const slowMo = Math.max(0, Number(process.env.PWA_SLOWMO) || 0);
 
 // Smoketest als Vorstufe (Gate) für `chromium`. Standard an (npm test, CI).
 // SMOKE_GATE=0 schaltet ihn ab: Dann laufen nur die ausgewählten Tests plus
 // Login. Abhängigkeiten laufen in Playwright sonst immer vollständig mit,
-// auch bei Datei-/Grep-Filter. Die Web-UI setzt den Wert über ihren Schalter.
+// auch bei Datei-/Grep-Filter. Das Cockpit setzt den Wert über ihren Schalter.
 const smokeGate = process.env.SMOKE_GATE !== '0';
 
 export default defineConfig({

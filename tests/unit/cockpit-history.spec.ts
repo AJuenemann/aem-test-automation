@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { sortRunsNewestFirst, baselinePath, runSettingsFrom } from '../../webui/history.js';
+import { sortRunsNewestFirst, baselinePath, runSettingsFrom } from '../../cockpit/history.js';
 
-test.describe('Web-UI: Historie', { tag: '@unit' }, () => {
+test.describe('Cockpit: Historie', { tag: '@unit' }, () => {
   test('Lauf-Einstellungen (runSettingsFrom): Tempo nur sichtbar, Defaults gesetzt', () => {
     expect(runSettingsFrom({ headed: true, slowMo: 3000, repeatEach: 3, smokeGate: true })).toEqual({
       headed: true, slowMo: 3000, repeatEach: 3, workers: 1, smokeGate: true, updateSnapshots: false,

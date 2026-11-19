@@ -1,5 +1,5 @@
-// Reine Logik der Web-UI (ohne DOM). Lässt sich unter Node testen
-// (tests/unit/webui-ui-logic.spec.ts).
+// Reine Logik des Cockpits (ohne DOM). Lässt sich unter Node testen
+// (tests/unit/cockpit-ui-logic.spec.ts).
 import { t, tn, hasKey, locale } from './i18n.js';
 
 /** Theme aus gespeicherter Wahl und Systemeinstellung. */

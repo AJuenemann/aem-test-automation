@@ -9,9 +9,9 @@ angelegt und nach dem Test automatisch gelöscht. Der LDAP-Import legt
 Visitenkarten nach demselben Schema unter `/content/businesscards/fhgtest` an,
 der Asset-Test einen Testordner unter `/content/dam/fhgtest`. Verwaiste
 Rückstände unter allen drei Spielwiesen lassen sich über den Aufräum-Task der
-Web-UI entfernen.
+Cockpit entfernen.
 
-Die Testfälle sind in fünf Bereiche gegliedert (in der Web-UI in dieser
+Die Testfälle sind in fünf Bereiche gegliedert (im Cockpit in dieser
 Reihenfolge, die Stufe steht in Klammern):
 
 1. **Smoketest**: Ist die Umgebung betriebsbereit?
@@ -45,7 +45,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 ## Gesamtübersicht (Stand 19.11.2026)
 
 59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 126 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+nur auf Anforderung) und 127 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -98,10 +98,10 @@ am 19.11.2026 nicht erreichbar, HTTP 503).
 
 Schnelle, rein lesende Prüfung, ob die Umgebung grundsätzlich lebt. Läuft als
 **Vorstufe** vor allen übrigen AEM-Tests: Schlägt ein Smoketest fehl, überspringt
-Playwright das Projekt `chromium` komplett. Die Web-UI meldet dann „Umgebungs-
+Playwright das Projekt `chromium` komplett. Das Cockpit meldet dann „Umgebungs-
 Blocker: Smoketest fehlgeschlagen (…)". Datei- und Grep-Filter wirken nicht auf
 die Vorstufe, sie läuft dann immer vollständig (≈ 30 s). Läuft auf DEV und TEST.
-Die Vorstufe gilt für CLI und CI (`SMOKE_GATE`, Default an). In der Web-UI laufen
+Die Vorstufe gilt für CLI und CI (`SMOKE_GATE`, Default an). In des Cockpits laufen
 nur die ausgewählten Tests. Die Vorstufe ist dort per Schalter „Smoketest vorab
 ausführen" zuschaltbar (Stand 19.11.2026).
 
@@ -119,7 +119,7 @@ ausführen" zuschaltbar (Stand 19.11.2026).
 - **Erwartet**: Keine Fehlermeldung auf der Login-Seite, Weiterleitung aus der
   Login-Maske, Granite-Shell sichtbar.
 - **Hinweis**: Läuft vor jedem AEM-Lauf, auch ohne Smoketest-Vorstufe. Die
-  Web-UI zeigt ihn nur, wenn er fehlschlägt (dann mit Login-Blocker-Hinweis).
+  Cockpit zeigt ihn nur, wenn er fehlschlägt (dann mit Login-Blocker-Hinweis).
   Erzwingt eine Umgebung SSO, muss er an den IdP-Flow angepasst werden.
 
 ### SMOKE-1..5 — Author-Oberflächen laden ohne JS-Fehler
@@ -397,7 +397,7 @@ Newsroom. Rein lesend — der Schreib-Guard ist nicht berührt.
 ### VIS-1 — Gerenderte Testseite entspricht Baseline (`tests/basics/visual-regression.spec.ts`)
 
 - **Vorbedingung**: angemeldet; Testseite angelegt; Baseline vorhanden
-  (Web-UI „Baselines aktualisieren" oder `npm run baseline:visual`).
+  (Cockpit „Baselines aktualisieren" oder `npm run baseline:visual`).
 - **Schritte**: gerenderte Seitenansicht (`?wcmmode=disabled`) aufnehmen und mit
   der Baseline vergleichen.
 - **Erwartet**: Screenshot stimmt innerhalb der Toleranz mit der Baseline überein.
@@ -558,11 +558,11 @@ Sprachversionen.
   blockiert.
 - **Erwartet**: Guard lässt erlaubte Pfade zu und wirft bei allen anderen.
 
-### UNIT-WEBUI — Web-UI-Kernlogik (ohne AEM)
-- **Zweck**: sichert die reine Logik hinter der Test-Web-UI ab, ohne AEM/Login.
-- **Dateien**: `tests/unit/webui-catalog.spec.ts`, `webui-runargs.spec.ts`,
-  `webui-report.spec.ts`, `webui-history.spec.ts`, `webui-cleanup.spec.ts`,
-  `webui-live-reporter.spec.ts`.
+### UNIT-COCKPIT — Cockpit-Kernlogik (ohne AEM)
+- **Zweck**: sichert die reine Logik hinter dem Test-Cockpit ab, ohne AEM/Login.
+- **Dateien**: `tests/unit/cockpit-catalog.spec.ts`, `cockpit-runargs.spec.ts`,
+  `cockpit-report.spec.ts`, `cockpit-history.spec.ts`, `cockpit-cleanup.spec.ts`,
+  `cockpit-live-reporter.spec.ts`.
 - **Fälle**:
   - **Katalog-Parser** (`parseCatalog`): flacht die verschachtelte
     `--list`-JSON-Struktur (Datei → describe → Test) korrekt ab; führt denselben
@@ -587,7 +587,7 @@ Sprachversionen.
     Testname; derselbe Fehler in `chromium` nicht. `buildRun`: Nur Smoketests
     ziehen `setup` nach. Ein bestandener Login (`setup`) erscheint nicht in
     Tabelle und Summary, ein gescheiterter schon.
-  - **Aufräum-Erkennung** (`webui-cleanup.spec.ts`: `isTestPageName`,
+  - **Aufräum-Erkennung** (`cockpit-cleanup.spec.ts`: `isTestPageName`,
     `isAllowedCleanupPath`): erkennt alle Test-Level und ignoriert Fremd- und
     Altnamen. Erlaubt sind nur Testseiten direkt unter `/content/fhgtest`,
     `/content/businesscards/fhgtest` oder `/content/dam/fhgtest`. Testdateien
@@ -600,12 +600,12 @@ Sprachversionen.
   - **Historie/Baseline** (`sortRunsNewestFirst`, `baselinePath`, `runSettingsFrom`): sortiert Läufe
     neueste zuerst; löst Baseline-Pfade gemäß `snapshotPathTemplate` je Umgebung auf;
     speichert die Lauf-Einstellungen, das Tempo nur im sichtbaren Lauf (headless = 0).
-- **Erwartet**: alle Fälle grün; die Web-UI-Logik ist unabhängig von einer echten
+- **Erwartet**: alle Fälle grün; die Cockpit-Logik ist unabhängig von einer echten
   AEM-Umgebung abgesichert.
 
-### UNIT-UI-LOGIK — Logik und Kontrast der neuen Web-UI (`tests/unit/webui-ui-logic.spec.ts`)
-- **Zweck**: sichert die DOM-freie Logik der neuen Oberfläche (`webui/public/js/logic.js`)
-  und die Lesbarkeit der Farbpalette (`webui/public/tokens.css`) ab. Kein AEM, kein Browser.
+### UNIT-UI-LOGIK — Logik und Kontrast des neuen Cockpits (`tests/unit/cockpit-ui-logic.spec.ts`)
+- **Zweck**: sichert die DOM-freie Logik der neuen Oberfläche (`cockpit/public/js/logic.js`)
+  und die Lesbarkeit der Farbpalette (`cockpit/public/tokens.css`) ab. Kein AEM, kein Browser.
 - **Fälle** (16):
   - **Theme** (`resolveTheme`): gespeicherte Wahl schlägt die Systemeinstellung, sonst gilt das System.
   - **Auswahl**: Testschlüssel trennt Geschwister mit gleicher Datei und Zeile; `env:`-Tag schränkt
@@ -620,8 +620,8 @@ Sprachversionen.
     (UI-Elemente wie der Fokusrahmen 3:1).
 - **Erwartet**: alle Fälle grün.
 
-### UNIT-UI-BROWSER — Bedienung der neuen Web-UI (`tests/unit/webui-ui.spec.ts`)
-- **Zweck**: prüft die Oberfläche im Browser gegen einen lokalen Server, der `webui/public`
+### UNIT-UI-BROWSER — Bedienung des neuen Cockpits (`tests/unit/cockpit-ui.spec.ts`)
+- **Zweck**: prüft die Oberfläche im Browser gegen einen lokalen Server, der `cockpit/public`
   ausliefert und `/api/*` mit festen Daten beantwortet. Kein AEM, kein Login, kein echter Lauf;
   gelöscht oder gestartet wird nichts.
 - **Fälle** (19):
@@ -650,11 +650,11 @@ Sprachversionen.
     fragt erst nach.
 - **Erwartet**: alle Fälle grün.
 
-### UNIT-I18N — Zweisprachige Web-UI, DE/EN-US (`tests/unit/webui-i18n.spec.ts`, ab 19.11.2026)
+### UNIT-I18N — Zweisprachiges Cockpit, DE/EN-US (`tests/unit/cockpit-i18n.spec.ts`, ab 19.11.2026)
 - **Zweck**: sichert die Zweisprachigkeit der neuen Oberfläche ab (Sprachwahl, Wörterbücher,
   Umschalten). Kein AEM, kein Login. Testtitel, Dateinamen und Playwright-Texte bleiben
   unübersetzt und werden nicht geprüft.
-- **Fälle** (31, davon 11 im Browser gegen den lokalen Mock-Server):
+- **Fälle** (32, davon 12 im Browser gegen den lokalen Mock-Server):
   - **Sprachwahl** (`resolveLang`): Systemsprache `de*` → DE, sonst EN, die gespeicherte Wahl gewinnt.
   - **Kern**: Platzhalter, Fallback (DE, dann Schlüssel), Plural, Locale; Formatierer
     (Kernaussage, Einstellungen, Bereiche, „Heute"/„Gestern", Monat) auch auf Englisch;
@@ -670,14 +670,16 @@ Sprachversionen.
   - **Startsprache** (Browser): `en-US` und `fr-FR` → EN, `de-AT` → DE.
   - **Umschalten** (Browser): Schalter links vom Theme-Schalter, Wahl bleibt nach Reload und gewinnt
     gegen die Systemsprache; nach einem Neustart des Dienstes (neue Start-Kennung) gilt wieder die
-    Systemsprache, auch bei einer Wahl aus der Vorversion ohne Kennung; Theme-Schalter, Beenden-Dialog; Testlauf behält Auswahl, offene
+    Systemsprache, auch bei einer Wahl aus der Vorversion ohne Kennung; der Tab-Titel (Hover im Browsertab)
+    folgt Reiter und Sprache (`Results · AEM Test Cockpit` / `Testlauf · AEM Test-Cockpit`), auch nach Reload;
+    Theme-Schalter, Beenden-Dialog; Testlauf behält Auswahl, offene
     Kategorie und Umgebung; Ergebnisse (Kernaussage, Blocker per Code, Durchlauf, Datum) und
     Historie (Auswahl bleibt); Werkzeuge (Aufräum-Ergebnis, Hinweis per Code, Auswahl bleibt);
     in EN steht kein deutscher Anzeigetext mehr in allen Reitern, Schritten und Dialogen;
     Testtitel, Dateinamen und Fehlertexte tragen in EN `lang="de"`, in DE kein `lang`-Attribut.
-- **Dazu erweitert**: `webui-report.spec.ts` (+4: `detectBlockerInfo`, `blockerText`,
-  `repeatIndex`/`repeatTotal`), `webui-catalog.spec.ts` (+1: `labelEn`/`descriptionEn` additiv).
-  `webui-ui.spec.ts` nagelt die Sprache auf `de-DE` fest.
+- **Dazu erweitert**: `cockpit-report.spec.ts` (+4: `detectBlockerInfo`, `blockerText`,
+  `repeatIndex`/`repeatTotal`), `cockpit-catalog.spec.ts` (+1: `labelEn`/`descriptionEn` additiv).
+  `cockpit-ui.spec.ts` nagelt die Sprache auf `de-DE` fest.
 - **Erwartet**: alle Fälle grün.
 
 ---

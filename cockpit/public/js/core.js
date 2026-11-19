@@ -1,4 +1,4 @@
-// Gemeinsamer Kern der Web-UI: Zustand, Einstellungen, API-Helfer, Dialog, Toast.
+// Gemeinsamer Kern des Cockpits: Zustand, Einstellungen, API-Helfer, Dialog, Toast.
 import { esc } from './logic.js';
 import { t, hasKey, getLang } from './i18n.js';
 
@@ -31,7 +31,7 @@ export const state = {
   searchTerm: '',
   runs: [],
   activeRunId: null,
-  /** Kennung des laufenden Dienstes (wechselt bei jedem Start von npm run webui). */
+  /** Kennung des laufenden Dienstes (wechselt bei jedem Start von npm run cockpit). */
   serverStartId: null,
 };
 
@@ -74,7 +74,7 @@ export function baseRunFields() {
 // --- Einstellungen (localStorage) ---------------------------------------------
 // Eigener Schlüssel (v2): die alte Oberfläche unter /legacy/ nutzt v1 weiter.
 // Bewusst ohne Testauswahl: die wechselt je Vorhaben.
-const PREFS_KEY = 'aem-webui-prefs-v2';
+const PREFS_KEY = 'aem-cockpit-prefs-v2';
 
 export function savePrefs() {
   try {

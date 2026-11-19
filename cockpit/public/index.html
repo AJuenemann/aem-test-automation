@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AEM Testautomatisierung</title>
+    <title>AEM Test-Cockpit</title>
     <!-- Theme vor dem ersten Zeichnen setzen (kein Aufblitzen). Logik: js/logic.js resolveTheme. -->
     <script>
       (function () {
         try {
-          var s = localStorage.getItem('aem-webui-theme');
+          var s = localStorage.getItem('aem-cockpit-theme');
           var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
           document.documentElement.dataset.theme = s === 'light' || s === 'dark' ? s : dark ? 'dark' : 'light';
         } catch (e) { document.documentElement.dataset.theme = 'light'; }
@@ -18,7 +18,7 @@
     <script>
       (function () {
         try {
-          var s = localStorage.getItem('aem-webui-lang');
+          var s = localStorage.getItem('aem-cockpit-lang');
           var first = ((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
           document.documentElement.lang = s === 'de' || s === 'en' ? s : /^de(-|$)/.test(first) ? 'de' : 'en';
         } catch (e) { document.documentElement.lang = 'de'; }
@@ -68,7 +68,7 @@
     <header class="topbar">
       <div class="brand">
         <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></span>
-        <h1 data-i18n="app.title">AEM Testautomatisierung</h1>
+        <h1 data-i18n="app.title">AEM Test-Cockpit</h1>
       </div>
 
       <nav class="tabs" role="tablist" aria-label="Bereiche" data-i18n-aria-label="nav.label">

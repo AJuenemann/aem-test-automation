@@ -1,4 +1,4 @@
-// Frontend der Test-Web-UI. Vanilla-JS, kein Build-Step.
+// Frontend des Test-Cockpits. Vanilla-JS, kein Build-Step.
 // Hält den UI-Zustand, baut die Lauf-Anforderung und redet mit dem Runner-Service.
 
 const $ = (sel) => document.querySelector(sel);
@@ -22,10 +22,10 @@ const state = {
 
 // ---------------------------------------------------------------------------
 // Zuletzt verwendete Optionen (localStorage) - überlebt Reload UND Neustart des
-// Web-UI-Service. Bewusst OHNE Testauswahl: die wechselt je Vorhaben, ein
+// Cockpit-Service. Bewusst OHNE Testauswahl: die wechselt je Vorhaben, ein
 // vorausgewählter Lauf wäre unerwünscht. Pro Arbeitsplatz/Browser.
 // ---------------------------------------------------------------------------
-const PREFS_KEY = 'aem-webui-prefs-v1';
+const PREFS_KEY = 'aem-cockpit-prefs-v1';
 
 function savePrefs() {
   try {

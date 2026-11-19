@@ -4,7 +4,7 @@ Playwright-/TypeScript-Testautomatisierung für die Fraunhofer AEM 6.5 LTS Migra
 (Tickets FHGWCMS-2415 / FHGWCMS-2416). Die Suite prüft über echte Redakteurs-
 Gesten, ob die Fraunhofer-Website nach dem Update wie vorher funktioniert. Sie
 umfasst 59 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
-inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 126 Unit-Tests
+inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 127 Unit-Tests
 ohne AEM (Stand 19.11.2026). Die vollständige Liste mit Ablauf und Erwartung steht in
 [`docs/TESTFAELLE.md`](docs/TESTFAELLE.md).
 
@@ -25,7 +25,7 @@ Die Vorstufe ist über `SMOKE_GATE` schaltbar (`playwright.config.ts`):
   vollständig, auch beim Start eines einzelnen Tests (Playwright führt
   Abhängigkeiten immer komplett aus). Das kostet je Lauf ≈ 30 s (gemessen auf
   TEST). `SMOKE_GATE=0` schaltet sie ab.
-- **Web-UI**: aus. Es laufen nur die ausgewählten Tests. Der Schalter
+- **Cockpit**: aus. Es laufen nur die ausgewählten Tests. Der Schalter
   „Smoketest vorab ausführen" (Weitere Optionen) schaltet sie zu.
 
 Der Login (`setup`) läuft immer mit. Unit-Tests (`--project=unit`) brauchen
@@ -33,7 +33,7 @@ weder Login noch Vorstufe.
 
 ## Gliederung der Tests
 
-Die Tests sind in fünf Bereiche gegliedert. Die Web-UI zeigt sie in dieser
+Die Tests sind in fünf Bereiche gegliedert. Das Cockpit zeigt sie in dieser
 Reihenfolge, die Stufe (Level) steht in Klammern:
 
 1. **Smoketest**: Ist die Umgebung betriebsbereit?
@@ -132,7 +132,7 @@ cp .env.example .env   # Werte eintragen (siehe unten)
 | `AEM_PLAYGROUND_PATH` | nein    | Spielwiese (Default `/content/fhgtest`); nur hier wird geschrieben |
 | `AEM_READONLY_PATH`   | nein    | Nur-lesender Pfad (Default `/content/zv`); derzeit von keinem Test genutzt (der Smoketest hat `/content/zv/de` fest) |
 | `AEM_TEST_COMPONENT`  | nein    | Komponente für den Insert-Flow (Default `Verweis`)              |
-| `AEM_PUBLISH_URL`     | nein    | Publish-Basis-URL für alle Publish-Prüfungen; fehlt sie, Ableitung aus `AEM_BASE_URL` (author→publish1), sonst Skip. Die Web-UI setzt sie aus dem Preset |
+| `AEM_PUBLISH_URL`     | nein    | Publish-Basis-URL für alle Publish-Prüfungen; fehlt sie, Ableitung aus `AEM_BASE_URL` (author→publish1), sonst Skip. Das Cockpit setzt sie aus dem Preset |
 | `AEM_SAMPLES_ROOT`    | nein    | Wurzel der Komponenten-Beispielseiten (Default `/content/samples/de/components`) |
 | `LDAP_SEARCH_QUERY`   | nein    | Vorname für den LDAP-Kontakttest (Default `Max`)                |
 | `AEM_BUSINESSCARD_PLAYGROUND_PATH` | nein | Schreibziel des LDAP-Imports (Default `/content/businesscards/fhgtest`) |
@@ -186,7 +186,7 @@ tests/basics/              CRUD, Kopieren/Verschieben/Umbenennen/Eigenschaften, 
 tests/components/          Dialoge, Capture, FAQ befüllen, Publish-Visual
 tests/integration/         ACL-Tool, LDAP-Import
 tests/regression/          Overlays, Fehlerseite, Sprachversionen
-tests/unit/                Pfad-Guard, Publish-URL, Web-UI-Logik (kein AEM nötig)
+tests/unit/                Pfad-Guard, Publish-URL, Cockpit-Logik (kein AEM nötig)
 tests/__snapshots__/<env>/ Visual-Baselines pro Umgebung
 ```
 
@@ -235,8 +235,8 @@ in CI (Playwright-Docker-Image) erzeugen, nicht lokal.
 Die Migration hat noch nicht begonnen — der aktuelle Stand ist der Vorher-Stand
 und sollte dringend festgehalten werden.
 
-**Über die Web-UI (empfohlen):**
-1. `npm run webui` starten, Umgebung **DEV** (Standard).
+**Über das Cockpit (empfohlen):**
+1. `npm run cockpit` starten, Umgebung **DEV** (Standard).
 2. Visuelle Tests wählen: in der Gruppe „Komponenten (Level 2)" die Tests
    „Gerenderte Seite "…" entspricht Baseline" (Publish-Komponenten) und
    „Gerenderte Seite entspricht Baseline" (Testseite), in der Gruppe
@@ -246,7 +246,7 @@ und sollte dringend festgehalten werden.
 4. **Tests starten** → erzeugt die Baselines. Danach denselben Lauf OHNE den
    Haken = Vergleich.
 Credentials kommen aus der `.env`, Author- und Publish-URL aus dem gewählten
-Preset (`webui/environments.json`).
+Preset (`cockpit/environments.json`).
 
 **Über die CLI (alternativ):**
 ```bash
@@ -265,14 +265,16 @@ Nach der Migration denselben Lauf ohne Capture/Update als Vergleich fahren.
 `.github/workflows/playwright.yml` läuft im Image `mcr.microsoft.com/playwright`,
 liest Credentials aus Repository-Secrets und lädt Report/Traces als Artefakt hoch.
 
-## Web-UI (Tests starten und auswerten)
+## Cockpit (Tests starten und auswerten)
 
 Eine lokale Weboberfläche zum Auswählen, Konfigurieren, Starten und Auswerten der
 Tests — als intuitive Alternative zur CLI. Die Tests/Suiten selbst bleiben
 unangetastet; die UI ruft nur `playwright` auf.
 
+*Bis 19.11.2026 hieß das Cockpit „Web-UI" (Ordner `webui`, `npm run webui`, `WEBUI_*`).*
+
 ```bash
-npm run webui        # Service startet auf http://localhost:4321, öffnet den Browser
+npm run cockpit        # Service startet auf http://cockpit.localhost:4321/, öffnet den Browser
 ```
 
 **Aufbau (seit 19.11.2026)**: Drei Reiter. **Testlauf** führt in drei Schritten (Tests
@@ -282,22 +284,41 @@ Der Umschalter oben rechts wechselt zwischen „Assistent" (ein Schritt nach dem
 Laufs („2 von 6 Tests fehlgeschlagen"), Fehlschläge zuerst, Statusfilter, Details
 und Artefakte je Test sowie rechts die früheren Läufe. **Werkzeuge** enthält Aufräumen,
 Referenzbilder vergleichen und den Playwright UI-Mode. Die Oberfläche ist hell oder
-dunkel (Umschalter oben, Standard = Systemeinstellung). Links davon wechselt der Sprachschalter zwischen Deutsch und Englisch (US); angezeigt wird die aktive Sprache (`DE`/`EN`). Startsprache ist die Systemsprache (Deutsch → DE, sonst EN). Die Wahl gilt bis zum nächsten Start von `npm run webui` (ein Reload behält sie). Testtitel und Playwright-Texte bleiben unübersetzt. Die Farbpalette steht zentral
-in `webui/public/tokens.css`. Die bisherige Oberfläche läuft vorerst unverändert unter
+dunkel (Umschalter oben, Standard = Systemeinstellung). Links davon wechselt der Sprachschalter zwischen Deutsch und Englisch (US); angezeigt wird die aktive Sprache (`DE`/`EN`). Startsprache ist die Systemsprache (Deutsch → DE, sonst EN). Die Wahl gilt bis zum nächsten Start von `npm run cockpit` (ein Reload behält sie). Testtitel und Playwright-Texte bleiben unübersetzt. Die Farbpalette steht zentral
+in `cockpit/public/tokens.css`. Die bisherige Oberfläche läuft vorerst unverändert unter
 `/legacy/` weiter (Link „Alte Oberfläche"), bis die neue abgenommen ist.
 
-Der Standardbrowser öffnet sich automatisch (abschaltbar via `WEBUI_NO_OPEN=1`).
+Der Standardbrowser öffnet sich automatisch (abschaltbar via `COCKPIT_NO_OPEN=1`).
+
+**Adresse `http://cockpit.localhost:4321/`** (ohne Einrichtung). `http://localhost:4321/`
+funktioniert weiter gleichwertig.
+
+- Namen auf `.localhost` zeigen immer auf den eigenen Rechner. Chrome und Firefox lösen sie
+  selbst auf, macOS auch systemweit. Ein hosts-Eintrag ist nicht nötig. Nur falls ein Programm
+  den Namen nicht findet: `127.0.0.1 cockpit.localhost` in die hosts-Datei eintragen oder mit
+  `COCKPIT_URL=http://localhost:4321/ npm run cockpit` starten.
+- Chrome behandelt `*.localhost` wie `localhost` als sicheren Kontext, ohne „Nicht sicher"-Hinweis.
+  Ein eigener Name ohne `.localhost` (z. B. `http://cockpit:4321/`) bekommt den Hinweis
+  (geprüft 19.11.2026 mit Chrome 157 und Chromium 158 über `window.isSecureContext`).
+- `COCKPIT_URL` ändert nur die ausgegebene und im Browser geöffnete Adresse. Der Dienst
+  lauscht weiter nur auf `127.0.0.1` (keine Netzwerkfreigabe).
+- Der Port bleibt in der Adresse. Ohne Port (Port 80) geht es nicht sauber: macOS erlaubt
+  Port 80 an `127.0.0.1` nur mit Root (`EACCES`), und eine pf-Weiterleitung 80 → 4321 legte am
+  19.11.2026 direkte Verbindungen zu Port 4321 lahm (Handshake hing, auch die Neustart-Prüfung).
+  Kein `sudo npm run …`: dann liefe auch Playwright als root.
+- `localhost` und `cockpit.localhost` sind verschiedene Browser-Ursprünge: Theme, Sprache und
+  letzte Optionen werden je Adresse getrennt gespeichert.
 **Beenden**: „Beenden"-Button oben rechts in der UI oder `Strg+C` im Terminal —
 beides stoppt einen laufenden Test, schließt die Verbindungen und gibt den Port
 frei.
 
-**Erneuter Start bei laufender UI**: Läuft bereits eine Web-UI auf dem Port,
-fragt `npm run webui` im Terminal nach („Neu starten? [j/N]"). Bei „j" wird die
+**Erneuter Start bei laufender UI**: Läuft bereits ein Cockpit auf dem Port,
+fragt `npm run cockpit` im Terminal nach („Neu starten? [j/N]"). Bei „j" wird die
 laufende Instanz sauber beendet (über `/api/shutdown`) und neu gestartet. Ohne
 Terminal (z.B. in einer Pipe) bricht der Start ab, statt ungefragt zu beenden.
-`WEBUI_FORCE=1 npm run webui` überspringt die Rückfrage und startet sofort neu
+`COCKPIT_FORCE=1 npm run cockpit` überspringt die Rückfrage und startet sofort neu
 (für Debugging/Skripte). Belegt ein **fremder** Prozess den Port, wird nichts
-beendet — Hinweis auf einen anderen `WEBUI_PORT`. Die Oberfläche ist geführt aufgebaut (Was testen → Umgebung → Wie
+beendet — Hinweis auf einen anderen `COCKPIT_PORT`. Die Oberfläche ist geführt aufgebaut (Was testen → Umgebung → Wie
 ausführen → Start); Tests erscheinen mit lesbarem Namen, der Dateipfad steht
 dezent daneben. Funktionen:
 
@@ -316,17 +337,17 @@ dezent daneben. Funktionen:
   - **Chips**: die aktive Auswahl erscheint als Chips (pro Kategorie mit Anzahl);
     ein Klick auf das × wählt diese Kategorie ab, „Alle abwählen" leert alles.
   - **Ausgeblendete Kategorien**: Einträge mit `"hidden": true` in
-    `webui/categories.json` erscheinen NICHT in der Auswahl (laufen weiter über
+    `cockpit/categories.json` erscheinen NICHT in der Auswahl (laufen weiter über
     CLI/CI). So ausgeblendet: **Unit** (fachlich irrelevant für den Tester) und
     **Werkzeuge** (`@tooling`, z.B. der Dialog-Capture-Lauf).
   - Die Kategorien kommen aus Playwright-Tags (z.B. `@smoke`, `@level1`) und sind
-    in `webui/categories.json` auf lesbare Namen gemappt — neue Stufe = neuer
+    in `cockpit/categories.json` auf lesbare Namen gemappt — neue Stufe = neuer
     Eintrag dort plus Tag an den Tests.
-- **Umgebung**: DEV/TEST aus `webui/environments.json`. Nach jedem Start von `npm run webui`
+- **Umgebung**: DEV/TEST aus `cockpit/environments.json`. Nach jedem Start von `npm run cockpit`
   ist **keine Umgebung vorgewählt**: Sie wird bewusst gewählt, bevor ein Lauf startet. Ein Reload
   behält die Wahl, ein Neustart des Dienstes nicht. Die UI setzt daraus `AEM_BASE_URL`, `AEM_PUBLISH_URL` und `AEM_ENV`; **Credentials kommen weiter aus `.env`**
   (werden nie in der UI eingegeben). Die Publish-URL steht je Preset als
-  `publishUrl` in `webui/environments.json` und überschreibt `AEM_PUBLISH_URL` aus
+  `publishUrl` in `cockpit/environments.json` und überschreibt `AEM_PUBLISH_URL` aus
   `.env`. Fehlt `publishUrl` im Preset, gilt der Wert aus `.env`.
 - **Zuletzt verwendete Optionen**: Umgebung, Ausführungsmodus, Tempo und die
   Zusatzoptionen (grep/repeat/workers/Baselines) werden pro Browser in
@@ -350,7 +371,7 @@ dezent daneben. Funktionen:
 - **Button „Playwright UI-Mode öffnen"** (im Ergebnisbereich): startet Playwrights
   eigene Oberfläche in einem separaten Fenster. Übernimmt Umgebung, Projekte und
   `--grep`-Filter; die Datei/Zeile-Testauswahl kann `--ui` technisch nicht
-  vorfiltern (dort das Suchfeld nutzen). Läuft unabhängig von der Web-UI und
+  vorfiltern (dort das Suchfeld nutzen). Läuft unabhängig vom Cockpit und
   blockiert keinen weiteren Lauf.
 - **Zusatzoptionen**: `--grep`, `--repeat-each`, `--workers` (Default 1 wegen der
   AEM-Instanz), `--update-snapshots`. **„Baselines aktualisieren"** ist der
@@ -358,7 +379,7 @@ dezent daneben. Funktionen:
   wählen, Haken setzen, starten (siehe „Vorher-Stand festhalten").
 - **Kommandovorschau**: zeigt den exakten `playwright`-Aufruf vor dem Start.
 - **Live-Log** während des Laufs (SSE) + grün/rot. Ein eigener Reporter
-  (`webui/live-reporter.ts`) schreibt jeden Test schon beim Start
+  (`cockpit/live-reporter.ts`) schreibt jeden Test schon beim Start
   (`[n/m] … › Titel`). Ergebnis und Dauer hängt er dahinter an, z.B. `✓ 12.3s`,
   `✘ Timeout 90.0s` oder `– übersprungen 0.1s` mit Grund. Schreibt der Test
   zwischendurch selbst etwas, folgt das Ergebnis in einer eigenen `↳`-Zeile. Bei
@@ -369,9 +390,9 @@ dezent daneben. Funktionen:
   echten Laufstart.
 - **Button „Report & Traces"**: der native Playwright-HTML-Report inkl.
   Screenshots/Traces/Videos. `/report` leitet auf den neuesten Lauf-Report um
-  (`/report/<id>/`), aus `webui/runs/` ermittelt — überlebt einen Neustart der
-  Web-UI. Jeder Lauf erzeugt seinen eigenen, in sich geschlossenen HTML-Report
-  unter `webui/runs/<id>/html/` (mit eingebetteten Artefakten in `html/data/`).
+  (`/report/<id>/`), aus `cockpit/runs/` ermittelt — überlebt einen Neustart der
+  Cockpit. Jeder Lauf erzeugt seinen eigenen, in sich geschlossenen HTML-Report
+  unter `cockpit/runs/<id>/html/` (mit eingebetteten Artefakten in `html/data/`).
   In der **Frühere Testergebnisse**-Ansicht hat jeder frühere Lauf einen eigenen „Report & Traces"-Link.
 - **Frühere Testergebnisse**: alle bisherigen Läufe, gruppiert
   nach **Jahr/Monat/Tag** (jeweils einklappbar). Toolbar zeigt Gesamt-Speicher
@@ -419,16 +440,16 @@ dezent daneben. Funktionen:
   Tests stehen dann als übersprungen in der Tabelle.
 
 - **Artefakt-Archivierung**: Traces, Screenshots und Videos landen lauf-spezifisch
-  unter `webui/runs/<id>/artifacts/`. Beim Löschen eines Laufs werden alle
+  unter `cockpit/runs/<id>/artifacts/`. Beim Löschen eines Laufs werden alle
   Artefakte mitentfernt. `test-results/` wird weiterhin von Playwright angelegt
   (normales Verhalten), ist aber kein primäres Artefakt-Archiv mehr.
 
 Grenzen (bewusst): nur localhost, kein Auth, genau ein Lauf gleichzeitig, keine
 Credential-Eingabe über die UI, keine Bearbeitung der Tests. Lauf-Artefakte liegen
-unter `webui/runs/` (in `.gitignore`). Port überschreibbar via `WEBUI_PORT`.
+unter `cockpit/runs/` (in `.gitignore`). Port überschreibbar via `COCKPIT_PORT`.
 
 ```
-webui/
+cockpit/
   server.ts          HTTP-Service (Node-Bordmittel): Katalog, Lauf, SSE, statische Auslieferung
   catalog.ts         Parser für `playwright test --list --reporter=json`
   runArgs.ts         UI-Auswahl -> Playwright-Argumente + env
@@ -452,7 +473,7 @@ Jeder Flow ist einzeln stabil. Neue Flows wurden mit `--repeat-each=3
 --retries=0` geprüft. Beim kompletten Suite-Lauf (mehrere Minuten Dauerlast) kann
 die Instanz träge werden und sporadisch einen Test mit Timeout fehlschlagen
 lassen (wandernd, kein fester Selektor-Bug). Dafür gibt es Retries: lokal 1,
-in CI 2. Die Web-UI markiert Tests, die erst in der Wiederholung grün wurden,
+in CI 2. Das Cockpit markiert Tests, die erst in der Wiederholung grün wurden,
 als „instabil" (Tabelle und Historie).
 
 **Timeouts**: Der globale Test-Timeout liegt bei 90s (statt der
@@ -463,7 +484,7 @@ brauchen (real bis ~53s beobachtet). Besonders lange Flows erhöhen zusätzlich 
 **„snapshot doesn't exist … writing actual" ist KEIN Fehler im Sinne einer
 Regression**: Beim ersten visuellen Lauf einer Umgebung fehlt die Baseline;
 Playwright nimmt sie auf und meldet den Lauf rot (Standardverhalten). Einmalig
-den Vorher-Stand erzeugen (Web-UI „Baselines aktualisieren" oder
+den Vorher-Stand erzeugen (Cockpit „Baselines aktualisieren" oder
 `npm run baseline:visual`, siehe „Vorher-Stand festhalten"), danach
 vergleicht der Test grün. Das harte Verhalten ist bewusst beibehalten: Ein
 tolerantes „fehlende Baseline = grün" würde eine echte Rendering-Regression
@@ -473,7 +494,7 @@ verstecken.
 
 - **Playwright-Version**: `package.json` deklariert `^1.49`, getestet mit 1.65.
   Ab neueren Versionen nimmt `--update-snapshots` ein optionales `[mode]`-Argument.
-  Skripte und Web-UI nutzen deshalb `--update-snapshots=all`, am Ende der
+  Skripte und Cockpit nutzen deshalb `--update-snapshots=all`, am Ende der
   Argumente. Ohne Modus gilt `changed`, dann bleiben Baselines mit kleinen echten
   Änderungen unter der Toleranz unverändert.
 - **Login-Methode**: `auth.setup.ts` nutzt den Granite-Formular-Login (gegen TEST
@@ -495,7 +516,7 @@ verstecken.
 - **„Neu starten" alter Läufe**: Läufe von vor der Titel-Vereinheitlichung (11/2026)
   filtern nach den alten Testtiteln. Bei umbenannten Tests findet so ein Lauf
   nichts. Dann die Tests neu auswählen.
-- **Web-UI und Publish-URL**: Bis 17.11.2026 setzte die UI keine Publish-URL.
+- **Cockpit und Publish-URL**: Bis 17.11.2026 setzte die UI keine Publish-URL.
   Publish-Tests auf TEST liefen dadurch gegen DEV-Publish (mit TEST-Baselines).
   Behoben über `publishUrl` je Preset. Ergebnisse früherer UI-Läufe auf TEST mit
   Publish-Tests sind nicht belastbar, neu laufen lassen. „Neu starten" alter Läufe

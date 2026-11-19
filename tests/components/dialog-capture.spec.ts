@@ -22,7 +22,7 @@ import { writeReference, emptyFields } from '../../fixtures/dialog-reference.js'
 const CAPTURE = process.env.CAPTURE_DIALOGS === '1';
 
 // Tag @tooling: Werkzeug (Referenz-Erzeugung), kein fachlicher Testfall ->
-// in der Web-UI ausgeblendet (categories.json: hidden). Läuft via npm run
+// im Cockpit ausgeblendet (categories.json: hidden). Läuft via npm run
 // capture-dialogs / CLI. @level2-components zusätzlich für die Level-Ableitung
 // der Testseiten-Namen (makeTestPage) — hier nicht genutzt, aber konsistent.
 test.describe('Komponenten: Dialog-Capture (Referenz)', { tag: ['@tooling', '@level2-components'] }, () => {
