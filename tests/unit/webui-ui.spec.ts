@@ -230,6 +230,16 @@ test.describe('Web-UI (neu): Testlauf', { tag: '@unit' }, () => {
     await expect(step(page, 3)).toHaveAttribute('data-open', 'false');
   });
 
+  test('Schritte: „Alle Schritte" und zurück zum Assistenten hakt Schritt 3 nicht ab', async ({ page }) => {
+    await open(page);
+    await page.getByRole('button', { name: 'Alle Schritte' }).click();
+    await expect(page.locator('#steps .step[data-open="true"]')).toHaveCount(3);
+    await page.getByRole('button', { name: 'Assistent' }).click();
+    await expect(step(page, 1)).toHaveAttribute('data-open', 'true');
+    await expect(step(page, 2)).toHaveAttribute('data-done', 'false');
+    await expect(step(page, 3)).toHaveAttribute('data-done', 'false');
+  });
+
   test('Schritte: genau ein Schritt offen, „Alle Schritte" öffnet alle', async ({ page }) => {
     await open(page);
     const open_ = page.locator('#steps .step[data-open="true"]');

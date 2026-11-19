@@ -386,7 +386,9 @@ function renderSteps() {
     const head = $('.step-head', li);
     head.disabled = !reachableStep(n);
     head.title = head.disabled ? stepBlockReason(n) : '';
-    if (open) visitedSteps.add(n);
+    // Nur im Assistenten zählt „geöffnet" als gesehen. „Alle Schritte" öffnet alle zugleich,
+    // das ist keine Bestätigung (sonst wäre Schritt 3 nach dem Zurückschalten schon abgehakt).
+    if (open && state.stepMode === 'single') visitedSteps.add(n);
     li.dataset.open = String(open);
     $('.step-head', li).setAttribute('aria-expanded', String(open));
     li.dataset.done = String(n === 1 ? tests.length > 0 : visitedSteps.has(n) && (n !== 2 || !!env));
