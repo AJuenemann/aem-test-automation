@@ -45,7 +45,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 ## Gesamtübersicht (Stand 19.11.2026)
 
 59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 120 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+nur auf Anforderung) und 121 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -624,7 +624,7 @@ Sprachversionen.
 - **Zweck**: prüft die Oberfläche im Browser gegen einen lokalen Server, der `webui/public`
   ausliefert und `/api/*` mit festen Daten beantwortet. Kein AEM, kein Login, kein echter Lauf;
   gelöscht oder gestartet wird nichts.
-- **Fälle** (18):
+- **Fälle** (19):
   - **Testlauf**: Start braucht mindestens einen Test und eine Umgebung; die Start-Leiste nennt,
     was fehlt. „Zurücksetzen" leert Auswahl und Suchfeld und klappt die Kategorien zu; der Button
     erscheint nur, wenn es etwas zurückzusetzen gibt.
@@ -639,7 +639,8 @@ Sprachversionen.
     Schritt 1; Auswahl und Umgebung bleiben.
   - **Schrittmodus**: Standard ist „Assistent", die letzte Wahl bleibt nach Reload erhalten.
     Das grüne Häkchen eines Schritts erscheint erst, wenn er geöffnet wurde (Umgebung und Ausführung
-    sind vorbelegt bzw. leer, das zählt nicht).
+    sind vorbelegt bzw. leer, das zählt nicht). Auch „Alle Schritte“ und zurück zum Assistenten
+    hakt keinen Schritt ab (alle zugleich geöffnet ist keine Bestätigung).
   - **Nur Unit-Tests**: „Sichtbar" ist gesperrt, Headless aktiv.
   - **Shell**: Reiter per Hash-Routing, Reload und Home-Taste; Theme-Umschalter speichert die Wahl,
     ohne Wahl folgt die UI dem System.
