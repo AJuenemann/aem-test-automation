@@ -566,7 +566,11 @@ Sprachversionen.
 - **Fälle**:
   - **Katalog-Parser** (`parseCatalog`): flacht die verschachtelte
     `--list`-JSON-Struktur (Datei → describe → Test) korrekt ab; führt denselben
-    Test über mehrere Projekte zu einem Eintrag zusammen.
+    Test über mehrere Projekte zu einem Eintrag zusammen. Englische Texte der
+    Kategorien (`labelEn`, `descriptionEn`) und die Annotationen `_title-en` /
+    `_describe-en` der Tests erscheinen additiv als `titleEn` und `labelEn`; ohne
+    sie entstehen keine leeren Felder; bei mehreren describe-Titeln je Datei gibt
+    es keinen englischen Suite-Namen.
   - **Argument-Bauer** (`buildRun`): baut aus der UI-Auswahl die korrekte
     Playwright-Kommandozeile; `chromium` zieht `setup` nach; `--headed` vs.
     `--ui` (UI-Mode) schließen sich aus; der Datei/Zeile-Filter steht OHNE `--`
@@ -584,7 +588,11 @@ Sprachversionen.
     ein erst im Retry bestandener Test zählt als instabil (`flaky`); `detectBlocker` erkennt einen Umgebungs-Blocker, wenn alle Tests an
     Login/Timeout scheitern, und meldet nichts bei gemischtem Ergebnis. Ein
     fehlgeschlagener Smoketest (Projekt `smoke`) ergibt den Gate-Hinweis mit
-    Testname; derselbe Fehler in `chromium` nicht. `buildRun`: Nur Smoketests
+    Testname; derselbe Fehler in `chromium` nicht. `detectBlockerInfo` liefert
+    denselben Blocker als Code mit Parametern (`network` mit Host, `env`, `login`,
+    `smoke` mit Testnamen), `blockerText` erzeugt daraus den unveränderten deutschen
+    Text. `repeatIndex`/`repeatTotal` stehen neben dem deutschen `repeatLabel`, der
+    englische Testname (`titleEn`) kommt aus der Annotation `_title-en`. `buildRun`: Nur Smoketests
     ziehen `setup` nach. Ein bestandener Login (`setup`) erscheint nicht in
     Tabelle und Summary, ein gescheiterter schon.
   - **Aufräum-Erkennung** (`cockpit-cleanup.spec.ts`: `isTestPageName`,
