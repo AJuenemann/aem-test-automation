@@ -45,7 +45,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 ## Gesamtübersicht (Stand 19.11.2026)
 
 59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 81 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+nur auf Anforderung) und 82 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -623,10 +623,10 @@ Sprachversionen.
 - **Zweck**: prüft die Oberfläche im Browser gegen einen lokalen Server, der `webui/public`
   ausliefert und `/api/*` mit festen Daten beantwortet. Kein AEM, kein Login, kein echter Lauf;
   gelöscht oder gestartet wird nichts.
-- **Fälle** (11):
+- **Fälle** (12):
   - **Testlauf**: Start ohne Auswahl gesperrt, mit Auswahl frei; Schritt-Kopf und Start-Leiste
     fassen die Auswahl zusammen. „Zurücksetzen" leert Auswahl und Suchfeld und klappt die
-    Kategorien zu; der Button erscheint nur, wenn es etwas zurückzusetzen gibt. Im Schrittmodus ist genau ein Schritt offen, „Alle offen" öffnet alle.
+    Kategorien zu; der Button erscheint nur, wenn es etwas zurückzusetzen gibt. Im Schrittmodus ist genau ein Schritt offen, „Alle Schritte" öffnet alle (Umschalter „Assistent" / „Alle Schritte"). Standard ist „Assistent", die letzte Wahl bleibt nach einem Reload erhalten.
   - **Umgebung**: Ein Test mit `@env:test` ist unter DEV gesperrt und fällt beim Wechsel aus der
     Auswahl. Aufgeklappte Kategorien bleiben beim Neuzeichnen offen.
   - **Nur Unit-Tests**: „Sichtbar" ist gesperrt, Headless aktiv.

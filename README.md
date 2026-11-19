@@ -4,7 +4,7 @@ Playwright-/TypeScript-Testautomatisierung für die Fraunhofer AEM 6.5 LTS Migra
 (Tickets FHGWCMS-2415 / FHGWCMS-2416). Die Suite prüft über echte Redakteurs-
 Gesten, ob die Fraunhofer-Website nach dem Update wie vorher funktioniert. Sie
 umfasst 59 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
-inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 81 Unit-Tests
+inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 82 Unit-Tests
 ohne AEM (Stand 19.11.2026). Die vollständige Liste mit Ablauf und Erwartung steht in
 [`docs/TESTFAELLE.md`](docs/TESTFAELLE.md).
 
@@ -278,7 +278,7 @@ npm run webui        # Service startet auf http://localhost:4321, öffnet den Br
 **Aufbau (seit 19.11.2026)**: Drei Reiter. **Testlauf** führt in drei Schritten (Tests
 auswählen → Umgebung wählen → Ausführung festlegen) und hat eine immer sichtbare
 Start-Leiste. Geschlossene Schritte zeigen ihre Auswahl als Zusammenfassung;
-„Alle offen" zeigt alle Schritte zugleich. **Ergebnisse** zeigt die Kernaussage des
+Der Umschalter oben rechts wechselt zwischen „Assistent" (ein Schritt nach dem anderen) und „Alle Schritte" (alle zugleich). **Ergebnisse** zeigt die Kernaussage des
 Laufs („2 von 6 Tests fehlgeschlagen"), Fehlschläge zuerst, Statusfilter, Details
 und Artefakte je Test sowie rechts die früheren Läufe. **Werkzeuge** enthält Aufräumen,
 Referenzbilder vergleichen und den Playwright UI-Mode. Die Oberfläche ist hell oder

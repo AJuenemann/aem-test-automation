@@ -127,15 +127,32 @@ test.describe('Web-UI (neu): Testlauf', { tag: '@unit' }, () => {
     await expect(reset).toBeHidden();
   });
 
-  test('Schritte: genau ein Schritt offen, „Alle offen" öffnet alle', async ({ page }) => {
+  test('Schritte: genau ein Schritt offen, „Alle Schritte" öffnet alle', async ({ page }) => {
     await open(page);
     const open_ = page.locator('#steps .step[data-open="true"]');
     await expect(open_).toHaveCount(1);
     await page.getByRole('button', { name: 'Umgebung wählen' }).click();
     await expect(open_).toHaveCount(1);
     await expect(page.locator('#steps .step[data-step="2"]')).toHaveAttribute('data-open', 'true');
-    await page.getByRole('button', { name: 'Alle offen' }).click();
+    await page.getByRole('button', { name: 'Alle Schritte' }).click();
     await expect(open_).toHaveCount(3);
+  });
+
+  test('Schrittmodus: Standard ist „Assistent", die letzte Wahl bleibt nach Reload', async ({ page }) => {
+    await open(page);
+    const steps = page.locator('#steps .step[data-open="true"]');
+    await expect(page.getByRole('button', { name: 'Assistent' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(steps).toHaveCount(1);
+    await page.getByRole('button', { name: 'Alle Schritte' }).click();
+    await expect(steps).toHaveCount(3);
+    await page.reload();
+    await expect(page.locator('.cat-group')).toHaveCount(CATALOG.groups.length);
+    await expect(page.getByRole('button', { name: 'Alle Schritte' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(steps).toHaveCount(3);
+    await page.getByRole('button', { name: 'Assistent' }).click();
+    await page.reload();
+    await expect(page.locator('.cat-group')).toHaveCount(CATALOG.groups.length);
+    await expect(steps).toHaveCount(1);
   });
 
   test('Umgebung: Test mit env-Tag ist in der falschen Umgebung gesperrt und fällt aus der Auswahl', async ({ page }) => {

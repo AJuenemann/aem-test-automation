@@ -23,7 +23,7 @@ export const state = {
   slowMo: 0,
   // Weitere Optionen. workers bleibt intern 1: AEM verträgt keinen parallelen Zugriff.
   options: { grep: '', repeatEach: 1, updateSnapshots: false, smokeGate: false },
-  stepMode: 'single', // single = ein Schritt offen, all = alle offen
+  stepMode: 'single', // single = Assistent (ein Schritt offen), all = alle Schritte offen
   openStep: 1,
   // Gewählte Tests als Schlüssel (überlebt Filtern und Neu-Rendern).
   selectedKeys: new Set(),
