@@ -207,6 +207,23 @@ test.describe('Web-UI: parseCatalog', { tag: '@unit' }, () => {
     expect(catalog.files.map((f) => f.file)).toEqual(['c.spec.ts']);
   });
 
+  test('Reicht englische Texte (labelEn, descriptionEn) additiv an die Gruppen durch', () => {
+    const tagged = {
+      suites: [
+        { file: 's.spec.ts', specs: [{ title: 's', file: 's.spec.ts', line: 1, tags: ['smoke'], tests: [{ projectName: 'chromium' }] }] },
+        { file: 'x.spec.ts', specs: [{ title: 'x', file: 'x.spec.ts', line: 1, tests: [{ projectName: 'chromium' }] }] },
+      ],
+    };
+    const categories = [{ tag: 'smoke', label: 'Smoketest', labelEn: 'Smoke test', description: 'Bereit?', descriptionEn: 'Ready?', order: 10 }];
+    const groups = parseCatalog(tagged, categories).groups;
+    expect(groups[0]).toMatchObject({ tag: 'smoke', label: 'Smoketest', labelEn: 'Smoke test', descriptionEn: 'Ready?' });
+    // Unkategorisiert: deutscher Name bleibt, englischer kommt dazu.
+    expect(groups[1]).toMatchObject({ label: 'Sonstige', labelEn: 'Other' });
+    // Ohne englische Texte entstehen keine leeren Felder (alte Oberfläche und Tests bleiben unberührt).
+    const plain = parseCatalog(tagged, [{ tag: 'smoke', label: 'Smoketest', order: 10 }]).groups[0];
+    expect('labelEn' in plain).toBe(false);
+    expect('descriptionEn' in plain).toBe(false);
+  });
   test('Gruppiert die neuen Kategorien (components/integration/regression) in order-Reihenfolge', () => {
     const tagged = {
       suites: [

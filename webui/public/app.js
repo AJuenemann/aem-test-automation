@@ -1,12 +1,55 @@
-// Einstieg der Web-UI: Reiter-Routing, Theme, Lauf-Anzeige im Kopf, Beenden.
+// Einstieg der Web-UI: Sprache, Reiter-Routing, Theme, Lauf-Anzeige im Kopf, Beenden.
 // Vanilla-JS mit ES-Modulen, kein Build-Schritt. Die bisherige Oberfläche liegt
 // unverändert unter /legacy/ (Fallback bis zur Abnahme).
-import { $, $$, on, loadPrefs, api, confirmDialog } from './js/core.js';
-import { resolveTheme } from './js/logic.js';
+import { $, $$, on, emit, loadPrefs, api, confirmDialog } from './js/core.js';
+import { resolveTheme, resolveLang } from './js/logic.js';
+import { t, setLang, getLang, LANG_KEY } from './js/i18n.js';
 import * as testrun from './js/testrun.js';
 import * as results from './js/results.js';
 import * as history from './js/history.js';
 import * as tools from './js/tools.js';
+
+// ---------------------------------------------------------------------------
+// Sprache: gespeicherte Wahl, sonst Systemsprache (de* -> Deutsch, sonst Englisch).
+// Das Setzen von <html lang> vor dem ersten Zeichnen passiert im <head> von index.html.
+// ---------------------------------------------------------------------------
+function storedLang() {
+  try { return localStorage.getItem(LANG_KEY); } catch { return null; }
+}
+
+/** Übersetzt alle Elemente mit data-i18n, data-i18n-title, -aria-label und -placeholder. */
+function applyStatic() {
+  $$('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  const attrs = [['title', 'i18nTitle'], ['aria-label', 'i18nAriaLabel'], ['placeholder', 'i18nPlaceholder']];
+  for (const [attr, key] of attrs) {
+    $$(`[data-i18n-${attr}]`).forEach((el) => el.setAttribute(attr, t(el.dataset[key])));
+  }
+}
+
+/** Sprache setzen und die Oberfläche neu beschriften. Die Module zeichnen sich über `lang-change` neu. */
+function applyLang(lang) {
+  setLang(lang);
+  document.documentElement.lang = lang;
+  applyStatic();
+  const btn = $('#lang-toggle');
+  $('#lang-toggle-text').textContent = lang.toUpperCase();
+  const label = t('lang.toggle', { name: t(`lang.name.${lang}`) });
+  btn.setAttribute('aria-label', label);
+  btn.title = label;
+  applyTheme(document.documentElement.dataset.theme);
+  updateTitle();
+  renderPill();
+  emit('lang-change', { lang });
+}
+
+function initLang() {
+  applyLang(resolveLang(storedLang(), navigator.languages || [navigator.language]));
+  $('#lang-toggle').addEventListener('click', () => {
+    const next = getLang() === 'de' ? 'en' : 'de';
+    try { localStorage.setItem(LANG_KEY, next); } catch { /* privater Modus */ }
+    applyLang(next);
+  });
+}
 
 // ---------------------------------------------------------------------------
 // Theme: gespeicherte Wahl, sonst Systemeinstellung. Das Setzen vor dem ersten
@@ -22,7 +65,7 @@ function storedTheme() {
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
   const toggle = $('#theme-toggle');
-  toggle.setAttribute('aria-label', theme === 'dark' ? 'Zum hellen Theme wechseln' : 'Zum dunklen Theme wechseln');
+  toggle.setAttribute('aria-label', theme === 'dark' ? t('theme.toLight') : t('theme.toDark'));
 }
 
 function initTheme() {
@@ -42,23 +85,26 @@ function initTheme() {
 // Reiter (Hash-Routing: #/testlauf, #/ergebnisse, #/werkzeuge)
 // ---------------------------------------------------------------------------
 const TABS = ['testlauf', 'ergebnisse', 'werkzeuge'];
-const TITLES = { testlauf: 'Testlauf', ergebnisse: 'Ergebnisse', werkzeuge: 'Werkzeuge' };
 
 function currentTab() {
   const m = location.hash.match(/^#\/([a-z]+)/);
   return m && TABS.includes(m[1]) ? m[1] : 'testlauf';
 }
 
+function updateTitle() {
+  document.title = `${t(`tab.${currentTab()}`)} · ${t('app.title')}`;
+}
+
 function route() {
   const tab = currentTab();
-  for (const t of TABS) {
-    const selected = t === tab;
-    $(`#tab-${t}`).hidden = !selected;
-    const link = $(`#tab-btn-${t}`);
+  for (const name of TABS) {
+    const selected = name === tab;
+    $(`#tab-${name}`).hidden = !selected;
+    const link = $(`#tab-btn-${name}`);
     link.setAttribute('aria-selected', String(selected));
     link.tabIndex = selected ? 0 : -1;
   }
-  document.title = `${TITLES[tab]} · AEM Testautomatisierung`;
+  updateTitle();
   if (tab === 'werkzeuge') tools.onShow();
   if (tab === 'testlauf') testrun.onShow();
 }
@@ -80,13 +126,23 @@ function initTabs() {
 // ---------------------------------------------------------------------------
 // Lauf-Anzeige im Kopf (unabhängig vom offenen Reiter)
 // ---------------------------------------------------------------------------
+let pillState = { running: false, elapsed: '' };
+
+function renderPill() {
+  const pill = $('#run-pill');
+  pill.hidden = !pillState.running;
+  if (pillState.running) {
+    $('#run-pill-text').textContent = t('top.runPill.elapsed', { elapsed: pillState.elapsed || '0:00' });
+  }
+}
+
 function initRunIndicators() {
   const pill = $('#run-pill');
   const dot = $('#tab-dot');
   pill.addEventListener('click', () => { location.hash = '#/ergebnisse'; });
   on('run-state', (d) => {
-    pill.hidden = !d.running;
-    if (d.running) $('#run-pill-text').textContent = `Lauf aktiv · ${d.elapsed || '0:00'}`;
+    pillState = { running: !!d.running, elapsed: d.elapsed };
+    renderPill();
     const known = ['running', 'passed', 'failed', 'flaky'];
     dot.hidden = !known.includes(d.status);
     dot.dataset.status = d.status;
@@ -99,16 +155,17 @@ function initRunIndicators() {
 function initShutdown() {
   $('#shutdown').addEventListener('click', async () => {
     const ok = await confirmDialog({
-      title: 'Anwendung beenden?',
-      message: 'Der lokale Service stoppt und gibt den Port frei.',
-      confirmLabel: 'Beenden',
+      title: t('shutdown.dialog.title'),
+      message: t('shutdown.dialog.message'),
+      confirmLabel: t('shutdown.dialog.confirm'),
       danger: true,
     });
     if (!ok) return;
     await api('/api/shutdown', {});
-    document.body.innerHTML =
-      '<p style="padding:48px;text-align:center;font-family:system-ui;color:#5f6166">' +
-      'Die Anwendung wurde beendet. Dieses Fenster kann geschlossen werden.</p>';
+    const note = document.createElement('p');
+    note.style.cssText = 'padding:48px;text-align:center;font-family:system-ui;color:#5f6166';
+    note.textContent = t('shutdown.done');
+    document.body.replaceChildren(note);
   });
 }
 
@@ -116,6 +173,7 @@ function initShutdown() {
 // Start
 // ---------------------------------------------------------------------------
 async function main() {
+  initLang();
   initTheme();
   loadPrefs();
   testrun.init();

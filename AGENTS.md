@@ -78,7 +78,7 @@ Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und di
 
 Umfang: 59 AEM-Testfälle (12 Smoketest inkl. Login, 11 Basisfunktionen,
 24 Komponenten, 3 Integrationstest, 9 Regressionstest), dazu 11 Capture-Läufe
-und 89 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
+und 120 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 ## Web-UI: Aufbau und Fallback
@@ -92,9 +92,22 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
 - Fallback: die bisherige Oberfläche liegt unverändert in `webui/public-legacy/` und
   wird unter `/legacy/` ausgeliefert (`server.ts`). Beide nutzen dieselben `/api/*`-
   Endpunkte. **API-Änderungen nur additiv**, sonst bricht die jeweils andere UI.
-  Eigene localStorage-Schlüssel: `aem-webui-prefs-v2` und `aem-webui-theme` (neu),
+  Eigene localStorage-Schlüssel: `aem-webui-prefs-v2`, `aem-webui-theme` und `aem-webui-lang` (neu),
   `aem-webui-prefs-v1` (alt). Entfernen von `public-legacy/` und der Weiche erst nach
   ausdrücklicher Abnahme durch den User.
+- **Zweisprachig (DE/EN-US, ab 19.11.2026)**: Texte stehen in `js/i18n/de.js` und `js/i18n/en.js`
+  (flache Schlüssel, Platzhalter `{name}`, Plural `.one`/`.other`), Kern in `js/i18n.js`
+  (`t`, `tn`, `locale`, DOM-frei, Default `de`). Statisches HTML nutzt `data-i18n`,
+  `data-i18n-title`, `-aria-label`, `-placeholder`; `app.js` übersetzt es (`applyStatic`).
+  Der Sprachschalter `#lang-toggle` speichert `aem-webui-lang`; ohne Wahl gilt die Systemsprache
+  (`resolveLang` in `logic.js`). Module zeichnen sich bei `lang-change` neu (idempotente
+  Render-Funktionen, Zustand bleibt; Gruppen über `groupKey`, nicht über das Label).
+  **Neue Texte immer in beiden Wörterbüchern, nie als Literal im JS.** Server-Texte additiv:
+  `labelEn`/`descriptionEn` in `categories.json` und `environments.json`, `blockerInfo`
+  (`{code, params}`), `code`/`params` bei bekannten Fehlern (`CodedError`), `repeatIndex`/
+  `repeatTotal`. Nicht übersetzt: Testtitel, Dateinamen, Playwright-Fehlertexte, `skip`-Gründe,
+  Playwright-Report. `webui-ui.spec.ts` nagelt `locale: 'de-DE'` fest, `webui-i18n.spec.ts`
+  prüft Vollständigkeit und Umschalten.
 - Tests: `tests/unit/webui-ui-logic.spec.ts` (Logik, Token-Kontrast) und
   `tests/unit/webui-ui.spec.ts` (Browser gegen gemockte API). Neue Farben in
   `tokens.css` müssen den Kontrast-Test bestehen.

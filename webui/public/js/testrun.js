@@ -1,7 +1,9 @@
 // Reiter „Testlauf": Schritte (Tests, Umgebung, Ausführung) und Start-Leiste.
 import {
   $, $$, state, esc, icon, api, on, emit, toast, savePrefs, currentEnvironment, baseRunFields,
+  groupKey, groupLabel, groupDescription, envLabel, envShort,
 } from './core.js';
+import { t, tn } from './i18n.js';
 import {
   testKey, isTestAllowed, isUnitOnly, testMatches,
 } from './logic.js';
@@ -17,18 +19,24 @@ const openGroups = new Set();
  */
 const visitedSteps = new Set();
 
-const envShort = (label) => (label || '').split(' (')[0];
+/** Kurzname der Umgebung in der aktiven Sprache. */
+const envName = (env) => envShort(envLabel(env));
+/** Ladezustand des Katalogs (für das Neuzeichnen bei Sprachwechsel). */
+let catalogStatus = 'loading';
 
 // ---------------------------------------------------------------------------
 // Laden
 // ---------------------------------------------------------------------------
 export async function loadCatalog(refresh = false) {
-  $('#catalog').textContent = 'Lade Tests…';
+  catalogStatus = 'loading';
+  renderCatalog();
   const r = await api(`/api/tests${refresh ? '?refresh=1' : ''}`);
   if (!r.ok) {
-    $('#catalog').textContent = 'Tests konnten nicht geladen werden.';
+    catalogStatus = 'error';
+    renderCatalog();
     return;
   }
+  catalogStatus = 'ready';
   state.catalog = r.data;
   renderCatalog();
   afterSelectionChange();
@@ -39,7 +47,7 @@ export async function loadCatalog(refresh = false) {
 export function fileToGroupMap() {
   const map = new Map();
   for (const group of state.catalog.groups || []) {
-    for (const file of group.files) map.set(file.file, group.label);
+    for (const file of group.files) map.set(file.file, groupLabel(group));
   }
   return map;
 }
@@ -105,15 +113,17 @@ const allowedHere = (test) => isTestAllowed(test, currentEnvironment());
 function renderCatalog() {
   const root = $('#catalog');
   root.innerHTML = '';
+  if (catalogStatus === 'loading') { root.textContent = t('catalog.loading'); return; }
+  if (catalogStatus === 'error') { root.textContent = t('catalog.error'); return; }
   const groups = state.catalog.groups || [];
-  if (!groups.length) { root.textContent = 'Keine Tests gefunden.'; return; }
+  if (!groups.length) { root.textContent = t('catalog.empty'); return; }
   const term = state.searchTerm.trim().toLowerCase();
   let shown = 0;
   for (const group of groups) {
     const el = renderGroup(group, term);
     if (el) { root.appendChild(el); shown++; }
   }
-  if (!shown) root.textContent = `Kein Test passt zu „${state.searchTerm}".`;
+  if (!shown) root.textContent = t('catalog.noMatch', { term: state.searchTerm });
 }
 
 function renderGroup(group, term) {
@@ -126,10 +136,11 @@ function renderGroup(group, term) {
   const section = document.createElement('details');
   section.className = 'cat-group';
   // Bei Suche aufgeklappt (Treffer zeigen), sonst wie vom Nutzer zuletzt gewählt.
-  section.open = term.length > 0 || openGroups.has(group.label);
+  const key = groupKey(group);
+  section.open = term.length > 0 || openGroups.has(key);
   section.addEventListener('toggle', () => {
     if (term.length > 0) return;
-    if (section.open) openGroups.add(group.label); else openGroups.delete(group.label);
+    if (section.open) openGroups.add(key); else openGroups.delete(key);
     updateStartbar();
   });
 
@@ -138,7 +149,7 @@ function renderGroup(group, term) {
   const cb = document.createElement('input');
   cb.type = 'checkbox';
   cb.className = 'cat-cb';
-  cb.setAttribute('aria-label', `Ganze Kategorie „${group.label}" wählen`);
+  cb.setAttribute('aria-label', t('cat.select.aria', { name: groupLabel(group) }));
   cb.addEventListener('click', (e) => e.stopPropagation());
   cb.addEventListener('change', () => {
     // Nicht verfügbare Tests (andere Umgebung) nicht mitwählen.
@@ -147,8 +158,8 @@ function renderGroup(group, term) {
   });
   head.append(cb);
   head.insertAdjacentHTML('beforeend',
-    `<span class="cat-title">${esc(group.label)}</span><span class="cat-count">${count}</span>` +
-    (group.description ? `<span class="cat-desc">${esc(group.description)}</span>` : ''));
+    `<span class="cat-title">${esc(groupLabel(group))}</span><span class="cat-count">${count}</span>` +
+    (groupDescription(group) ? `<span class="cat-desc">${esc(groupDescription(group))}</span>` : ''));
   section.appendChild(head);
 
   const ul = document.createElement('ul');
@@ -169,7 +180,8 @@ function renderTestRow(test, file) {
   cb.dataset.title = test.title;
 
   const allowed = allowedHere(test);
-  const reason = `In der gewählten Umgebung (${envShort(currentEnvironment()?.label) || 'dieser'}) nicht verfügbar.`;
+  const env = currentEnvironment();
+  const reason = env ? t('env.unavailable', { env: envName(env) }) : t('env.unavailable.generic');
   if (!allowed) {
     li.classList.add('disabled');
     cb.disabled = true;
@@ -222,22 +234,25 @@ function renderChips() {
   const perGroup = new Map();
   for (const { test, group } of allCatalogTests()) {
     if (state.selectedKeys.has(testKey(test.file, test.line, test.title))) {
-      perGroup.set(group.label, (perGroup.get(group.label) || 0) + 1);
+      const key = groupKey(group);
+      const entry = perGroup.get(key) || { label: groupLabel(group), n: 0 };
+      entry.n++;
+      perGroup.set(key, entry);
     }
   }
   if (!perGroup.size) return;
-  for (const [label, n] of perGroup) {
+  for (const [key, { label, n }] of perGroup) {
     const chip = document.createElement('span');
     chip.className = 'chip';
     chip.insertAdjacentHTML('beforeend', `${esc(label)}: ${n}`);
     const x = document.createElement('button');
     x.type = 'button';
     x.className = 'chip-x';
-    x.setAttribute('aria-label', `Auswahl „${label}" entfernen`);
+    x.setAttribute('aria-label', t('chip.remove.aria', { name: label }));
     x.innerHTML = icon('x');
     x.addEventListener('click', () => {
       for (const { test, group } of allCatalogTests()) {
-        if (group.label === label) state.selectedKeys.delete(testKey(test.file, test.line, test.title));
+        if (groupKey(group) === key) state.selectedKeys.delete(testKey(test.file, test.line, test.title));
       }
       renderCatalog();
       afterSelectionChange();
@@ -248,7 +263,7 @@ function renderChips() {
   const clear = document.createElement('button');
   clear.type = 'button';
   clear.className = 'chip-clear chip';
-  clear.textContent = 'Alle abwählen';
+  clear.textContent = t('chip.clear');
   clear.addEventListener('click', clearSelection);
   el.appendChild(clear);
 }
@@ -298,15 +313,16 @@ function renderEnvCards() {
     btn.type = 'button';
     btn.className = 'choice';
     btn.setAttribute('aria-pressed', String(env.id === state.selectedEnvId));
-    const desc = env.label.includes('(') ? env.label.slice(env.label.indexOf('(') + 1, -1) : '';
-    btn.innerHTML = `<span class="choice-title">${esc(envShort(env.label))}</span>` +
+    const label = envLabel(env);
+    const desc = label.includes('(') ? label.slice(label.indexOf('(') + 1, -1) : '';
+    btn.innerHTML = `<span class="choice-title">${esc(envShort(label))}</span>` +
       `<span class="choice-desc">${esc(desc || env.baseUrl || '')}</span>`;
     btn.addEventListener('click', () => {
       state.selectedEnvId = env.id;
       savePrefs();
       const removed = pruneSelectionForEnv();
       if (removed) {
-        toast(`${removed} ${removed === 1 ? 'Test ist' : 'Tests sind'} in ${envShort(env.label)} nicht verfügbar und wurde${removed === 1 ? '' : 'n'} aus der Auswahl entfernt.`, 'info');
+        toast(tn('sel.removed', removed, { env: envName(env) }), 'info');
       }
       renderEnvCards();
       renderCatalog();
@@ -316,9 +332,9 @@ function renderEnvCards() {
     root.appendChild(btn);
   }
   const env = currentEnvironment();
-  $('#env-hint').textContent = !env ? 'Wähle eine Umgebung. Danach erscheint hier ihre Basis-URL.' : env.baseUrl
-    ? `${env.baseUrl} · Zugangsdaten kommen aus der .env`
-    : 'Keine Basis-URL im Preset hinterlegt. In environments.json ergänzen.';
+  $('#env-hint').textContent = !env ? t('env.hint.none') : env.baseUrl
+    ? t('env.hint.url', { url: env.baseUrl })
+    : t('env.hint.noUrl');
 }
 
 function updateModeUi() {
@@ -329,7 +345,7 @@ function updateModeUi() {
   $$('#mode-cards .choice').forEach((card) => {
     const headed = card.dataset.mode === 'headed';
     card.disabled = unitOnly && headed;
-    card.title = card.disabled ? 'Nur für UI-Tests. Unit-Tests laufen ohne Browser.' : '';
+    card.title = card.disabled ? t('mode.unitOnly.title') : '';
     card.setAttribute('aria-pressed', String(card.dataset.mode === state.mode));
   });
   $('#slowmo-row').hidden = !(state.mode === 'headed' && !unitOnly);
@@ -356,10 +372,7 @@ function reachableStep(n) {
   return hasTests && !!currentEnvironment();
 }
 
-const STEP_BLOCK_REASON = {
-  2: 'Zuerst mindestens einen Test wählen.',
-  3: 'Zuerst mindestens einen Test und eine Umgebung wählen.',
-};
+const stepBlockReason = (n) => t(`step.block.${n}`);
 
 function renderSteps() {
   const { tests } = collectSelection();
@@ -372,7 +385,7 @@ function renderSteps() {
     const open = isStepOpen(n);
     const head = $('.step-head', li);
     head.disabled = !reachableStep(n);
-    head.title = head.disabled ? STEP_BLOCK_REASON[n] : '';
+    head.title = head.disabled ? stepBlockReason(n) : '';
     if (open) visitedSteps.add(n);
     li.dataset.open = String(open);
     $('.step-head', li).setAttribute('aria-expanded', String(open));
@@ -382,29 +395,29 @@ function renderSteps() {
 
   const nGroups = new Set(allCatalogTests()
     .filter(({ test }) => state.selectedKeys.has(testKey(test.file, test.line, test.title)))
-    .map(({ group }) => group.label)).size;
+    .map(({ group }) => groupKey(group))).size;
   $('#sum-1').textContent = tests.length
-    ? `${tests.length} ${tests.length === 1 ? 'Test' : 'Tests'} in ${nGroups} ${nGroups === 1 ? 'Bereich' : 'Bereichen'}`
-    : 'Noch nichts ausgewählt';
-  $('#sum-2').textContent = env ? envShort(env.label) : 'Nicht gewählt';
+    ? t('sum.tests', { tests: tn('count.tests', tests.length), areas: tn('count.areasIn', nGroups) })
+    : t('sum.none');
+  $('#sum-2').textContent = env ? envName(env) : t('sum.envNone');
   $('#sum-3').textContent = modeSummary();
   // „Weiter"-Knöpfe und der Grund, warum sie gesperrt sind.
   $$('[data-next]').forEach((b) => {
     const target = Number(b.dataset.next);
     const blocked = !reachableStep(target);
     b.disabled = blocked;
-    b.title = blocked ? STEP_BLOCK_REASON[target] : '';
+    b.title = blocked ? stepBlockReason(target) : '';
     const hint = $(`#hint-next-${target - 1}`);
     if (hint) hint.hidden = !blocked;
   });
 }
 
 function modeSummary() {
-  const parts = [state.mode === 'headed' ? 'Sichtbar' : 'Headless'];
-  if (state.options.repeatEach > 1) parts.push(`${state.options.repeatEach}×`);
-  if (state.options.smokeGate) parts.push('Smoketest vorab');
-  if (state.options.updateSnapshots) parts.push('Baselines aktualisieren');
-  if (state.options.grep) parts.push(`Filter „${state.options.grep}"`);
+  const parts = [state.mode === 'headed' ? t('mode.headed') : t('mode.headless')];
+  if (state.options.repeatEach > 1) parts.push(t('sum.repeat', { n: state.options.repeatEach }));
+  if (state.options.smokeGate) parts.push(t('sum.smokeGate'));
+  if (state.options.updateSnapshots) parts.push(t('sum.snapshots'));
+  if (state.options.grep) parts.push(t('sum.filter', { grep: state.options.grep }));
   return parts.join(' · ');
 }
 
@@ -427,17 +440,17 @@ function updateStartbar() {
   const env = currentEnvironment();
   const ready = n > 0 && !!env;
   $('#sb-count').textContent = !n
-    ? 'Noch nichts ausgewählt'
-    : `${n} ${n === 1 ? 'Test' : 'Tests'} ${ready ? 'bereit' : 'gewählt'}`;
+    ? t('sum.none')
+    : tn(ready ? 'sb.ready' : 'sb.selected', n);
   $('#sb-detail').textContent = !n
-    ? 'Wähle in Schritt 1 mindestens einen Test.'
+    ? t('sb.detail.noTest')
     : !env
-      ? 'Wähle in Schritt 2 eine Umgebung.'
-      : `${envShort(env.label)} · ${modeSummary()}`;
+      ? t('sb.detail.noEnv')
+      : `${envName(env)} · ${modeSummary()}`;
   $('#run').disabled = !ready || running;
-  $('#run').title = !n ? 'Zuerst mindestens einen Test wählen.'
-    : !env ? 'Zuerst eine Umgebung wählen.'
-      : running ? 'Es läuft bereits ein Lauf.' : '';
+  $('#run').title = !n ? t('sb.run.noTest')
+    : !env ? t('sb.run.noEnv')
+      : running ? t('sb.run.running') : '';
   $('#cancel').hidden = !running;
   $('#select-none').hidden = n === 0;
   $('#reset-selection').hidden = n === 0 && !state.searchTerm && openGroups.size === 0;
@@ -560,6 +573,14 @@ export function init() {
     updateStartbar();
   });
 
+  // Sprachwechsel: alles Dynamische neu zeichnen. Der Zustand (Auswahl, offene Gruppen) bleibt.
+  on('lang-change', () => {
+    renderCatalog();
+    renderEnvCards();
+    afterSelectionChange();
+  });
+
+  renderCatalog();
   updateModeUi();
   renderSteps();
   updateStartbar();

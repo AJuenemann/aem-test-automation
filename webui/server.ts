@@ -21,7 +21,7 @@ import { randomUUID } from 'node:crypto';
 
 import { parseCatalog, TestCatalog, CategoryDef } from './catalog.js';
 import { buildRun, RunRequest } from './runArgs.js';
-import { buildReportView, detectBlocker, ReportView } from './report.js';
+import { buildReportView, detectBlocker, detectBlockerInfo, BlockerInfo, ReportView } from './report.js';
 import { sortRunsNewestFirst, runSettingsFrom, RunMeta } from './history.js';
 import { isAllowedCleanupPath, selectTestPages } from './cleanup.js';
 
@@ -57,6 +57,32 @@ interface AemAccess {
 }
 
 /**
+ * Fehler mit maschinenlesbarem Code. Die API liefert zusätzlich zum deutschen `error`-Text
+ * `code` und `params` (additiv, die alte Oberfläche ignoriert sie). Die neue Web-UI
+ * übersetzt über den Code (Wörterbuch-Schlüssel `err.<code>`).
+ */
+class CodedError extends Error {
+  constructor(
+    readonly code: string,
+    message: string,
+    readonly params: Record<string, string> = {},
+  ) {
+    super(message);
+  }
+}
+
+/** Hinweis mit Code für die Web-UI (parallel zum deutschen Text in `warnings`). */
+interface ApiNote {
+  code: string;
+  params: Record<string, string>;
+}
+
+const noteOf = (err: unknown): ApiNote =>
+  err instanceof CodedError
+    ? { code: err.code, params: err.params }
+    : { code: 'cleanup.notSearched', params: { message: (err as Error).message } };
+
+/**
  * Liest AEM-Zugang aus der .env der Suite (ohne dotenv-Abhängigkeit).
  * Mit `envId` gilt die Author-URL des Presets aus environments.json (in der UI
  * gewählte Umgebung). Nur die Kennung kommt vom Browser, die URL nie: sonst
@@ -77,7 +103,7 @@ async function readAemAccess(envId?: string): Promise<AemAccess> {
       environments: { id: string; baseUrl: string }[];
     };
     const preset = presets.environments.find((e) => e.id === envId);
-    if (!preset?.baseUrl) throw new Error(`Unbekannte Umgebung "${envId}".`);
+    if (!preset?.baseUrl) throw new CodedError('env.unknown', `Unbekannte Umgebung "${envId}".`, { env: envId });
     baseUrl = preset.baseUrl.replace(/\/+$/, '');
   }
   // Defaults spiegeln config/env.ts (Pfad-Guard der Tests).
@@ -87,17 +113,23 @@ async function readAemAccess(envId?: string): Promise<AemAccess> {
     env.AEM_DAM_PLAYGROUND_PATH || '/content/dam/fhgtest',
   ].map((p) => p.replace(/\/+$/, ''));
   if (!baseUrl || !env.AEM_USER || !env.AEM_PASSWORD) {
-    throw new Error('AEM-Zugang unvollständig (.env: AEM_BASE_URL/AEM_USER/AEM_PASSWORD).');
+    throw new CodedError('access.incomplete', 'AEM-Zugang unvollständig (.env: AEM_BASE_URL/AEM_USER/AEM_PASSWORD).');
   }
   return { baseUrl, playgrounds, user: env.AEM_USER, password: env.AEM_PASSWORD };
 }
 
 /** Alle Umgebungen aus environments.json (Aufräum-Task durchsucht jede). */
-async function listEnvironments(): Promise<{ id: string; label: string }[]> {
+async function listEnvironments(): Promise<{ id: string; label: string; labelEn?: string }[]> {
   const presets = JSON.parse(await fs.readFile(path.join(__dirname, 'environments.json'), 'utf-8')) as {
-    environments: { id: string; label: string; baseUrl: string }[];
+    environments: { id: string; label: string; labelEn?: string; baseUrl: string }[];
   };
-  return presets.environments.filter((e) => e.baseUrl).map((e) => ({ id: e.id, label: e.label.split(' (')[0] }));
+  return presets.environments
+    .filter((e) => e.baseUrl)
+    .map((e) => ({
+      id: e.id,
+      label: e.label.split(' (')[0],
+      ...(e.labelEn ? { labelEn: e.labelEn.split(' (')[0] } : {}),
+    }));
 }
 
 /** Einfacher AEM-Request (Basic-Auth, TLS-Fehler tolerant wie die Tests). */
@@ -134,20 +166,24 @@ function aemRequest(
  * Listet die Pfade löschbarer Testseiten direkt unter allen Spielwiesen.
  * Nicht lesbare Spielwiesen landen in `warnings`, die übrigen werden trotzdem durchsucht.
  */
-async function listTestPages(access: AemAccess): Promise<{ pages: string[]; warnings: string[] }> {
+async function listTestPages(
+  access: AemAccess,
+): Promise<{ pages: string[]; warnings: string[]; warningNotes: ApiNote[] }> {
   const pages: string[] = [];
   const warnings: string[] = [];
+  const warningNotes: ApiNote[] = [];
   for (const root of access.playgrounds) {
     const res = await aemRequest(access, 'GET', `${root}.1.json`);
     if (res.status !== 200) {
       warnings.push(`${root} nicht lesbar (HTTP ${res.status}).`);
+      warningNotes.push({ code: 'cleanup.unreadable', params: { root, status: String(res.status) } });
       continue;
     }
     const json = JSON.parse(res.text) as Record<string, unknown>;
     const children = Object.keys(json).filter((k) => !k.startsWith('jcr:') && typeof json[k] === 'object');
     pages.push(...selectTestPages(children).map((name) => `${root}/${name}`));
   }
-  return { pages, warnings };
+  return { pages, warnings, warningNotes };
 }
 
 /** Löscht genau eine Testseite; nur direkt unter einer Spielwiese erlaubt (Guard). */
@@ -206,7 +242,7 @@ function validateGrep(grep: string | undefined): string | undefined {
     new RegExp(grep);
     return undefined;
   } catch (err) {
-    return `Ungültiger Filter (--grep): ${(err as Error).message}`;
+    return (err as Error).message;
   }
 }
 
@@ -371,7 +407,7 @@ function startUiMode(req: RunRequest): void {
 
 async function startRun(req: RunRequest): Promise<{ id: string; uiMode?: boolean }> {
   if (activeRun && !activeRun.finished) {
-    throw new Error('Es läuft bereits ein Test. Bitte warten oder abbrechen.');
+    throw new CodedError('run.busy', 'Es läuft bereits ein Test. Bitte warten oder abbrechen.');
   }
 
   // Spezialpfad UI-Mode: Playwrights eigene Oberfläche (`--ui`) ist ein
@@ -472,6 +508,7 @@ async function startRun(req: RunRequest): Promise<{ id: string; uiMode?: boolean
 
     // Report lesen und Summary/Blocker ableiten.
     let blocker: string | undefined;
+    let blockerInfo: BlockerInfo | undefined;
     try {
       const raw = JSON.parse(await fs.readFile(reportPath, 'utf-8'));
       const view = buildReportView(raw);
@@ -482,6 +519,7 @@ async function startRun(req: RunRequest): Promise<{ id: string; uiMode?: boolean
         flaky: view.summary.flaky,
       };
       blocker = detectBlocker(view);
+      blockerInfo = detectBlockerInfo(view);
     } catch {
       // Kein Report (z.B. früher Abbruch) -> Summary bleibt leer.
     }
@@ -496,7 +534,7 @@ async function startRun(req: RunRequest): Promise<{ id: string; uiMode?: boolean
       path.join(runDir, 'meta.json'),
       JSON.stringify(run.meta, null, 2),
     );
-    broadcast(run, 'done', { id, code, status, blocker });
+    broadcast(run, 'done', { id, code, status, blocker, blockerInfo });
     for (const client of run.clients) {
       client.end();
     }
@@ -638,6 +676,8 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     } catch (err) {
       return sendJson(res, 500, {
         error: `environments.json konnte nicht gelesen werden: ${(err as Error).message}`,
+        code: 'environments.unreadable',
+        params: { message: (err as Error).message },
       });
     }
   }
@@ -683,12 +723,19 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       // sonst scheitert der Lauf mit einer kryptischen Regex-Fehlermeldung.
       const grepError = validateGrep(body.grep);
       if (grepError) {
-        return sendJson(res, 400, { error: grepError });
+        return sendJson(res, 400, {
+          error: `Ungültiger Filter (--grep): ${grepError}`,
+          code: 'grep.invalid',
+          params: { message: grepError },
+        });
       }
       const result = await startRun(body);
       return sendJson(res, 200, result);
     } catch (err) {
-      return sendJson(res, 409, { error: (err as Error).message });
+      return sendJson(res, 409, {
+        error: (err as Error).message,
+        ...(err instanceof CodedError ? { code: err.code, params: err.params } : {}),
+      });
     }
   }
 
@@ -718,7 +765,7 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       activeRun.child.kill('SIGTERM');
       return sendJson(res, 200, { cancelled: true });
     }
-    return sendJson(res, 404, { error: 'Kein aktiver Lauf mit dieser ID.' });
+    return sendJson(res, 404, { error: 'Kein aktiver Lauf mit dieser ID.', code: 'run.notActive' });
   }
 
   const reportMatch = pathname.match(/^\/api\/run\/([^/]+)\/report$/);
@@ -729,10 +776,12 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
     } catch (err) {
       return sendJson(res, 500, {
         error: `Report konnte nicht gelesen werden: ${(err as Error).message}`,
+        code: 'report.unreadable',
+        params: { message: (err as Error).message },
       });
     }
     if (!view) {
-      return sendJson(res, 404, { error: 'Kein Report für diesen Lauf.' });
+      return sendJson(res, 404, { error: 'Kein Report für diesen Lauf.', code: 'report.missing' });
     }
     // Attachment-Pfade in URLs übersetzen.
     const rows = view.rows.map((row) => ({
@@ -743,7 +792,12 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
         url: a.path ? toArtifactUrl(reportMatch[1], a.path) : undefined,
       })),
     }));
-    return sendJson(res, 200, { rows, summary: view.summary, blocker: detectBlocker(view) });
+    return sendJson(res, 200, {
+      rows,
+      summary: view.summary,
+      blocker: detectBlocker(view),
+      blockerInfo: detectBlockerInfo(view),
+    });
   }
 
   if (pathname === '/api/runs' && req.method === 'GET') {
@@ -755,18 +809,18 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
   if (pathname === '/api/runs/delete' && req.method === 'POST') {
     const { ids } = await readJsonBody<{ ids?: string[] }>(req);
     if (!Array.isArray(ids)) {
-      return sendJson(res, 400, { error: 'ids muss ein Array sein.' });
+      return sendJson(res, 400, { error: 'ids muss ein Array sein.', code: 'ids.array' });
     }
-    const results: { id: string; ok: boolean; error?: string }[] = [];
+    const results: { id: string; ok: boolean; error?: string; code?: string }[] = [];
     for (const id of ids) {
       // UUID-Format prüfen (Schutz gegen Path-Traversal).
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
-        results.push({ id, ok: false, error: 'Ungültige Lauf-ID.' });
+        results.push({ id, ok: false, error: 'Ungültige Lauf-ID.', code: 'run.invalidId' });
         continue;
       }
       // Laufenden Lauf nicht löschen.
       if (activeRun && !activeRun.finished && activeRun.id === id) {
-        results.push({ id, ok: false, error: 'Lauf ist noch aktiv.' });
+        results.push({ id, ok: false, error: 'Lauf ist noch aktiv.', code: 'run.stillActive' });
         continue;
       }
       try {
@@ -788,28 +842,30 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
   // Nutzt marked.js via CDN — kein Download, kein Build-Step.
   if (pathname === '/view-md' && req.method === 'GET') {
     const fileUrl = decodeURIComponent(url.searchParams.get('file') ?? '');
+    // Sprache der Seite (additiv): ?lang=en, sonst Deutsch wie bisher.
+    const en = url.searchParams.get('lang') === 'en';
     const runsPrefix = '/files/runs/';
     if (!fileUrl.startsWith(runsPrefix)) {
-      return sendText(res, 400, 'Ungültiger Pfad.');
+      return sendText(res, 400, en ? 'Invalid path.' : 'Ungültiger Pfad.');
     }
     const parts = fileUrl.slice(runsPrefix.length).split('/');
     const runId = parts[0];
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(runId)) {
-      return sendText(res, 400, 'Ungültige Lauf-ID.');
+      return sendText(res, 400, en ? 'Invalid run ID.' : 'Ungültige Lauf-ID.');
     }
     const rel = parts.slice(1).join(path.sep);
     const abs = path.resolve(path.join(RUNS_DIR, runId), rel);
     if (!abs.startsWith(path.join(RUNS_DIR, runId) + path.sep) || !existsSync(abs)) {
-      return sendText(res, 404, 'Datei nicht gefunden.');
+      return sendText(res, 404, en ? 'File not found.' : 'Datei nicht gefunden.');
     }
     const mdContent = await fs.readFile(abs, 'utf-8');
     // JSON.stringify sichert den Markdown-Inhalt gegen alle Sonderzeichen ab.
     const html = `<!DOCTYPE html>
-<html lang="de">
+<html lang="${en ? 'en' : 'de'}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fehler-Kontext</title>
+  <title>${en ? 'Error context' : 'Fehler-Kontext'}</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; max-width: 860px;
@@ -842,16 +898,23 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
   // werden trotzdem durchsucht.
   if (pathname === '/api/cleanup/list' && req.method === 'GET') {
     try {
-      const environments: { id: string; label: string; pages: string[]; warnings: string[] }[] = [];
+      const environments: {
+        id: string; label: string; labelEn?: string; pages: string[]; warnings: string[]; warningNotes: ApiNote[];
+      }[] = [];
       let playgrounds: string[] = [];
       for (const e of await listEnvironments()) {
         try {
           const access = await readAemAccess(e.id);
           playgrounds = access.playgrounds;
-          const { pages, warnings } = await listTestPages(access);
-          environments.push({ ...e, pages, warnings });
+          const { pages, warnings, warningNotes } = await listTestPages(access);
+          environments.push({ ...e, pages, warnings, warningNotes });
         } catch (err) {
-          environments.push({ ...e, pages: [], warnings: [`Nicht durchsucht: ${(err as Error).message}`] });
+          environments.push({
+            ...e,
+            pages: [],
+            warnings: [`Nicht durchsucht: ${(err as Error).message}`],
+            warningNotes: [noteOf(err)],
+          });
         }
       }
       return sendJson(res, 200, { playgrounds, environments });

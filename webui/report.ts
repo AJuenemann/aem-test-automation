@@ -34,6 +34,9 @@ export interface ReportRow {
   flaky: boolean;
   /** Durchlauf bei `--repeat-each`, z.B. „Durchlauf 2/3"; sonst undefined. */
   repeatLabel?: string;
+  /** Nummer und Anzahl der Durchläufe (zweisprachige Anzeige in der Web-UI). */
+  repeatIndex?: number;
+  repeatTotal?: number;
   /** Grund für einen skip (aus test.skip('…') oder test.fixme('…')). */
   skipReason?: string;
   /** Gekürzte Fehlermeldung (erste, aussagekräftige Zeile) oder undefined. */
@@ -219,6 +222,8 @@ export function buildReportView(raw: RawReport): ReportView {
           retryCount: Math.max(0, results.length - 1),
           flaky: test.status === 'flaky' || (status === 'passed' && results.length > 1),
           repeatLabel: repeats > 1 ? `Durchlauf ${index}/${repeats}` : undefined,
+          repeatIndex: repeats > 1 ? index : undefined,
+          repeatTotal: repeats > 1 ? repeats : undefined,
           skipReason,
           errorSummary: errorMessage ? firstMeaningfulLine(errorMessage) : undefined,
           errorDetail: errorMessage ? stripAnsi(errorMessage).trim() : undefined,
@@ -267,6 +272,48 @@ function extractHost(text: string): string | undefined {
  * Tests gar nicht erst) — nicht erst, wenn ALLE Tests fehlschlagen.
  */
 export function detectBlocker(view: ReportView): string | undefined {
+  const info = detectBlockerInfo(view);
+  return info ? blockerText(info) : undefined;
+}
+
+/** Maschinenlesbarer Blocker: Die Web-UI übersetzt ihn je Sprache (Schlüssel `blocker.<code>`). */
+export interface BlockerInfo {
+  code: 'network' | 'env' | 'login' | 'smoke';
+  /** network: host (optional); smoke: tests (Titel, mit „; “ getrennt). */
+  params: Record<string, string>;
+}
+
+/** Deutscher Text zu einem Blocker (Quelle für `detectBlocker`, Fallback der Web-UI). */
+export function blockerText(info: BlockerInfo): string {
+  switch (info.code) {
+    case 'network': {
+      const hostPart = info.params.host ? ` (${info.params.host})` : '';
+      return (
+        `Netz-/Erreichbarkeitsproblem: Die AEM-Instanz${hostPart} war nicht ` +
+        `erreichbar. Wahrscheinlichste Ursache: VPN nicht verbunden. ` +
+        `Prüfe die VPN-Verbindung; sonst DNS/Firewall oder ob die Instanz läuft.`
+      );
+    }
+    case 'env':
+      return (
+        'Konfigurations-Blocker: Pflicht-Umgebungsvariablen fehlen ' +
+        '(AEM_BASE_URL/AEM_USER/AEM_PASSWORD). .env prüfen.'
+      );
+    case 'login':
+      return (
+        'Login-Blocker: Die Anmeldung an AEM ist fehlgeschlagen. Credentials in ' +
+        'der .env prüfen; erzwingt die Umgebung SSO, muss auth.setup.ts angepasst ' +
+        'werden (siehe README).'
+      );
+    case 'smoke':
+      return (
+        `Umgebungs-Blocker: Smoketest fehlgeschlagen (${info.params.tests}). ` +
+        'Die übrigen AEM-Tests wurden deshalb nicht ausgeführt. Ursache in der Smoketest-Zeile prüfen.'
+      );
+  }
+}
+
+export function detectBlockerInfo(view: ReportView): BlockerInfo | undefined {
   const failed = view.rows.filter(
     (r) => r.status === 'failed' || r.status === 'timedOut',
   );
@@ -283,20 +330,12 @@ export function detectBlocker(view: ReportView): string | undefined {
   const netHit = failed.find((r) => netPattern.test(haystack(r)));
   if (netHit) {
     const host = extractHost(haystack(netHit));
-    const hostPart = host ? ` (${host})` : '';
-    return (
-      `Netz-/Erreichbarkeitsproblem: Die AEM-Instanz${hostPart} war nicht ` +
-      `erreichbar. Wahrscheinlichste Ursache: VPN nicht verbunden. ` +
-      `Prüfe die VPN-Verbindung; sonst DNS/Firewall oder ob die Instanz läuft.`
-    );
+    return { code: 'network', params: host ? { host } : {} };
   }
 
   // 2) Fehlende Umgebungsvariablen/Credentials.
   if (failed.some((r) => /MissingEnvError/i.test(haystack(r)))) {
-    return (
-      'Konfigurations-Blocker: Pflicht-Umgebungsvariablen fehlen ' +
-      '(AEM_BASE_URL/AEM_USER/AEM_PASSWORD). .env prüfen.'
-    );
+    return { code: 'env', params: {} };
   }
 
   // 3) Login/Setup gescheitert (ohne klaren Netzfehler).
@@ -306,20 +345,13 @@ export function detectBlocker(view: ReportView): string | undefined {
       /login|anmeld|granite-shell|credentials|passwort/i.test(haystack(r)),
   );
   if (loginHit) {
-    return (
-      'Login-Blocker: Die Anmeldung an AEM ist fehlgeschlagen. Credentials in ' +
-      'der .env prüfen; erzwingt die Umgebung SSO, muss auth.setup.ts angepasst ' +
-      'werden (siehe README).'
-    );
+    return { code: 'login', params: {} };
   }
 
   // 4) Smoketest (Gate) gescheitert: Playwright überspringt dann alle übrigen AEM-Tests.
   const smokeFailed = failed.filter((r) => r.project === 'smoke');
   if (smokeFailed.length > 0) {
-    return (
-      `Umgebungs-Blocker: Smoketest fehlgeschlagen (${smokeFailed.map((r) => r.title).join('; ')}). ` +
-      'Die übrigen AEM-Tests wurden deshalb nicht ausgeführt. Ursache in der Smoketest-Zeile prüfen.'
-    );
+    return { code: 'smoke', params: { tests: smokeFailed.map((r) => r.title).join('; ') } };
   }
 
   return undefined;

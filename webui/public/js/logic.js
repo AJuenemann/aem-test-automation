@@ -1,10 +1,21 @@
 // Reine Logik der Web-UI (ohne DOM). Lässt sich unter Node testen
 // (tests/unit/webui-ui-logic.spec.ts).
+import { t, tn, hasKey, locale } from './i18n.js';
 
 /** Theme aus gespeicherter Wahl und Systemeinstellung. */
 export function resolveTheme(stored, prefersDark) {
   if (stored === 'light' || stored === 'dark') return stored;
   return prefersDark ? 'dark' : 'light';
+}
+
+/**
+ * Sprache aus gespeicherter Wahl und Systemsprache: de* -> Deutsch, sonst Englisch.
+ * `languages` entspricht navigator.languages (erster Eintrag zählt).
+ */
+export function resolveLang(stored, languages) {
+  if (stored === 'de' || stored === 'en') return stored;
+  const first = String((languages && languages[0]) || '').toLowerCase();
+  return first === 'de' || first.startsWith('de-') ? 'de' : 'en';
 }
 
 export function esc(s) {
@@ -42,7 +53,8 @@ export function isUnitOnly(testCount, projects) {
 /** Passt der Test zum Suchbegriff (Name, Suite, Datei, Kategorie, Tags)? */
 export function testMatches(test, file, group, term) {
   if (!term) return true;
-  const haystack = [test.title, file.label, file.file, group.label, ...(test.tags || [])]
+  const haystack = [test.title, file.label, file.file, group.label, group.labelEn, ...(test.tags || [])]
+    .filter(Boolean)
     .join(' ')
     .toLowerCase();
   return haystack.includes(term);
@@ -63,15 +75,8 @@ export const severityOf = (row) => SEVERITY[statusKind(row)];
 
 /** Lesbare Kurzbezeichnung für einen Level-Tag. */
 export function levelLabel(level) {
-  const map = {
-    smoke: 'Smoketest',
-    level1: 'Basisfunktionen (L1)',
-    'level2-components': 'Komponenten (L2)',
-    integration: 'Integrationstest',
-    regression: 'Regressionstest',
-    unit: 'Unit',
-  };
-  return map[level] || level || 'Sonstige';
+  if (level && hasKey(`level.${level}`)) return t(`level.${level}`);
+  return level || t('level.other');
 }
 
 /**
@@ -100,16 +105,16 @@ export function groupRows(rows) {
 
 /** Kernaussage eines Laufs. */
 export function headline(summary, status) {
-  if (status === 'cancelled') return 'Lauf abgebrochen';
+  if (status === 'cancelled') return t('headline.cancelled');
   if (!summary) return '';
   const passed = summary.passed || 0;
   const failed = summary.failed || 0;
   const skipped = summary.skipped || 0;
   const total = summary.total ?? passed + failed + skipped;
-  if (total === 0) return 'Keine Tests ausgeführt';
-  if (failed > 0) return `${failed} von ${total} ${total === 1 ? 'Test' : 'Tests'} fehlgeschlagen`;
-  if (passed === total) return total === 1 ? '1 Test bestanden' : `Alle ${total} Tests bestanden`;
-  return `${passed} von ${total} Tests bestanden`;
+  if (total === 0) return t('headline.none');
+  if (failed > 0) return tn('headline.failed', total, { failed, total });
+  if (passed === total) return total === 1 ? t('headline.single') : t('headline.all', { total });
+  return t('headline.some', { passed, total });
 }
 
 export function fmtDuration(ms) {
@@ -129,16 +134,15 @@ export function fmtSize(bytes) {
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
-const SLOWMO_LABELS = { 0: 'Normal', 500: 'Etwas langsamer', 1500: 'Langsam', 3000: 'Sehr langsam' };
-export const slowmoLabel = (ms) => SLOWMO_LABELS[ms] ?? `${ms} ms`;
+export const slowmoLabel = (ms) => (hasKey(`slowmo.${ms}`) ? t(`slowmo.${ms}`) : `${ms} ms`);
 
 /** Kurztext der Lauf-Einstellungen. Leer bei älteren Läufen ohne Einstellungen. */
 export function runSettingsLabel(s) {
   if (!s) return '';
-  const parts = [s.headed ? `Sichtbar, ${slowmoLabel(s.slowMo)}` : 'Headless'];
-  if (s.repeatEach > 1) parts.push(`${s.repeatEach}×`);
-  if (s.smokeGate) parts.push('Smoketest vorab');
-  if (s.updateSnapshots) parts.push('Baselines aktualisiert');
+  const parts = [s.headed ? t('settings.headed', { tempo: slowmoLabel(s.slowMo) }) : t('settings.headless')];
+  if (s.repeatEach > 1) parts.push(t('sum.repeat', { n: s.repeatEach }));
+  if (s.smokeGate) parts.push(t('settings.smokeGate'));
+  if (s.updateSnapshots) parts.push(t('settings.snapshots'));
   return parts.join(', ');
 }
 
@@ -156,7 +160,7 @@ export function runSelectionLabel(run) {
   }
   if (projects?.length) {
     const meaningful = projects.filter((p) => p !== 'setup');
-    return meaningful.length ? `Alle Tests (${meaningful.join(', ')})` : 'Alle Tests';
+    return meaningful.length ? t('run.all.projects', { projects: meaningful.join(', ') }) : t('run.all');
   }
   return run.selection || '—';
 }
@@ -177,18 +181,18 @@ export function runAreaLabel(run, fileToGroup) {
 
 /** Kernaussage eines Laufs für die Historie (wie in der Detailansicht). */
 export function runHeadline(run) {
-  return headline(run.summary, run.status) || (run.status === 'running' ? 'Läuft' : run.status || '');
+  return headline(run.summary, run.status) || (run.status === 'running' ? t('headline.running') : run.status || '');
 }
 
 const sameDay = (a, b) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
 export function dayLabel(date, now = new Date()) {
-  if (sameDay(date, now)) return 'Heute';
+  if (sameDay(date, now)) return t('day.today');
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
-  if (sameDay(date, yesterday)) return 'Gestern';
-  return date.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'long' });
+  if (sameDay(date, yesterday)) return t('day.yesterday');
+  return date.toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'long' });
 }
 
 /**
@@ -203,7 +207,7 @@ export function groupRunsByMonthDay(runs, now = new Date()) {
     if (!months.has(monthKey)) {
       months.set(monthKey, {
         key: monthKey,
-        label: d.toLocaleString('de-DE', { month: 'long', year: 'numeric' }),
+        label: d.toLocaleString(locale(), { month: 'long', year: 'numeric' }),
         open: d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth(),
         runs: [],
         days: new Map(),

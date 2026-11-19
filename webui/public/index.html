@@ -14,6 +14,16 @@
         } catch (e) { document.documentElement.dataset.theme = 'light'; }
       })();
     </script>
+    <!-- Sprache vor dem ersten Zeichnen setzen. Logik: js/logic.js resolveLang. -->
+    <script>
+      (function () {
+        try {
+          var s = localStorage.getItem('aem-webui-lang');
+          var first = ((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
+          document.documentElement.lang = s === 'de' || s === 'en' ? s : /^de(-|$)/.test(first) ? 'de' : 'en';
+        } catch (e) { document.documentElement.lang = 'de'; }
+      })();
+    </script>
     <link rel="stylesheet" href="/tokens.css" />
     <link rel="stylesheet" href="/app.css" />
   </head>
@@ -53,37 +63,40 @@
       </defs>
     </svg>
 
-    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+    <a class="skip-link" href="#main" data-i18n="app.skip">Zum Inhalt springen</a>
 
     <header class="topbar">
       <div class="brand">
         <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></span>
-        <h1>AEM Testautomatisierung</h1>
+        <h1 data-i18n="app.title">AEM Testautomatisierung</h1>
       </div>
 
-      <nav class="tabs" role="tablist" aria-label="Bereiche">
+      <nav class="tabs" role="tablist" aria-label="Bereiche" data-i18n-aria-label="nav.label">
         <a role="tab" id="tab-btn-testlauf" href="#/testlauf" aria-controls="tab-testlauf" data-tab="testlauf">
-          <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg><span>Testlauf</span>
+          <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg><span data-i18n="tab.testlauf">Testlauf</span>
         </a>
         <a role="tab" id="tab-btn-ergebnisse" href="#/ergebnisse" aria-controls="tab-ergebnisse" data-tab="ergebnisse">
-          <svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Ergebnisse</span>
+          <svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><span data-i18n="tab.ergebnisse">Ergebnisse</span>
           <span class="tab-dot" id="tab-dot" hidden></span>
         </a>
         <a role="tab" id="tab-btn-werkzeuge" href="#/werkzeuge" aria-controls="tab-werkzeuge" data-tab="werkzeuge">
-          <svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg><span>Werkzeuge</span>
+          <svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg><span data-i18n="tab.werkzeuge">Werkzeuge</span>
         </a>
       </nav>
 
       <div class="top-actions">
         <button type="button" id="run-pill" class="run-pill" hidden>
-          <span class="spinner" aria-hidden="true"></span><span id="run-pill-text">Lauf aktiv</span>
+          <span class="spinner" aria-hidden="true"></span><span id="run-pill-text" data-i18n="top.runPill">Lauf aktiv</span>
         </button>
-        <button type="button" id="theme-toggle" class="icon-btn" aria-label="Zum dunklen Theme wechseln" title="Hell / Dunkel">
+        <button type="button" id="lang-toggle" class="lang-btn" aria-label="Sprache wechseln" title="Sprache wechseln">
+          <span id="lang-toggle-text" aria-hidden="true">DE</span>
+        </button>
+        <button type="button" id="theme-toggle" class="icon-btn" aria-label="Zum dunklen Theme wechseln" title="Hell / Dunkel" data-i18n-title="theme.title">
           <svg class="icon theme-moon" aria-hidden="true"><use href="#i-moon"/></svg>
           <svg class="icon theme-sun" aria-hidden="true"><use href="#i-sun"/></svg>
         </button>
-        <a class="btn btn-ghost btn-sm" href="/legacy/" title="Bisherige Oberfläche öffnen">Alte Oberfläche</a>
-        <button type="button" id="shutdown" class="icon-btn" aria-label="Anwendung beenden" title="Anwendung beenden und Port freigeben">
+        <a class="btn btn-ghost btn-sm" href="/legacy/" title="Bisherige Oberfläche öffnen" data-i18n="legacy.link" data-i18n-title="legacy.title">Alte Oberfläche</a>
+        <button type="button" id="shutdown" class="icon-btn" aria-label="Anwendung beenden" title="Anwendung beenden und Port freigeben" data-i18n-aria-label="shutdown.aria" data-i18n-title="shutdown.title">
           <svg class="icon" aria-hidden="true"><use href="#i-power"/></svg>
         </button>
       </div>
@@ -94,12 +107,12 @@
       <section id="tab-testlauf" class="panel" role="tabpanel" aria-labelledby="tab-btn-testlauf" hidden>
         <div class="panel-head">
           <div>
-            <h2>Testlauf vorbereiten</h2>
-            <p class="lede">Tests wählen, Umgebung festlegen, starten.</p>
+            <h2 data-i18n="run.title">Testlauf vorbereiten</h2>
+            <p class="lede" data-i18n="run.lede">Tests wählen, Umgebung festlegen, starten.</p>
           </div>
-          <div class="segmented" role="group" aria-label="Darstellung der Schritte">
-            <button type="button" data-stepmode="single" aria-pressed="true" title="Ein Schritt nach dem anderen">Assistent</button>
-            <button type="button" data-stepmode="all" aria-pressed="false" title="Alle Schritte gleichzeitig anzeigen">Alle Schritte</button>
+          <div class="segmented" role="group" aria-label="Darstellung der Schritte" data-i18n-aria-label="steps.layout.aria">
+            <button type="button" data-stepmode="single" aria-pressed="true" title="Ein Schritt nach dem anderen" data-i18n="steps.wizard" data-i18n-title="steps.wizard.title">Assistent</button>
+            <button type="button" data-stepmode="all" aria-pressed="false" title="Alle Schritte gleichzeitig anzeigen" data-i18n="steps.all" data-i18n-title="steps.all.title">Alle Schritte</button>
           </div>
         </div>
 
@@ -109,7 +122,7 @@
             <h3 class="step-title">
               <button type="button" class="step-head" aria-expanded="true" aria-controls="step-body-1">
                 <span class="step-num" aria-hidden="true"></span>
-                <span class="step-label">Tests auswählen</span>
+                <span class="step-label" data-i18n="step.1.label">Tests auswählen</span>
                 <span class="step-summary" id="sum-1"></span>
                 <svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg>
               </button>
@@ -118,18 +131,18 @@
               <div class="catalog-toolbar">
                 <label class="search">
                   <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
-                  <span class="sr-only">Tests filtern</span>
-                  <input type="search" id="catalog-search" placeholder="Tests filtern (Name, Kategorie, Tag)" autocomplete="off" />
+                  <span class="sr-only" data-i18n="catalog.filter.sr">Tests filtern</span>
+                  <input type="search" id="catalog-search" placeholder="Tests filtern (Name, Kategorie, Tag)" data-i18n-placeholder="catalog.filter.placeholder" autocomplete="off" />
                 </label>
                 <div class="toolbar-links">
-                  <button type="button" id="select-all" class="link">Alle</button>
-                  <button type="button" id="select-none" class="link" hidden>Keine</button>
-                  <button type="button" id="reset-selection" class="link" title="Auswahl und Suchfeld zurücksetzen" hidden>Zurücksetzen</button>
+                  <button type="button" id="select-all" class="link" data-i18n="sel.all">Alle</button>
+                  <button type="button" id="select-none" class="link" data-i18n="sel.none" hidden>Keine</button>
+                  <button type="button" id="reset-selection" class="link" title="Auswahl und Suchfeld zurücksetzen" data-i18n="sel.reset" data-i18n-title="sel.reset.title" hidden>Zurücksetzen</button>
                 </div>
               </div>
-              <div id="active-chips" class="chips" aria-label="Aktive Auswahl"></div>
+              <div id="active-chips" class="chips" aria-label="Aktive Auswahl" data-i18n-aria-label="chips.aria"></div>
               <div id="catalog" class="catalog" aria-live="polite">Lade Tests…</div>
-              <div class="step-foot"><span class="step-hint" id="hint-next-1" hidden>Wähle mindestens einen Test, um fortzufahren.</span><button type="button" class="btn" data-next="2">Weiter: Umgebung</button></div>
+              <div class="step-foot"><span class="step-hint" id="hint-next-1" data-i18n="step.1.hint" hidden>Wähle mindestens einen Test, um fortzufahren.</span><button type="button" class="btn" data-next="2" data-i18n="step.next.env">Weiter: Umgebung</button></div>
             </div>
           </li>
 
@@ -138,15 +151,15 @@
             <h3 class="step-title">
               <button type="button" class="step-head" aria-expanded="false" aria-controls="step-body-2">
                 <span class="step-num" aria-hidden="true"></span>
-                <span class="step-label">Umgebung wählen</span>
+                <span class="step-label" data-i18n="step.2.label">Umgebung wählen</span>
                 <span class="step-summary" id="sum-2"></span>
                 <svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg>
               </button>
             </h3>
             <div class="step-body" id="step-body-2">
-              <div id="env-cards" class="choice-grid" role="group" aria-label="Testumgebung"></div>
+              <div id="env-cards" class="choice-grid" role="group" aria-label="Testumgebung" data-i18n-aria-label="env.group.aria"></div>
               <p id="env-hint" class="hint"></p>
-              <div class="step-foot"><span class="step-hint" id="hint-next-2" hidden>Wähle eine Umgebung, um fortzufahren.</span><button type="button" class="btn" data-next="3">Weiter: Ausführung</button></div>
+              <div class="step-foot"><span class="step-hint" id="hint-next-2" data-i18n="step.2.hint" hidden>Wähle eine Umgebung, um fortzufahren.</span><button type="button" class="btn" data-next="3" data-i18n="step.next.exec">Weiter: Ausführung</button></div>
             </div>
           </li>
 
@@ -155,56 +168,56 @@
             <h3 class="step-title">
               <button type="button" class="step-head" aria-expanded="false" aria-controls="step-body-3">
                 <span class="step-num" aria-hidden="true"></span>
-                <span class="step-label">Ausführung festlegen</span>
+                <span class="step-label" data-i18n="step.3.label">Ausführung festlegen</span>
                 <span class="step-summary" id="sum-3"></span>
                 <svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg>
               </button>
             </h3>
             <div class="step-body" id="step-body-3">
-              <div id="mode-cards" class="choice-grid" role="group" aria-label="Ausführungsmodus">
+              <div id="mode-cards" class="choice-grid" role="group" aria-label="Ausführungsmodus" data-i18n-aria-label="mode.group.aria">
                 <button type="button" class="choice" data-mode="headless" aria-pressed="true">
-                  <span class="choice-title">Headless</span>
-                  <span class="choice-desc">Im Hintergrund, am schnellsten.</span>
+                  <span class="choice-title" data-i18n="mode.headless">Headless</span>
+                  <span class="choice-desc" data-i18n="mode.headless.desc">Im Hintergrund, am schnellsten.</span>
                 </button>
                 <button type="button" class="choice" data-mode="headed" aria-pressed="false">
-                  <span class="choice-title">Sichtbar</span>
-                  <span class="choice-desc">Browser-Fenster läuft mit.</span>
+                  <span class="choice-title" data-i18n="mode.headed">Sichtbar</span>
+                  <span class="choice-desc" data-i18n="mode.headed.desc">Browser-Fenster läuft mit.</span>
                 </button>
               </div>
 
               <div id="slowmo-row" class="slowmo" hidden>
-                <span class="field-label" id="slowmo-label">Tempo</span>
+                <span class="field-label" id="slowmo-label" data-i18n="slowmo.label">Tempo</span>
                 <div id="slowmo-steps" class="segmented" role="group" aria-labelledby="slowmo-label">
-                  <button type="button" data-ms="0" aria-pressed="true">Normal</button>
-                  <button type="button" data-ms="500" aria-pressed="false">Etwas langsamer</button>
-                  <button type="button" data-ms="1500" aria-pressed="false">Langsam</button>
-                  <button type="button" data-ms="3000" aria-pressed="false">Sehr langsam</button>
+                  <button type="button" data-ms="0" aria-pressed="true" data-i18n="slowmo.0">Normal</button>
+                  <button type="button" data-ms="500" aria-pressed="false" data-i18n="slowmo.500">Etwas langsamer</button>
+                  <button type="button" data-ms="1500" aria-pressed="false" data-i18n="slowmo.1500">Langsam</button>
+                  <button type="button" data-ms="3000" aria-pressed="false" data-i18n="slowmo.3000">Sehr langsam</button>
                 </div>
-                <p class="hint">„Normal" ist die Playwright-Standardgeschwindigkeit. Die anderen Stufen pausieren pro Aktion.</p>
+                <p class="hint" data-i18n="slowmo.hint">„Normal" ist die Playwright-Standardgeschwindigkeit. Die anderen Stufen pausieren pro Aktion.</p>
               </div>
 
               <details class="more">
-                <summary>Weitere Optionen</summary>
+                <summary data-i18n="more.summary">Weitere Optionen</summary>
                 <div class="more-grid">
                   <label class="field">
-                    <span class="field-label">Filter (--grep)</span>
-                    <input type="text" id="grep" placeholder="z. B. Seite anlegen" />
+                    <span class="field-label" data-i18n="opt.grep">Filter (--grep)</span>
+                    <input type="text" id="grep" placeholder="z. B. Seite anlegen" data-i18n-placeholder="opt.grep.placeholder" />
                   </label>
                   <label class="field">
-                    <span class="field-label">Wiederholungen</span>
+                    <span class="field-label" data-i18n="opt.repeat">Wiederholungen</span>
                     <input type="number" id="repeat-each" min="1" value="1" />
-                    <span class="hint">1 = normal. Höher nur zur Flakiness-Diagnose.</span>
+                    <span class="hint" data-i18n="opt.repeat.hint">1 = normal. Höher nur zur Flakiness-Diagnose.</span>
                   </label>
                   <label class="check">
                     <input type="checkbox" id="update-snapshots" />
-                    <span>Baselines aktualisieren</span>
+                    <span data-i18n="opt.snapshots">Baselines aktualisieren</span>
                   </label>
                   <label class="check">
                     <input type="checkbox" id="smoke-gate" aria-describedby="smoke-gate-hint" />
-                    <span>Smoketest vorab ausführen</span>
+                    <span data-i18n="opt.smoke">Smoketest vorab ausführen</span>
                   </label>
                 </div>
-                <p id="smoke-gate-hint" class="hint">Der Smoketest prüft zuerst die Umgebung (ca. 30 s). Schlägt er fehl, laufen die gewählten Tests nicht. Aus: Es laufen nur die gewählten Tests.</p>
+                <p id="smoke-gate-hint" class="hint" data-i18n="opt.smoke.hint">Der Smoketest prüft zuerst die Umgebung (ca. 30 s). Schlägt er fehl, laufen die gewählten Tests nicht. Aus: Es laufen nur die gewählten Tests.</p>
               </details>
             </div>
           </li>
@@ -218,13 +231,13 @@
           </div>
           <div class="startbar-actions">
             <button type="button" id="cmd-toggle" class="btn btn-ghost" aria-expanded="false" aria-controls="cmd-panel">
-              <svg class="icon" aria-hidden="true"><use href="#i-terminal"/></svg>Befehl
+              <svg class="icon" aria-hidden="true"><use href="#i-terminal"/></svg><span data-i18n="startbar.cmd">Befehl</span>
             </button>
             <button type="button" id="cancel" class="btn btn-danger" hidden>
-              <svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg>Abbrechen
+              <svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg><span data-i18n="startbar.cancel">Abbrechen</span>
             </button>
             <button type="button" id="run" class="btn btn-primary btn-lg" disabled>
-              <svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Tests starten
+              <svg class="icon" aria-hidden="true"><use href="#i-play"/></svg><span data-i18n="startbar.start">Tests starten</span>
             </button>
           </div>
           <div id="cmd-panel" class="cmd-panel" hidden><pre id="preview"></pre></div>
@@ -236,9 +249,9 @@
         <div class="res-main">
           <div id="res-empty" class="empty card">
             <svg class="icon icon-xl" aria-hidden="true"><use href="#i-inbox"/></svg>
-            <h2>Noch kein Lauf</h2>
-            <p>Starte einen Testlauf oder öffne rechts einen früheren Lauf.</p>
-            <a class="btn btn-primary" href="#/testlauf">Zum Testlauf</a>
+            <h2 data-i18n="res.empty.title">Noch kein Lauf</h2>
+            <p data-i18n="res.empty.text">Starte einen Testlauf oder öffne rechts einen früheren Lauf.</p>
+            <a class="btn btn-primary" href="#/testlauf" data-i18n="res.empty.cta">Zum Testlauf</a>
           </div>
 
           <div id="res-view" hidden>
@@ -250,10 +263,10 @@
               </div>
               <div class="res-head-actions">
                 <button type="button" id="res-cancel" class="btn btn-danger" hidden>
-                  <svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg>Abbrechen
+                  <svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg><span data-i18n="res.cancel">Abbrechen</span>
                 </button>
                 <a id="open-report" href="/report" target="_blank" rel="noopener" class="btn">
-                  Report &amp; Traces<svg class="icon" aria-hidden="true"><use href="#i-external"/></svg>
+                  <span data-i18n="res.report">Report &amp; Traces</span><svg class="icon" aria-hidden="true"><use href="#i-external"/></svg>
                 </a>
               </div>
               <div class="progress" id="res-progress" hidden><span></span></div>
@@ -264,24 +277,24 @@
             <div id="res-capture" class="banner banner-warn" hidden>
               <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
               <div class="banner-text">
-                <strong><span id="capture-count">0</span> Tests übersprungen:</strong> Referenz-Fixtures fehlen.
-                <span class="muted">Der Capture-Lauf hält den aktuellen Dialog-Stand fest (<code>CAPTURE_DIALOGS=1</code>).</span>
+                <strong><span id="capture-count">0</span> <span id="capture-label">Tests übersprungen:</span></strong> <span data-i18n="res.capture.missing">Referenz-Fixtures fehlen.</span>
+                <span class="muted"><span data-i18n="res.capture.hint">Der Capture-Lauf hält den aktuellen Dialog-Stand fest</span> (<code>CAPTURE_DIALOGS=1</code>).</span>
               </div>
-              <button type="button" id="run-capture" class="btn btn-sm">Capture jetzt ausführen</button>
+              <button type="button" id="run-capture" class="btn btn-sm" data-i18n="res.capture.run">Capture jetzt ausführen</button>
             </div>
 
-            <div class="filters" id="res-filters" role="group" aria-label="Ergebnisse filtern" hidden></div>
+            <div class="filters" id="res-filters" role="group" aria-label="Ergebnisse filtern" data-i18n-aria-label="res.filters.aria" hidden></div>
             <div id="res-groups"></div>
 
             <details id="res-log" class="log-card card">
-              <summary>Live-Log</summary>
+              <summary data-i18n="res.log">Live-Log</summary>
               <pre id="log" class="log"></pre>
             </details>
           </div>
         </div>
 
         <aside class="res-side card" aria-labelledby="history-title">
-          <h3 id="history-title"><svg class="icon" aria-hidden="true"><use href="#i-history"/></svg>Frühere Läufe</h3>
+          <h3 id="history-title"><svg class="icon" aria-hidden="true"><use href="#i-history"/></svg><span data-i18n="history.title">Frühere Läufe</span></h3>
           <div id="history" class="history">—</div>
         </aside>
       </section>
@@ -290,39 +303,39 @@
       <section id="tab-werkzeuge" class="panel" role="tabpanel" aria-labelledby="tab-btn-werkzeuge" hidden>
         <div class="panel-head">
           <div>
-            <h2>Werkzeuge</h2>
-            <p class="lede">Hilfsfunktionen neben dem eigentlichen Testlauf.</p>
+            <h2 data-i18n="tools.title">Werkzeuge</h2>
+            <p class="lede" data-i18n="tools.lede">Hilfsfunktionen neben dem eigentlichen Testlauf.</p>
           </div>
         </div>
 
         <div class="tools-grid">
           <article class="card tool" aria-labelledby="tool-cleanup-title">
-            <h3 id="tool-cleanup-title"><svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg>Testseiten aufräumen</h3>
-            <p>Von Tests angelegte Seiten, Visitenkarten und Assets unter den Spielwiesen finden und löschen. Durchsucht alle Umgebungen.</p>
+            <h3 id="tool-cleanup-title"><svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg><span data-i18n="cleanup.title">Testseiten aufräumen</span></h3>
+            <p data-i18n="cleanup.text">Von Tests angelegte Seiten, Visitenkarten und Assets unter den Spielwiesen finden und löschen. Durchsucht alle Umgebungen.</p>
             <div class="tool-actions">
-              <button type="button" id="cleanup-scan" class="btn">Testseiten suchen</button>
-              <button type="button" id="cleanup-delete" class="btn btn-danger" hidden>Ausgewählte löschen</button>
+              <button type="button" id="cleanup-scan" class="btn" data-i18n="cleanup.scan">Testseiten suchen</button>
+              <button type="button" id="cleanup-delete" class="btn btn-danger" data-i18n="cleanup.delete" hidden>Ausgewählte löschen</button>
             </div>
             <div id="cleanup-result" class="cleanup-result" aria-live="polite"></div>
           </article>
 
           <article class="card tool" aria-labelledby="tool-ui-title">
-            <h3 id="tool-ui-title"><svg class="icon" aria-hidden="true"><use href="#i-window"/></svg>Playwright UI-Mode</h3>
-            <p>Öffnet Playwrights eigene Oberfläche in einem separaten Fenster. Übernommen werden Umgebung, Projekte und Filter. Die Testauswahl nach Datei und Zeile übernimmt Playwright nicht: Dort das Suchfeld nutzen.</p>
+            <h3 id="tool-ui-title"><svg class="icon" aria-hidden="true"><use href="#i-window"/></svg><span data-i18n="uimode.title">Playwright UI-Mode</span></h3>
+            <p data-i18n="uimode.text">Öffnet Playwrights eigene Oberfläche in einem separaten Fenster. Übernommen werden Umgebung, Projekte und Filter. Die Testauswahl nach Datei und Zeile übernimmt Playwright nicht: Dort das Suchfeld nutzen.</p>
             <div class="tool-actions">
-              <button type="button" id="open-uimode" class="btn">UI-Mode öffnen</button>
+              <button type="button" id="open-uimode" class="btn" data-i18n="uimode.open">UI-Mode öffnen</button>
             </div>
             <p id="uimode-result" class="hint" role="status"></p>
           </article>
 
           <article class="card tool tool-wide" aria-labelledby="tool-base-title">
-            <h3 id="tool-base-title"><svg class="icon" aria-hidden="true"><use href="#i-compare"/></svg>Referenzbilder vergleichen</h3>
-            <p>Zwei Umgebungen nebeneinander, zum Beispiel alt gegen neu.</p>
+            <h3 id="tool-base-title"><svg class="icon" aria-hidden="true"><use href="#i-compare"/></svg><span data-i18n="base.title">Referenzbilder vergleichen</span></h3>
+            <p data-i18n="base.text">Zwei Umgebungen nebeneinander, zum Beispiel alt gegen neu.</p>
             <div class="base-controls">
-              <label class="field"><span class="field-label">Umgebung A</span><select id="base-a"></select></label>
-              <label class="field"><span class="field-label">Umgebung B</span><select id="base-b"></select></label>
+              <label class="field"><span class="field-label" data-i18n="base.envA">Umgebung A</span><select id="base-a"></select></label>
+              <label class="field"><span class="field-label" data-i18n="base.envB">Umgebung B</span><select id="base-b"></select></label>
             </div>
-            <p id="baseline-note" class="hint" hidden>Nur eine Umgebung vorhanden. Ein Vergleich braucht zwei.</p>
+            <p id="baseline-note" class="hint" data-i18n="base.note" hidden>Nur eine Umgebung vorhanden. Ein Vergleich braucht zwei.</p>
             <div id="baselines" class="baselines">—</div>
           </article>
         </div>
@@ -334,20 +347,20 @@
     <!-- Allgemeiner Bestätigungsdialog -->
     <dialog id="confirm-dialog" aria-labelledby="confirm-title">
       <form method="dialog">
-        <h3 id="confirm-title">Bestätigen</h3>
+        <h3 id="confirm-title" data-i18n="dialog.confirm.title">Bestätigen</h3>
         <p id="confirm-message"></p>
         <p id="confirm-detail" class="dialog-detail" hidden></p>
         <div class="dialog-actions">
-          <button type="submit" value="cancel" class="btn">Abbrechen</button>
-          <button type="submit" value="ok" id="confirm-ok" class="btn btn-primary">Bestätigen</button>
+          <button type="submit" value="cancel" class="btn" data-i18n="dialog.cancel">Abbrechen</button>
+          <button type="submit" value="ok" id="confirm-ok" class="btn btn-primary" data-i18n="dialog.confirm.ok">Bestätigen</button>
         </div>
       </form>
     </dialog>
 
     <!-- Referenzbild in Vollansicht -->
-    <dialog id="lightbox" aria-label="Referenzbild">
+    <dialog id="lightbox" aria-label="Referenzbild" data-i18n-aria-label="lightbox.aria">
       <form method="dialog">
-        <button type="submit" class="icon-btn lightbox-close" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+        <button type="submit" class="icon-btn lightbox-close" aria-label="Schließen" data-i18n-aria-label="lightbox.close"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
       </form>
       <figure><img alt="" /><figcaption></figcaption></figure>
     </dialog>

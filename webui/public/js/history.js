@@ -2,11 +2,15 @@
 import {
   $, $$, state, esc, icon, api, on, toast, confirmDialog, baseRunFields,
 } from './core.js';
+import { t, tn, hasKey, locale } from './i18n.js';
+
 import {
   fmtSize, groupRunsByMonthDay, runAreaLabel, runHeadline, runSelectionLabel, runSettingsLabel,
 } from './logic.js';
 import { showRun, startRunRequest } from './results.js';
 import { fileToGroupMap } from './testrun.js';
+
+const statusText = (status) => (hasKey(`status.${status}`) ? t(`status.${status}`) : status || '');
 
 let shownRunId = null;
 let totalSizeBytes = 0;
@@ -21,11 +25,17 @@ export async function loadHistory() {
 function renderList() {
   const el = $('#history');
   if (!state.runs.length) {
-    el.innerHTML = '<p class="muted">Noch keine früheren Läufe. Die Liste füllt sich nach dem ersten Testlauf.</p>';
+    el.innerHTML = `<p class="muted">${esc(t('history.empty'))}</p>`;
     return;
   }
+  // Auswahl und aufgeklappte Monate überleben das Neuzeichnen (z. B. beim Sprachwechsel).
+  const checkedIds = new Set(checkedBoxes().map((cb) => cb.dataset.id));
+  const openMonths = $$('.runs-month').map((m) => m.open);
   el.innerHTML = '';
   el.appendChild(renderHistory(state.runs, totalSizeBytes));
+  $$('.runs-month').forEach((m, i) => { if (i < openMonths.length) m.open = openMonths[i]; });
+  $$('.run-cb').forEach((cb) => { cb.checked = checkedIds.has(cb.dataset.id); });
+  syncGroups();
   updateActions();
 }
 
@@ -33,9 +43,9 @@ function renderHistory(runs, totalSizeBytes) {
   const wrap = document.createElement('div');
   wrap.insertAdjacentHTML('beforeend',
     `<div class="runs-toolbar">` +
-    `<button type="button" id="runs-rerun" class="btn btn-sm" disabled>Neu starten</button>` +
-    `<button type="button" id="runs-delete" class="btn btn-sm btn-danger" disabled>Löschen</button>` +
-    `<span class="runs-total">${runs.length} ${runs.length === 1 ? 'Lauf' : 'Läufe'} · ${fmtSize(totalSizeBytes)} gesamt</span></div>`);
+    `<button type="button" id="runs-rerun" class="btn btn-sm" disabled>${esc(t('history.rerun'))}</button>` +
+    `<button type="button" id="runs-delete" class="btn btn-sm btn-danger" disabled>${esc(t('history.delete'))}</button>` +
+    `<span class="runs-total">${esc(tn('history.total', runs.length, { size: fmtSize(totalSizeBytes) }))}</span></div>`);
   $('#runs-rerun', wrap).addEventListener('click', rerunSelected);
   $('#runs-delete', wrap).addEventListener('click', deleteSelected);
 
@@ -44,14 +54,14 @@ function renderHistory(runs, totalSizeBytes) {
     det.className = 'runs-month';
     det.open = month.open;
     const sum = document.createElement('summary');
-    sum.append(groupCheckbox(`Alle Läufe im ${month.label} wählen`, det));
+    sum.append(groupCheckbox(t('history.month.aria', { label: month.label }), det));
     sum.insertAdjacentHTML('beforeend', `<span class="grp-label">${esc(month.label)}</span><span class="muted">${month.runs.length}</span>`);
     det.appendChild(sum);
     for (const day of month.days) {
       const dayEl = document.createElement('div');
       const head = document.createElement('div');
       head.className = 'runs-day-head';
-      head.append(groupCheckbox(`Alle Läufe von ${day.label} wählen`, dayEl));
+      head.append(groupCheckbox(t('history.day.aria', { label: day.label }), dayEl));
       head.insertAdjacentHTML('beforeend', `<span class="grp-label">${esc(day.label)}</span>`);
       dayEl.appendChild(head);
       const ul = document.createElement('ul');
@@ -99,21 +109,23 @@ function renderRun(run) {
   if (run.id === shownRunId) li.classList.add('selected');
   const flaky = run.status === 'passed' && (run.summary?.flaky || 0) > 0;
   const kind = flaky ? 'flaky' : run.status;
-  const time = new Date(run.startedAt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const time = new Date(run.startedAt).toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' });
   const env = (run.environment || '—').split(' ')[0];
   // Wie in der Detailansicht: Bereich als Überschrift, darunter die Kernaussage.
   const area = runAreaLabel(run, fileToGroupMap());
   const sel = area || runSelectionLabel(run);
   const files = runSelectionLabel(run);
-  const headline = runHeadline(run) + (run.summary?.flaky ? ` (${run.summary.flaky} instabil)` : '');
+  const headline = run.summary?.flaky
+    ? t('history.flakyCount', { headline: runHeadline(run), n: run.summary.flaky })
+    : runHeadline(run);
   const headKind = run.summary?.failed > 0 ? 'failed' : flaky ? 'flaky' : '';
   const settings = runSettingsLabel(run.settings);
 
   li.innerHTML =
-    `<input type="checkbox" class="run-cb" data-id="${esc(run.id)}" data-size="${run.sizeBytes || 0}" aria-label="Lauf von ${esc(time)} wählen">` +
-    `<span class="run-ico ${kind}" title="${flaky ? 'Bestanden, aber instabil' : esc(run.status)}">${icon(flaky ? 'alert' : RUN_ICON[run.status] || 'skip')}</span>` +
+    `<input type="checkbox" class="run-cb" data-id="${esc(run.id)}" data-size="${run.sizeBytes || 0}" aria-label="${esc(t('history.run.aria', { time }))}">` +
+    `<span class="run-ico ${kind}" title="${esc(flaky ? t('history.flakyTitle') : statusText(run.status))}">${icon(flaky ? 'alert' : RUN_ICON[run.status] || 'skip')}</span>` +
     `<span class="run-sel" title="${esc(`${sel} · ${files}`)}"><span class="run-time">${esc(time)}</span> · ${esc(sel)}</span>` +
-    `<a class="run-link" href="/report/${esc(run.id)}/" target="_blank" rel="noopener" aria-label="Report öffnen">Report</a>` +
+    `<a class="run-link" href="/report/${esc(run.id)}/" target="_blank" rel="noopener" aria-label="${esc(t('history.report.aria'))}">${esc(t('history.report'))}</a>` +
     `<span class="run-sub"><span class="run-head ${headKind}">${esc(headline)}</span> · ${esc(env)}${settings ? ' · ' + esc(settings) : ''} · ${fmtSize(run.sizeBytes).replace(' ', '\u00a0')}</span>`;
 
   $('.run-cb', li).addEventListener('click', (e) => e.stopPropagation());
@@ -142,28 +154,28 @@ function updateActions() {
   if (!del || !rerun) return;
   const size = checked.reduce((s, cb) => s + (Number(cb.dataset.size) || 0), 0);
   del.disabled = checked.length === 0;
-  del.textContent = checked.length ? `${checked.length} löschen (${fmtSize(size)})` : 'Löschen';
+  del.textContent = checked.length ? t('history.delete.n', { n: checked.length, size: fmtSize(size) }) : t('history.delete');
   const withReq = checked.filter((cb) => rerunnable(state.runs.find((r) => r.id === cb.dataset.id)));
   rerun.disabled = withReq.length === 0;
-  rerun.textContent = withReq.length ? `Neu starten (${withReq.length})` : 'Neu starten';
+  rerun.textContent = withReq.length ? t('history.rerun.n', { n: withReq.length }) : t('history.rerun');
   const missing = checked.length - withReq.length;
-  rerun.title = missing > 0 ? `${missing} Lauf ohne gespeicherte Testauswahl wird übersprungen.` : '';
+  rerun.title = missing > 0 ? t('history.rerun.skipped', { n: missing }) : '';
 }
 
 async function deleteSelected() {
   const ids = checkedBoxes().map((cb) => cb.dataset.id);
   if (!ids.length) return;
   const ok = await confirmDialog({
-    title: 'Läufe löschen',
-    message: `${ids.length} ${ids.length === 1 ? 'Lauf' : 'Läufe'} endgültig löschen?`,
-    detail: 'Das kann nicht rückgängig gemacht werden. Report, Traces und Screenshots werden gelöscht.',
-    confirmLabel: 'Endgültig löschen',
+    title: t('history.dialog.title'),
+    message: tn('history.dialog.message', ids.length),
+    detail: t('history.dialog.detail'),
+    confirmLabel: t('history.dialog.confirm'),
     danger: true,
   });
   if (!ok) return;
   const r = await api('/api/runs/delete', { ids });
   const failed = (r.data.results || []).filter((x) => !x.ok).length;
-  if (!r.ok || failed) toast(`${failed || ids.length} Lauf/Läufe konnten nicht gelöscht werden.`, 'error');
+  if (!r.ok || failed) toast(t('history.error.delete', { n: failed || ids.length }), 'error');
   await loadHistory();
 }
 
@@ -192,6 +204,7 @@ async function rerunSelected() {
 
 export function init() {
   on('run-done', () => loadHistory().catch(() => {}));
+  on('lang-change', renderList);
   // Der Katalog kommt oft nach der Historie: Bereiche erst dann auflösen.
   on('catalog-loaded', renderList);
   loadHistory().catch(() => {});

@@ -55,6 +55,9 @@ const REPORT = {
   ],
 };
 
+// Die Web-UI wählt ihre Sprache nach der Browser-Sprache. Diese Tests prüfen deutsche Texte.
+test.use({ locale: 'de-DE' });
+
 let server: Server;
 let base = '';
 let posts: string[] = [];

@@ -1,13 +1,13 @@
 {
-  "comment": "Ordnet Playwright-Tags lesbaren Kategorien zu. Erweiterbar: neue Stufe = neuer Eintrag. 'order' steuert die Reihenfolge in der UI. 'tag' ohne @. 'hidden': true blendet die Kategorie in der Web-UI aus (Tests laufen weiter via CLI/CI) - z.B. fachlich irrelevante Unit-Tests.",
+  "comment": "Ordnet Playwright-Tags lesbaren Kategorien zu. Erweiterbar: neue Stufe = neuer Eintrag. 'order' steuert die Reihenfolge in der UI. 'tag' ohne @. 'hidden': true blendet die Kategorie in der Web-UI aus (Tests laufen weiter via CLI/CI) - z.B. fachlich irrelevante Unit-Tests. 'labelEn'/'descriptionEn' sind die englischen Texte der Web-UI (Sprache EN).",
   "categories": [
-    { "tag": "tooling", "label": "Werkzeuge (kein Testfall)", "description": "Capture-/Hilfsläufe, via CLI", "order": 5, "hidden": true },
-    { "tag": "smoke", "label": "Smoketest", "description": "Ist die Umgebung betriebsbereit? Erreichbarkeit, Login, Publish", "order": 10 },
-    { "tag": "level1", "label": "AEM-Basisfunktionen (Level 1)", "description": "Seiten anlegen, kopieren, verschieben, umbenennen, Eigenschaften, Komponenten einfügen, Versionen, Veröffentlichen, Asset-Upload", "order": 20 },
-    { "tag": "level2-components", "label": "Komponenten (Level 2)", "description": "Dialoge im Editor, Komponente befüllen bis Publish, Darstellung auf Publish", "order": 30 },
-    { "tag": "integration", "label": "Integrationstest", "description": "ACL-Tool, LDAP-Import (aktualisierte Bibliotheken)", "order": 40 },
-    { "tag": "regression", "label": "Regressionstest: Bekannte Migrationsrisiken", "description": "Asset-Finder, Download-Asset-Feld, Baum wiederherstellen, Fehlerseite, Sprachversionen", "order": 50 },
-    { "tag": "unit", "label": "Unit (ohne AEM)", "description": "Logik-Tests ohne Author-Instanz", "order": 90, "hidden": true }
+    { "tag": "tooling", "label": "Werkzeuge (kein Testfall)", "labelEn": "Tools (not a test case)", "description": "Capture-/Hilfsläufe, via CLI", "descriptionEn": "Capture and helper runs, via CLI", "order": 5, "hidden": true },
+    { "tag": "smoke", "label": "Smoketest", "labelEn": "Smoke test", "description": "Ist die Umgebung betriebsbereit? Erreichbarkeit, Login, Publish", "descriptionEn": "Is the environment ready? Reachability, login, publish", "order": 10 },
+    { "tag": "level1", "label": "AEM-Basisfunktionen (Level 1)", "labelEn": "AEM core functions (Level 1)", "description": "Seiten anlegen, kopieren, verschieben, umbenennen, Eigenschaften, Komponenten einfügen, Versionen, Veröffentlichen, Asset-Upload", "descriptionEn": "Create, copy, move and rename pages, properties, insert components, versions, publish, asset upload", "order": 20 },
+    { "tag": "level2-components", "label": "Komponenten (Level 2)", "labelEn": "Components (Level 2)", "description": "Dialoge im Editor, Komponente befüllen bis Publish, Darstellung auf Publish", "descriptionEn": "Editor dialogs, fill a component through to publish, rendering on publish", "order": 30 },
+    { "tag": "integration", "label": "Integrationstest", "labelEn": "Integration test", "description": "ACL-Tool, LDAP-Import (aktualisierte Bibliotheken)", "descriptionEn": "ACL tool, LDAP import (updated libraries)", "order": 40 },
+    { "tag": "regression", "label": "Regressionstest: Bekannte Migrationsrisiken", "labelEn": "Regression test: known migration risks", "description": "Asset-Finder, Download-Asset-Feld, Baum wiederherstellen, Fehlerseite, Sprachversionen", "descriptionEn": "Asset finder, download asset field, restore tree, error page, language versions", "order": 50 },
+    { "tag": "unit", "label": "Unit (ohne AEM)", "labelEn": "Unit (without AEM)", "description": "Logik-Tests ohne Author-Instanz", "descriptionEn": "Logic tests without an author instance", "order": 90, "hidden": true }
   ],
   "uncategorizedLabel": "Sonstige"
 }

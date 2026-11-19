@@ -1,5 +1,6 @@
 // Gemeinsamer Kern der Web-UI: Zustand, Einstellungen, API-Helfer, Dialog, Toast.
 import { esc } from './logic.js';
+import { t, hasKey, getLang } from './i18n.js';
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -33,6 +34,17 @@ export const state = {
   /** Kennung des laufenden Dienstes (wechselt bei jedem Start von npm run webui). */
   serverStartId: null,
 };
+
+// --- Anzeigenamen je Sprache (der Server liefert `labelEn`/`descriptionEn` additiv) ----------
+const english = () => getLang() === 'en';
+/** Stabiler Schlüssel einer Katalog-Gruppe (unabhängig von der Sprache). */
+export const groupKey = (group) => group.tag ?? 'other';
+export const groupLabel = (group) => (english() && group.labelEn) || group.label;
+export const groupDescription = (group) => (english() && group.descriptionEn) || group.description;
+/** Voller Umgebungs-Label, z. B. „DEV (Entwicklung, …)“ bzw. „DEV (development, …)“. */
+export const envLabel = (env) => (english() && env?.labelEn) || env?.label || '';
+/** Kurzname vor der Klammer, z. B. „DEV“. Sprachneutral. */
+export const envShort = (label) => (label || '').split(' (')[0];
 
 export const currentEnvironment = () =>
   state.environments.find((e) => e.id === state.selectedEnvId);
@@ -97,8 +109,17 @@ export async function api(url, body) {
     try { data = await res.json(); } catch { /* leere Antwort */ }
     return { ok: res.ok, status: res.status, data: data || {} };
   } catch (err) {
-    return { ok: false, status: 0, data: { error: `Keine Verbindung zum Service (${err.message}).` } };
+    return { ok: false, status: 0, data: { error: t('net.error', { message: err.message }) } };
   }
+}
+
+/**
+ * Fehlertext einer API-Antwort in der aktiven Sprache. Der Server liefert zu bekannten Fehlern
+ * `code` und `params` (Schlüssel `err.<code>`), sonst gilt sein `error`-Text.
+ */
+export function apiError(data, fallback = '') {
+  if (data?.code && hasKey(`err.${data.code}`)) return t(`err.${data.code}`, data.params);
+  return data?.error || fallback;
 }
 
 // --- Toast -------------------------------------------------------------------
@@ -127,7 +148,7 @@ export function confirmDialog(o) {
   detail.textContent = o.detail || '';
   detail.hidden = !o.detail;
   const ok = $('#confirm-ok');
-  ok.textContent = o.confirmLabel || 'Bestätigen';
+  ok.textContent = o.confirmLabel || t('dialog.confirm.ok');
   ok.className = o.danger ? 'btn btn-danger' : 'btn btn-primary';
   return new Promise((resolve) => {
     const done = (value) => {

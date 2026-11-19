@@ -76,6 +76,14 @@ main:focus { outline: none; }
   background: transparent; color: var(--text-muted); cursor: pointer;
 }
 .icon-btn:hover { background: var(--surface-sunken); color: var(--text); }
+/* Sprachschalter: zeigt die aktive Sprache (DE/EN), links vom Theme-Schalter. */
+.lang-btn {
+  display: inline-grid; place-items: center; min-width: 36px; height: 36px; padding: 0 var(--space-2);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-muted); cursor: pointer;
+  font: inherit; font-size: var(--fs-sm); font-weight: 650; letter-spacing: 0.04em;
+}
+.lang-btn:hover { background: var(--surface-sunken); color: var(--text); }
 .theme-sun { display: none; }
 :root[data-theme="dark"] .theme-sun { display: inline; }
 :root[data-theme="dark"] .theme-moon { display: none; }

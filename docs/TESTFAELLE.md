@@ -45,7 +45,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 ## Gesamtübersicht (Stand 19.11.2026)
 
 59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 89 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+nur auf Anforderung) und 120 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -647,6 +647,31 @@ Sprachversionen.
     Löschen verlangt Bestätigung und sendet bei „Abbrechen" nichts.
   - **Werkzeuge**: UI-Mode ist ohne Umgebung gesperrt. Aufräum-Suche listet Testseiten; Löschen
     fragt erst nach.
+- **Erwartet**: alle Fälle grün.
+
+### UNIT-I18N — Zweisprachige Web-UI, DE/EN-US (`tests/unit/webui-i18n.spec.ts`, ab 19.11.2026)
+- **Zweck**: sichert die Zweisprachigkeit der neuen Oberfläche ab (Sprachwahl, Wörterbücher,
+  Umschalten). Kein AEM, kein Login. Testtitel, Dateinamen und Playwright-Texte bleiben
+  unübersetzt und werden nicht geprüft.
+- **Fälle** (26, davon 8 im Browser gegen den lokalen Mock-Server):
+  - **Sprachwahl** (`resolveLang`): Systemsprache `de*` → DE, sonst EN, die gespeicherte Wahl gewinnt.
+  - **Kern**: Platzhalter, Fallback (DE, dann Schlüssel), Plural, Locale; Formatierer
+    (Kernaussage, Einstellungen, Bereiche, „Heute"/„Gestern", Monat) auch auf Englisch;
+    Suche findet Kategorien über den deutschen und den englischen Namen.
+  - **Wörterbücher**: `de.js` und `en.js` haben dieselben Schlüssel und Platzhalter, keine
+    leeren Werte, zu jedem `.one` ein `.other`; kein englischer Text gleicht dem deutschen.
+  - **Quelltext**: Jeder Schlüssel aus `index.html` und aus `t()`/`tn()` existiert; kein Eintrag
+    bleibt ungenutzt; Tags, Reiter, Status, Blocker und alle Server-Codes (`err.*`) haben Texte;
+    keine deutschen Zeichenketten mehr in den JS-Modulen.
+  - **Startsprache** (Browser): `en-US` und `fr-FR` → EN, `de-AT` → DE.
+  - **Umschalten** (Browser): Schalter links vom Theme-Schalter, Wahl bleibt nach Reload und gewinnt
+    gegen die Systemsprache; Theme-Schalter, Beenden-Dialog; Testlauf behält Auswahl, offene
+    Kategorie und Umgebung; Ergebnisse (Kernaussage, Blocker per Code, Durchlauf, Datum) und
+    Historie (Auswahl bleibt); Werkzeuge (Aufräum-Ergebnis, Hinweis per Code, Auswahl bleibt);
+    in EN steht kein deutscher Anzeigetext mehr in allen Reitern, Schritten und Dialogen.
+- **Dazu erweitert**: `webui-report.spec.ts` (+4: `detectBlockerInfo`, `blockerText`,
+  `repeatIndex`/`repeatTotal`), `webui-catalog.spec.ts` (+1: `labelEn`/`descriptionEn` additiv).
+  `webui-ui.spec.ts` nagelt die Sprache auf `de-DE` fest.
 - **Erwartet**: alle Fälle grün.
 
 ---

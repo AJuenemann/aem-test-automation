@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { buildReportView, detectBlocker } from '../../webui/report.js';
+import { buildReportView, detectBlocker, detectBlockerInfo, blockerText } from '../../webui/report.js';
 
 /**
  * Beispiel-Report in der Form des Playwright-JSON-Reporters
@@ -187,5 +187,42 @@ test.describe('Web-UI: buildReportView', { tag: '@unit' }, () => {
   test('Blocker-Erkennung (detectBlocker) meldet nichts bei gewöhnlichem Funktionsfehler', () => {
     // sampleReport: ein "TimeoutError: locator not found" in component-edit -> kein Umgebungs-Blocker.
     expect(detectBlocker(buildReportView(sampleReport))).toBeUndefined();
+  });
+  test('Blocker-Code (detectBlockerInfo): Netzfehler nennt Code network und Host', () => {
+    const msg = 'page.goto: net::ERR_ABORTED\nnavigating to "https://aem-author-test.ws.fraunhofer.de/x"';
+    const info = detectBlockerInfo(buildReportView(failWith('auth.setup.ts', 'authenticate', msg)));
+    expect(info).toEqual({ code: 'network', params: { host: 'aem-author-test.ws.fraunhofer.de' } });
+    // Ohne Host in der Meldung bleibt params leer.
+    expect(detectBlockerInfo(buildReportView(failWith('a.spec.ts', 't', 'net::ERR_CONNECTION_TIMED_OUT')))).toEqual({ code: 'network', params: {} });
+  });
+  test('Blocker-Code (detectBlockerInfo): env, login und smoke', () => {
+    expect(detectBlockerInfo(buildReportView(failWith('a.spec.ts', 't1', 'MissingEnvError: AEM_PASSWORD')))?.code).toBe('env');
+    expect(detectBlockerInfo(buildReportView(failWith('auth.setup.ts', 'authenticate', 'Login abgelehnt')))?.code).toBe('login');
+    const smoke = detectBlockerInfo(buildReportView(failWith('smoke.spec.ts', 'Bundles aktiv', 'Nicht aktive Bundles.', 'smoke')));
+    expect(smoke).toEqual({ code: 'smoke', params: { tests: 'Bundles aktiv' } });
+    expect(detectBlockerInfo(buildReportView(sampleReport))).toBeUndefined();
+  });
+  test('Blocker-Text (blockerText): der deutsche Text entsteht aus dem Code und bleibt unverändert', () => {
+    const views = [
+      failWith('auth.setup.ts', 'authenticate', 'net::ERR_ABORTED https://h.example/x'),
+      failWith('a.spec.ts', 't1', 'MissingEnvError: AEM_PASSWORD'),
+      failWith('auth.setup.ts', 'authenticate', 'Login abgelehnt'),
+      failWith('smoke.spec.ts', 'S1', 'kaputt', 'smoke'),
+    ].map((r) => buildReportView(r));
+    for (const view of views) {
+      const info = detectBlockerInfo(view);
+      expect(info).toBeDefined();
+      expect(blockerText(info!)).toBe(detectBlocker(view));
+    }
+    expect(blockerText({ code: 'network', params: { host: 'h.example' } })).toContain('Die AEM-Instanz (h.example) war nicht erreichbar');
+  });
+  test('Durchlauf (repeatIndex/repeatTotal): Zahlen stehen neben dem deutschen repeatLabel', () => {
+    // --repeat-each=2: derselbe Spec hat je Projekt zwei test-Einträge.
+    const run = { projectName: 'chromium', results: [{ status: 'passed', duration: 1 }] };
+    const report = { suites: [{ specs: [{ title: 'T', file: 'a.spec.ts', tests: [run, run] }] }] };
+    const rows = buildReportView(report).rows;
+    expect(rows.map((r) => r.repeatIndex)).toEqual([1, 2]);
+    expect(rows.map((r) => r.repeatTotal)).toEqual([2, 2]);
+    expect(rows[1].repeatLabel).toBe('Durchlauf 2/2');
   });
 });

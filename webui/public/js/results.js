@@ -1,5 +1,8 @@
 // Reiter „Ergebnisse": Lauf starten, Live-Stream, Kernaussage, Filter, Ergebnisliste.
-import { $, $$, state, esc, icon, api, emit, toast, baseRunFields, currentEnvironment } from './core.js';
+import {
+  $, $$, state, esc, icon, api, emit, on, toast, baseRunFields, currentEnvironment, apiError, envShort,
+} from './core.js';
+import { t, tn, hasKey, locale, getLang } from './i18n.js';
 import {
   groupRows, statusKind, headline, fmtDuration, fmtClock, runSettingsLabel,
 } from './logic.js';
@@ -14,22 +17,25 @@ const view = {
   filter: 'all',
   live: false, // true: Lauf aus dieser Sitzung (Log vorhanden)
   settings: null,
-  notice: '',
+  /** Schlüssel des Hinweises (Wörterbuch), damit er beim Sprachwechsel mitwechselt. */
+  noticeKey: '',
+  /** Blocker-Hinweis: { text, info } (info = maschinenlesbar vom Server, text = deutscher Fallback). */
+  blocker: null,
 };
 let es = null;
 let ticker = null;
 let lastLogAt = 0;
 
-const shortEnv = (label) => (label || '').split(' (')[0];
+const shortEnv = envShort;
 
 // ---------------------------------------------------------------------------
 // Lauf starten / abbrechen / streamen
 // ---------------------------------------------------------------------------
 /** Startet einen Lauf und wechselt zur Ergebnisansicht. { ok, error? } */
 export async function startRunRequest(req) {
-  if (!req.environment) return { ok: false, error: 'Zuerst eine Umgebung wählen (Testlauf, Schritt 2).' };
+  if (!req.environment) return { ok: false, error: t('run.error.noEnv') };
   const r = await api('/api/run', req);
-  if (!r.ok) return { ok: false, error: r.data.error || 'Start fehlgeschlagen.' };
+  if (!r.ok) return { ok: false, error: apiError(r.data, t('run.error.start')) };
   beginView(r.data.id, { envLabel: shortEnv(req.environment?.label), settings: req });
   location.hash = '#/ergebnisse';
   setTimeout(() => $('#res-title')?.focus({ preventScroll: true }), 60);
@@ -43,7 +49,7 @@ export async function resumeActiveRun() {
   const d = r.data;
   if (!r.ok || !d.activeRunId) return false;
   beginView(d.activeRunId, { envLabel: shortEnv(d.environment), startedAt: d.startedAt });
-  view.notice = 'Seite wurde neu geladen. Das Log verbindet sich wieder.';
+  view.noticeKey = 'res.notice.reloaded';
   render();
   stream(d.activeRunId, d.startedAt);
   return true;
@@ -57,7 +63,8 @@ function beginView(id, { envLabel = '', startedAt = null, settings = null } = {}
   view.report = null;
   view.filter = 'all';
   view.live = true;
-  view.notice = '';
+  view.noticeKey = '';
+  view.blocker = null;
   view.settings = settings
     ? { headed: !!settings.headed, slowMo: settings.slowMo, repeatEach: settings.repeatEach, smokeGate: !!settings.smokeGate, updateSnapshots: !!settings.updateSnapshots }
     : null;
@@ -86,8 +93,8 @@ function stream(id) {
     view.status = info.status === 'passed' ? 'passed' : info.status === 'cancelled' ? 'cancelled' : 'failed';
     state.activeRunId = null;
     const rep = await loadReport(id);
-    if (info.blocker) showBlocker(info.blocker);
-    else if (rep?.blocker) showBlocker(rep.blocker);
+    if (info.blocker) showBlocker(info.blocker, info.blockerInfo);
+    else if (rep?.blocker) showBlocker(rep.blocker, rep.blockerInfo);
     if (rep) $('#res-log').open = false;
     render();
     emit('run-done', { id, status: view.status });
@@ -99,7 +106,7 @@ function stream(id) {
     es = null;
     stopTicker();
     view.status = 'failed';
-    view.notice = 'Verbindung zum Lauf verloren. Der Lauf kann auf dem Rechner weiterlaufen: Seite neu laden.';
+    view.noticeKey = 'res.notice.lost';
     state.activeRunId = null;
     render();
   };
@@ -108,7 +115,7 @@ function stream(id) {
 export async function cancelRun() {
   if (!state.activeRunId) return;
   await api(`/api/run/${state.activeRunId}/cancel`, {});
-  view.notice = 'Abbruch angefordert…';
+  view.noticeKey = 'res.notice.cancelRequested';
   render();
 }
 
@@ -140,7 +147,7 @@ async function loadReport(id) {
 /** Zeigt einen früheren Lauf aus der Historie. */
 export async function showRun(run) {
   if (state.activeRunId && state.activeRunId !== run.id) {
-    toast('Es läuft gerade ein Lauf. Er bleibt aktiv, die Ansicht wechselt trotzdem.', 'info');
+    toast(t('res.toast.activeRun'), 'info');
   }
   stopTicker();
   view.runId = run.id;
@@ -150,21 +157,35 @@ export async function showRun(run) {
   view.settings = run.settings || null;
   view.live = false;
   view.filter = 'all';
-  view.notice = '';
+  view.noticeKey = '';
+  view.blocker = null;
   view.report = null;
-  $('#res-blocker').hidden = true;
   const rep = await loadReport(run.id);
-  if (!rep) view.notice = 'Für diesen Lauf gibt es keine Tabellenansicht. Details stehen im Report.';
-  else if (rep.blocker) showBlocker(rep.blocker);
+  if (!rep) view.noticeKey = 'res.notice.noTable';
+  else if (rep.blocker) showBlocker(rep.blocker, rep.blockerInfo);
   render();
   if (location.hash !== '#/ergebnisse') location.hash = '#/ergebnisse';
   $('#res-title').focus({ preventScroll: true });
 }
 
-function showBlocker(text) {
+function showBlocker(text, info) {
+  view.blocker = { text, info };
+  renderBlocker();
+}
+
+/** Blocker in der aktiven Sprache: per Code aus dem Wörterbuch, sonst der Text des Servers. */
+function blockerMessage({ text, info }) {
+  if (!info || !hasKey(`blocker.${info.code}`)) return text;
+  const params = { ...info.params };
+  if (info.code === 'network') params.hostPart = params.host ? ` (${params.host})` : '';
+  return t(`blocker.${info.code}`, params);
+}
+
+function renderBlocker() {
   const el = $('#res-blocker');
-  el.hidden = false;
-  el.textContent = text;
+  const show = view.blocker && view.status !== 'running';
+  el.hidden = !show;
+  el.textContent = show ? blockerMessage(view.blocker) : '';
 }
 
 /** Anzeigestatus: running | passed | failed | flaky | cancelled | idle. */
@@ -183,10 +204,10 @@ function displayStatus() {
 function metaText(now = Date.now()) {
   const parts = [view.envLabel].filter(Boolean);
   if (view.status === 'running') {
-    parts.push(`läuft seit ${fmtClock(now - view.startedAt)}`);
-    parts.push(`letzte Ausgabe vor ${fmtClock(now - lastLogAt)}`);
+    parts.push(t('res.meta.running', { time: fmtClock(now - view.startedAt) }));
+    parts.push(t('res.meta.lastOutput', { time: fmtClock(now - lastLogAt) }));
   } else {
-    parts.push(new Date(view.startedAt).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' }));
+    parts.push(new Date(view.startedAt).toLocaleString(locale(), { dateStyle: 'medium', timeStyle: 'short' }));
     const s = view.report?.summary;
     if (s?.durationMs != null) parts.push(fmtDuration(s.durationMs));
     const settings = runSettingsLabel(view.settings);
@@ -209,17 +230,17 @@ function render() {
   $('#res-status-ico').innerHTML = icon(STATUS_ICON[st] || 'skip');
   const s = view.report?.summary;
   $('#res-title').textContent = st === 'running'
-    ? 'Tests laufen…'
-    : headline(s, view.status) || (view.status === 'failed' ? 'Lauf fehlgeschlagen' : view.status === 'passed' ? 'Lauf erfolgreich' : 'Lauf beendet');
+    ? t('res.title.running')
+    : headline(s, view.status) || (view.status === 'failed' ? t('res.title.failed') : view.status === 'passed' ? t('res.title.passed') : t('res.title.done'));
   $('#res-meta').textContent = metaText();
   $('#res-progress').hidden = st !== 'running';
   $('#res-cancel').hidden = st !== 'running';
   $('#open-report').href = view.runId ? `/report/${view.runId}/` : '/report';
 
   const notice = $('#res-notice');
-  notice.hidden = !view.notice;
-  notice.textContent = view.notice;
-  if (st === 'running') $('#res-blocker').hidden = true;
+  notice.hidden = !view.noticeKey;
+  notice.textContent = view.noticeKey ? t(view.noticeKey) : '';
+  renderBlocker();
 
   $('#res-log').hidden = !view.live;
 
@@ -235,15 +256,10 @@ function renderCapture(rows) {
   const n = rows.filter((r) => r.status === 'skipped' && r.skipReason && /CAPTURE_DIALOGS/i.test(r.skipReason)).length;
   $('#res-capture').hidden = n === 0;
   $('#capture-count').textContent = String(n);
+  $('#capture-label').textContent = tn('res.capture.label', n);
 }
 
-const FILTERS = [
-  ['all', 'Alle'],
-  ['failed', 'Fehlgeschlagen'],
-  ['flaky', 'Instabil'],
-  ['skipped', 'Übersprungen'],
-  ['passed', 'Bestanden'],
-];
+const FILTERS = ['all', 'failed', 'flaky', 'skipped', 'passed'];
 
 function renderFilters(rows) {
   const el = $('#res-filters');
@@ -251,25 +267,25 @@ function renderFilters(rows) {
   if (!rows.length) return;
   const counts = { all: rows.length, failed: 0, flaky: 0, skipped: 0, passed: 0 };
   for (const r of rows) counts[statusKind(r)]++;
-  el.innerHTML = FILTERS.map(([kind, label]) =>
+  el.innerHTML = FILTERS.map((kind) =>
     `<button type="button" class="filter" data-kind="${kind}" aria-pressed="${view.filter === kind}"${kind !== 'all' && counts[kind] === 0 ? ' disabled' : ''}>` +
-    `${label} <span class="n">${counts[kind]}</span></button>`).join('');
+    `${esc(t(`res.filter.${kind}`))} <span class="n">${counts[kind]}</span></button>`).join('');
 }
 
 function artifactInfo(name) {
   const map = [
-    ['trace', 'activity', 'Trace'],
-    ['video', 'video', 'Video'],
-    ['error-context', 'file', 'Fehler-Kontext'],
-    ['rendered-page-diff', 'compare', 'Diff'],
-    ['rendered-page-expected', 'image', 'Baseline'],
-    ['rendered-page-actual', 'image', 'Aufnahme'],
-    ['screenshot', 'image', 'Screenshot'],
+    ['trace', 'activity', 'artifact.trace'],
+    ['video', 'video', 'artifact.video'],
+    ['error-context', 'file', 'artifact.error-context'],
+    ['rendered-page-diff', 'compare', 'artifact.diff'],
+    ['rendered-page-expected', 'image', 'artifact.expected'],
+    ['rendered-page-actual', 'image', 'artifact.actual'],
+    ['screenshot', 'image', 'artifact.screenshot'],
   ];
   const lower = (name || '').toLowerCase();
   const hit = map.find(([key]) => lower.includes(key));
-  if (hit) return { icon: hit[1], label: hit[2] };
-  return { icon: 'file', label: name ? name.charAt(0).toUpperCase() + name.slice(1) : 'Anhang' };
+  if (hit) return { icon: hit[1], label: t(hit[2]) };
+  return { icon: 'file', label: name ? name.charAt(0).toUpperCase() + name.slice(1) : t('artifact.other') };
 }
 
 function artifactLink(a) {
@@ -278,7 +294,7 @@ function artifactLink(a) {
   let href = a.url;
   // trace.playwright.dev lädt Traces per URL. Der Server setzt dafür den CORS-Header.
   if (lower.includes('trace')) href = `https://trace.playwright.dev/?trace=${window.location.origin}${a.url}`;
-  else if (lower.includes('error-context')) href = `/view-md?file=${encodeURIComponent(a.url)}`;
+  else if (lower.includes('error-context')) href = `/view-md?file=${encodeURIComponent(a.url)}&lang=${getLang()}`;
   return `<a class="artifact" href="${esc(href)}" target="_blank" rel="noopener">${icon(ic)}${esc(label)}</a>`;
 }
 
@@ -287,12 +303,16 @@ const KIND_ICON = { failed: 'x', flaky: 'alert', skipped: 'skip', passed: 'check
 function rowHtml(row, openByDefault) {
   const kind = statusKind(row);
   const title = row.title.charAt(0).toUpperCase() + row.title.slice(1);
-  const repeat = row.repeatLabel ? ` · ${esc(row.repeatLabel)}` : '';
+  const repeatText = row.repeatIndex
+    ? t('res.row.repeat', { i: row.repeatIndex, n: row.repeatTotal })
+    : row.repeatLabel;
+  const repeat = repeatText ? ` · ${esc(repeatText)}` : '';
   let badge = '';
   if (row.retryCount > 0) {
+    const n = row.retryCount;
     badge = row.flaky
-      ? `<span class="badge badge-flaky" title="Erst beim ${row.retryCount}. Wiederholungsversuch bestanden">instabil · ${row.retryCount}× wiederholt</span>`
-      : `<span class="badge badge-fail" title="Trotz Wiederholung fehlgeschlagen">${row.retryCount}× wiederholt</span>`;
+      ? `<span class="badge badge-flaky" title="${esc(t('res.row.flaky.title', { n }))}">${esc(t('res.row.flaky', { n }))}</span>`
+      : `<span class="badge badge-fail" title="${esc(t('res.row.retried.title'))}">${esc(t('res.row.retried', { n }))}</span>`;
   }
   let body = '';
   if (row.errorSummary) body += `<p class="err-summary">${esc(row.errorSummary)}</p>`;
@@ -300,7 +320,7 @@ function rowHtml(row, openByDefault) {
   if (row.skipReason) body += `<p class="skip-reason">${esc(row.skipReason)}</p>`;
   const arts = (row.attachments || []).filter((a) => a.url).map(artifactLink).join('');
   if (arts) body += `<div class="artifacts">${arts}</div>`;
-  if (!body) body = `<p class="muted">Keine weiteren Details.</p>`;
+  if (!body) body = `<p class="muted">${esc(t('res.row.noDetails'))}</p>`;
   return `<details class="trow st-${kind}"${openByDefault ? ' open' : ''}>` +
     `<summary><span class="st-ico">${icon(KIND_ICON[kind])}</span>` +
     `<span class="trow-title"><span>${esc(title)}</span><small>${esc(row.file)}${repeat}</small></span>` +
@@ -313,19 +333,19 @@ function renderGroups(rows) {
   if (!rows.length) {
     el.innerHTML = view.status === 'running' || !view.report
       ? ''
-      : '<p class="muted">Keine Testergebnisse in diesem Lauf.</p>';
+      : `<p class="muted">${esc(t('res.noResults'))}</p>`;
     return;
   }
   const failedTotal = rows.filter((r) => statusKind(r) === 'failed').length;
   const shown = view.filter === 'all' ? rows : rows.filter((r) => statusKind(r) === view.filter);
-  if (!shown.length) { el.innerHTML = '<p class="muted">Keine Tests in dieser Ansicht.</p>'; return; }
+  if (!shown.length) { el.innerHTML = `<p class="muted">${esc(t('res.noInView'))}</p>`; return; }
   el.innerHTML = groupRows(shown).map((g) => {
     const bits = [];
-    if (g.counts.failed) bits.push(`${g.counts.failed} fehlgeschlagen`);
-    if (g.counts.flaky) bits.push(`${g.counts.flaky} instabil`);
-    if (g.counts.skipped) bits.push(`${g.counts.skipped} übersprungen`);
+    if (g.counts.failed) bits.push(t('res.group.failed', { n: g.counts.failed }));
+    if (g.counts.flaky) bits.push(t('res.group.flaky', { n: g.counts.flaky }));
+    if (g.counts.skipped) bits.push(t('res.group.skipped', { n: g.counts.skipped }));
     return `<section class="rgroup"><div class="rgroup-head"><h3>${esc(g.label)}</h3>` +
-      `<span class="muted">${g.rows.length} ${g.rows.length === 1 ? 'Test' : 'Tests'}${bits.length ? ' · ' + bits.join(' · ') : ''}</span></div>` +
+      `<span class="muted">${esc(tn('count.tests', g.rows.length))}${bits.length ? ' · ' + esc(bits.join(' · ')) : ''}</span></div>` +
       g.rows.map((r) => rowHtml(r, statusKind(r) === 'failed' && failedTotal <= 3)).join('') + '</section>';
   }).join('');
 }
@@ -355,5 +375,6 @@ export function init() {
   });
   $('#res-cancel').addEventListener('click', cancelRun);
   $('#run-capture').addEventListener('click', runCapture);
+  on('lang-change', render);
   render();
 }

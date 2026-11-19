@@ -35,6 +35,9 @@ export interface CategoryDef {
   tag: string;
   label: string;
   description?: string;
+  /** Englischer Anzeigename und Beschreibung (Web-UI, Sprache EN). */
+  labelEn?: string;
+  descriptionEn?: string;
   order: number;
   /**
    * true -> in der Web-UI nicht anzeigen (fachlich irrelevant für den Tester,
@@ -49,6 +52,8 @@ export interface CatalogGroup {
   tag?: string;
   label: string;
   description?: string;
+  labelEn?: string;
+  descriptionEn?: string;
   files: CatalogSpecFile[];
 }
 
@@ -258,12 +263,19 @@ export function parseCatalog(
     if (cat.hidden) continue;
     const groupFiles = files.filter((f) => f.categoryTag === cat.tag);
     if (groupFiles.length) {
-      groups.push({ tag: cat.tag, label: cat.label, description: cat.description, files: groupFiles });
+      groups.push({
+        tag: cat.tag,
+        label: cat.label,
+        description: cat.description,
+        ...(cat.labelEn ? { labelEn: cat.labelEn } : {}),
+        ...(cat.descriptionEn ? { descriptionEn: cat.descriptionEn } : {}),
+        files: groupFiles,
+      });
     }
   }
   const uncategorized = files.filter((f) => !f.categoryTag);
   if (uncategorized.length) {
-    groups.push({ label: 'Sonstige', files: uncategorized });
+    groups.push({ label: 'Sonstige', labelEn: 'Other', files: uncategorized });
   }
 
   return {
