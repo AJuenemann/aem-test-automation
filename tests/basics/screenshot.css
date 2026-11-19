@@ -1,0 +1,8 @@
+/* Dynamische/volatile Elemente für die visuelle Regression ausblenden. */
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+  caret-color: transparent !important;
+}

@@ -1,0 +1,95 @@
+{
+  "component": "Filter 2.0",
+  "dialogTitle": "Filter 2.0",
+  "tabs": [
+    "Filter",
+    "UI settings",
+    "Zusätzliche Suchpfade"
+  ],
+  "fields": [
+    {
+      "tab": "Filter",
+      "label": "Filter-Typ",
+      "name": "./filter",
+      "value": "Messen und Veranstaltungen",
+      "empty": false
+    },
+    {
+      "tab": "Filter",
+      "label": "Sortierung",
+      "name": "./ordering",
+      "value": "Standard",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Inputfeld für den Suchbegriff verbergen",
+      "name": "./deactivateFulltextSearch",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Kategorie Auswahlmenü anzeigen",
+      "name": "./showcategory",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Kategorie-Einträge aus Inst.- und sprachspez. Konfiguration nicht anzeigen",
+      "name": "./hideConfigSubjects",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Auswahl des Suchzeitraums anzeigen",
+      "name": "./showperiod",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Look",
+      "name": "./resultView",
+      "value": "DEFAULT",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Button 'Abbrechen'",
+      "name": "./reset",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "UI settings",
+      "label": "Button 'Suchen'",
+      "name": "./search",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "UI settings",
+      "label": "Platzhalter Suchbegriff Eingabe",
+      "name": "./searchlabel",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Zusätzliche Suchpfade",
+      "label": "Suchpfad-Modus",
+      "name": "./pathFilters/item0/./searchPathRestriction",
+      "value": "Alle Kindseiten / Assets unterhalb:",
+      "empty": false
+    },
+    {
+      "tab": "Zusätzliche Suchpfade",
+      "label": "Suchpfad *",
+      "name": "./pathFilters/item0/./searchPath",
+      "value": "/content/samples/de/search-data",
+      "empty": false
+    }
+  ]
+}

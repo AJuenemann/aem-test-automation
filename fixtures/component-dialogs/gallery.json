@@ -1,0 +1,38 @@
+{
+  "component": "Bilder-/Filmstrecke",
+  "dialogTitle": "Bilder-/Filmstrecke",
+  "tabs": [
+    "Eigenschaften",
+    "Text"
+  ],
+  "fields": [
+    {
+      "tab": "Eigenschaften",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Gallery Komponente",
+      "empty": false
+    },
+    {
+      "tab": "Eigenschaften",
+      "label": "Ordner mit Bildern",
+      "name": "./path",
+      "value": "/content/dam/samples/images/technic",
+      "empty": false
+    },
+    {
+      "tab": "Eigenschaften",
+      "label": "Trenner entfernen",
+      "name": "./removeSeperator",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Text",
+      "label": "./text",
+      "name": "./text",
+      "value": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed eu sapien dictum, fermentum mauris ac, hendrerit metus. Aenean vel augue mi. Praesent nec commodo felis. Sed ac placerat orci, eget egestas risus. Morbi risus risus, maximus ut tortor faucibus, dictum condimentum lacus. Fusce eget turpis ex. Nulla commodo augue augue, varius venenatis quam imperdiet ac. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse at erat luctus, interdum ante vel, auctor tellus. Aliquam aliquet quis lectus et tincidunt. Donec commodo placerat magna. Aliquam erat volutpat.",
+      "empty": false
+    }
+  ]
+}

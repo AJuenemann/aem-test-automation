@@ -1,0 +1,21 @@
+{
+  "component": "Bereich",
+  "dialogTitle": "Bereich",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Content-Marginal-Spalte anzeigen",
+      "name": "./hasContentMarginal",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Trenner entfernen",
+      "name": "./useSeperator",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

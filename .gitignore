@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Secrets und lokale Umgebung
+.env
+.env.local
+
+# Playwright
+playwright/.auth/
+test-results/
+playwright-report/
+blob-report/
+.last-run.json
+
+# Web-UI: persistierte Lauf-Artefakte
+webui/runs/
+
+# OS / Editor
+.DS_Store
+*.log

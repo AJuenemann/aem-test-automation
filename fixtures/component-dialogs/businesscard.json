@@ -1,0 +1,28 @@
+{
+  "component": "Visitenkarten",
+  "dialogTitle": "Visitenkarten",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Funktion",
+      "name": "./role",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Mitarbeiterseite",
+      "name": "./employeepage",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Visitenkarten-Referenz",
+      "name": "./fileReference",
+      "value": "/content/businesscards/EMFT/Simone_Brand",
+      "empty": false
+    }
+  ]
+}

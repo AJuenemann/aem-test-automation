@@ -1,0 +1,52 @@
+{
+  "component": "Pressemitteilung [Stamm]",
+  "dialogTitle": "Pressemitteilung",
+  "tabs": [
+    "Parameter",
+    "Teaser-Bild"
+  ],
+  "fields": [
+    {
+      "tab": "Parameter",
+      "label": "Titel",
+      "name": "./title",
+      "value": "Nam liber tempor cum soluta (Titel) sid1009",
+      "empty": false
+    },
+    {
+      "tab": "Parameter",
+      "label": "Dachzeile",
+      "name": "./subtitle",
+      "value": "Consetetur sadipscing elitr (Dachzeile) sid1010",
+      "empty": false
+    },
+    {
+      "tab": "Parameter",
+      "label": "Medium",
+      "name": "./medium",
+      "value": "Lorem Ipsum (Medium) sid1011",
+      "empty": false
+    },
+    {
+      "tab": "Parameter",
+      "label": "Zusammenfassung",
+      "name": "./summary",
+      "value": "Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. sid1012",
+      "empty": false
+    },
+    {
+      "tab": "Parameter",
+      "label": "Vorspann",
+      "name": "./prefix",
+      "value": "Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. sid1013",
+      "empty": false
+    },
+    {
+      "tab": "Parameter",
+      "label": "Kategorien",
+      "name": "./subjects",
+      "value": "Category 1, Category 2",
+      "empty": false
+    }
+  ]
+}

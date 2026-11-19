@@ -1,0 +1,111 @@
+{
+  "component": "Teaser",
+  "dialogTitle": "Teaser",
+  "tabs": [
+    "Darstellung",
+    "Text",
+    "CTA-Button",
+    "Bild",
+    "Bildeigenschaften"
+  ],
+  "fields": [
+    {
+      "tab": "Darstellung",
+      "label": "Format des Teasers",
+      "name": "./style",
+      "value": "1x2 Block (vertikal) mit kleinem Bild",
+      "empty": false
+    },
+    {
+      "tab": "Darstellung",
+      "label": "Hintergrundfarbe",
+      "name": "./bgcolor",
+      "value": "lightblue",
+      "empty": false
+    },
+    {
+      "tab": "Darstellung",
+      "label": "Teaser-Variante",
+      "name": "./variant",
+      "value": "Kein",
+      "empty": false
+    },
+    {
+      "tab": "Darstellung",
+      "label": "Verlinkung als *",
+      "name": "./ctatype",
+      "value": "button",
+      "empty": false
+    },
+    {
+      "tab": "Text",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Teaser 1x2 Block (vertikal) mit kleinem Bild",
+      "empty": false
+    },
+    {
+      "tab": "Text",
+      "label": "Kategorie",
+      "name": "./category",
+      "value": "Samples Kategorie",
+      "empty": false
+    },
+    {
+      "tab": "Text",
+      "label": "Text",
+      "name": "./text",
+      "value": "Nulla a varius nulla, fermentum ornare ex. Vestibulum a tortor ac nunc accumsan ultrices eu nec eros. Donec at sem vel purus aliquet maximus. Aenean eget massa vel diam dictum tincidunt in at est. Phasellus sapien quam, facilisis auctor ullamcorper luctus, feugiat at orci. Vestibulum eget fringilla odio. Mauris a nisi maximus, dictum erat at, consequat libero. Sed sit amet orci justo. Ut ultricies purus ipsum, a tempor magna vehicula non. Nulla sodales nibh in interdum vestibulum. Maecenas ut neque vel leo convallis maximus.",
+      "empty": false
+    },
+    {
+      "tab": "CTA-Button",
+      "label": "Ziel-URL",
+      "name": "./link/path",
+      "value": "/content/samples/de/pages",
+      "empty": false
+    },
+    {
+      "tab": "CTA-Button",
+      "label": "Hilfetext für Link",
+      "name": "./link/linkHelpText",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "CTA-Button",
+      "label": "Link Title",
+      "name": "./link/linkTitle",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "CTA-Button",
+      "label": "Reiter-Id",
+      "name": "./link/tabpanelid",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "CTA-Button",
+      "label": "In neuem Fenster öffnen",
+      "name": "./link/linkTarget",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright übernehmen",
+      "name": "./image/properties/usecopyright",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright Angabe",
+      "name": "./image/properties/meta",
+      "value": "",
+      "empty": true
+    }
+  ]
+}

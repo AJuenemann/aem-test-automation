@@ -1,0 +1,109 @@
+{
+  "component": "Filter Newsroom",
+  "dialogTitle": "Filter Newsroom",
+  "tabs": [
+    "Filter",
+    "UI settings",
+    "Zusätzliche Suchpfade"
+  ],
+  "fields": [
+    {
+      "tab": "Filter",
+      "label": "Filter-Typ",
+      "name": "./filter",
+      "value": "Pressemitteilungen, Assets, Messen",
+      "empty": false
+    },
+    {
+      "tab": "Filter",
+      "label": "Sortierung",
+      "name": "./ordering",
+      "value": "Activation date (desc)",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Filter Auswahlmenü anzeigen",
+      "name": "./showFilters",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Inputfeld für den Suchbegriff verbergen",
+      "name": "./deactivateFulltextSearch",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Auswahl des Suchzeitraums anzeigen",
+      "name": "./showperiod",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Unendliches Nachladen aktivieren",
+      "name": "./enableInfiniteScroll",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Anzahl der Items pro Stück",
+      "name": "./itemsPerChunk",
+      "value": "10",
+      "empty": false
+    },
+    {
+      "tab": "UI settings",
+      "label": "Button 'Abbrechen'",
+      "name": "./reset",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "UI settings",
+      "label": "Button 'Suchen'",
+      "name": "./search",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "UI settings",
+      "label": "Platzhalter Suchbegriff Eingabe",
+      "name": "./searchlabel",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Zusätzliche Suchpfade",
+      "label": "Suchpfad-Modus",
+      "name": "./pathFilters/item0/./searchPathRestriction",
+      "value": "Alle Kindseiten / Assets unterhalb:",
+      "empty": false
+    },
+    {
+      "tab": "Zusätzliche Suchpfade",
+      "label": "Suchpfad *",
+      "name": "./pathFilters/item0/./searchPath",
+      "value": "/content/samples",
+      "empty": false
+    },
+    {
+      "tab": "Zusätzliche Suchpfade",
+      "label": "Suchpfad-Modus",
+      "name": "./pathFilters/item1/./searchPathRestriction",
+      "value": "Alle Kindseiten / Assets unterhalb:",
+      "empty": false
+    },
+    {
+      "tab": "Zusätzliche Suchpfade",
+      "label": "Suchpfad *",
+      "name": "./pathFilters/item1/./searchPath",
+      "value": "/content/dam/samples",
+      "empty": false
+    }
+  ]
+}

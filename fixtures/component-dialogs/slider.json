@@ -1,0 +1,28 @@
+{
+  "component": "Slider groß",
+  "dialogTitle": "Slider groß",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Titel *",
+      "name": "./heading",
+      "value": "Heading",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Unterüberschrift",
+      "name": "./description",
+      "value": "Subheading",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Trenner entfernen",
+      "name": "./removeSeperator",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

@@ -1,0 +1,203 @@
+{
+  "component": "Veranstaltung [Stamm]",
+  "dialogTitle": "Veranstaltung",
+  "tabs": [
+    "Veranstaltungs-Details",
+    "Zusammenfassung",
+    "Text",
+    "Veranstalter",
+    "Organisation",
+    "Teaser-Image"
+  ],
+  "fields": [
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Veranstaltung anzeigen",
+      "name": "./eventisactive",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Für Filter und iCal <h1>-Titel verwenden",
+      "name": "./usePageTitle",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Überschrift *",
+      "name": "./content/eventheading",
+      "value": "Sample Veranstaltung (Überschrift) sid1009",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Art der Veranstaltung *",
+      "name": "./content/eventtype",
+      "value": "Duis autem vel eum iriure (Art der Veranstaltung) sid1010",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Zwischen-Überschrift",
+      "name": "./content/eventsubtitle",
+      "value": "Nam liber tempor cum soluta nobis eleifend option congue (Zwischen-Überschrift) sid1011",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Kosten",
+      "name": "./content/eventcosts",
+      "value": "1000? sid1012",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Anmeldung",
+      "name": "./content/eventregistration",
+      "value": "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. sid1013",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Programm",
+      "name": "./content/eventprogram",
+      "value": "Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis. sid1014",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Veranstaltungs-Ort *",
+      "name": "./content/eventvenue",
+      "value": "München sid1015",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Adresse des Veranstaltungsortes",
+      "name": "./content/eventvenueinfo",
+      "value": "In der Nähe von Lorem Ipsum Platz sid1016",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "iCal-Termin anzeigen",
+      "name": "./showIcalEvent",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Veranstaltungs-Zeit",
+      "name": "./eventtimeperiod",
+      "value": "10:00-18:00",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Anwesenheitsmodus",
+      "name": "./eventAttendanceMode",
+      "value": "https://schema.org/OfflineEventAttendanceMode",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Sprache",
+      "name": "./content/eventlanguage",
+      "value": "deutsch",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Kontakte (E-Mails, Telefon etc.)",
+      "name": "./content/eventcontact",
+      "value": "Email: sample@localhost Tel: 0123456789 sid1017",
+      "empty": false
+    },
+    {
+      "tab": "Veranstaltungs-Details",
+      "label": "Kategorien",
+      "name": "./subjects",
+      "value": "Category 1",
+      "empty": false
+    },
+    {
+      "tab": "Zusammenfassung",
+      "label": "Zusammenfassung",
+      "name": "./content/eventsummary",
+      "value": "Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.  (Zusammenfassung) sid1018",
+      "empty": false
+    },
+    {
+      "tab": "Text",
+      "label": "./richtext2",
+      "name": "./richtext2",
+      "value": "Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. (Text) sid1019",
+      "empty": false
+    },
+    {
+      "tab": "Veranstalter",
+      "label": "Institut",
+      "name": "./institutes/item0/./eventinstitute",
+      "value": "IOSB : Fraunhofer-Institut für Optronik, Systemtechnik und Bildauswertung – Institutsteil Angewandte Systemtechnik IOSB",
+      "empty": false
+    },
+    {
+      "tab": "Veranstalter",
+      "label": "Institut",
+      "name": "./institutes/item1/./eventinstitute",
+      "value": "UMSICHT : Fraunhofer-Institut für Umwelt-, Sicherheits- und Energietechnik – Institutsteil Sulzbach-Rosenberg UMSICHT",
+      "empty": false
+    },
+    {
+      "tab": "Veranstalter",
+      "label": "Linktext",
+      "name": "./otherorganizer/item0/./linkTitle",
+      "value": "Fraunhofer Forum 2021",
+      "empty": false
+    },
+    {
+      "tab": "Veranstalter",
+      "label": "Externer Link URL",
+      "name": "./otherorganizer/item0/./linkUrl",
+      "value": "http://www.fraunhofer.de",
+      "empty": false
+    },
+    {
+      "tab": "Veranstalter",
+      "label": "Linktext",
+      "name": "./otherorganizer/item1/./linkTitle",
+      "value": "Veranstalter 2022",
+      "empty": false
+    },
+    {
+      "tab": "Veranstalter",
+      "label": "Externer Link URL",
+      "name": "./otherorganizer/item1/./linkUrl",
+      "value": "http://events.fraunhofer.de",
+      "empty": false
+    },
+    {
+      "tab": "Veranstalter",
+      "label": "Linktext",
+      "name": "./otherorganizer/item2/./linkTitle",
+      "value": "Fraunhofer Zentralle",
+      "empty": false
+    },
+    {
+      "tab": "Veranstalter",
+      "label": "Externer Link URL",
+      "name": "./otherorganizer/item2/./linkUrl",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Organisation",
+      "label": "./content/eventresponsibles",
+      "name": "./content/eventresponsibles",
+      "value": "Responsibles Consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus. sid1021",
+      "empty": false
+    }
+  ]
+}

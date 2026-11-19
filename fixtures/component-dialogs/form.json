@@ -1,0 +1,73 @@
+{
+  "component": "Formularcontainer",
+  "dialogTitle": "Formularcontainer",
+  "tabs": [
+    "Allg. Angaben",
+    "Aktionskonfiguration"
+  ],
+  "fields": [
+    {
+      "tab": "Allg. Angaben",
+      "label": "Elementname *",
+      "name": "./name",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Allg. Angaben",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Allg. Angaben",
+      "label": "Unterüberschrift",
+      "name": "./subheadline",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Allg. Angaben",
+      "label": "Aktionstyp",
+      "name": "./actionType",
+      "value": "E-Mail",
+      "empty": false
+    },
+    {
+      "tab": "Allg. Angaben",
+      "label": "Anschreiben für die 1. E-Mail an Antragsteller",
+      "name": "./greetingText",
+      "value": "Sie (oder jemand anderes) haben auf der Seite {0} ein Formular ausgefüllt und abgeschickt. Bitte bestätigen Sie nun durch Klick auf diesen Link {1} Ihre Angaben. Sie erhalten anschließend eine weitere E-Mail als Bestätigung zugeschickt. Sollte es sich um einen Irrtum handeln, ignorieren Sie diese E-Mail bitte.",
+      "empty": false
+    },
+    {
+      "tab": "Allg. Angaben",
+      "label": "Allgemeine Erfolgsmeldung",
+      "name": "./successmessage",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Allg. Angaben",
+      "label": "Allgemeine Fehlermeldung",
+      "name": "./errormessage",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Aktionskonfiguration",
+      "label": "Betreff *",
+      "name": "./subject",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Aktionskonfiguration",
+      "label": "Von *",
+      "name": "./from",
+      "value": "",
+      "empty": true
+    }
+  ]
+}

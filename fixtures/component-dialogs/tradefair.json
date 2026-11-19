@@ -1,0 +1,112 @@
+{
+  "component": "Messe [Stamm]",
+  "dialogTitle": "Messe",
+  "tabs": [
+    "Messe Details",
+    "Summary",
+    "Veranstalter",
+    "Bild",
+    "Adresse (URL)",
+    "Teaser-Image"
+  ],
+  "fields": [
+    {
+      "tab": "Messe Details",
+      "label": "Messe anzeigen",
+      "name": "./eventisactive",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Messe Details",
+      "label": "Für Filter und iCal <h1>-Titel verwenden",
+      "name": "./usePageTitle",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Messe Details",
+      "label": "Überschrift *",
+      "name": "./content/eventheading",
+      "value": "Sample Messe (Überschrift) sid1009",
+      "empty": false
+    },
+    {
+      "tab": "Messe Details",
+      "label": "Unterüberschrift",
+      "name": "./content/eventsubtitle",
+      "value": "Ut wisi enim ad minim veniam (Unterüberschrift) sid1010",
+      "empty": false
+    },
+    {
+      "tab": "Messe Details",
+      "label": "Veranstaltungs-Ort *",
+      "name": "./content/eventvenue",
+      "value": "München sid1011",
+      "empty": false
+    },
+    {
+      "tab": "Messe Details",
+      "label": "Stand/Halle",
+      "name": "./content/tradefairbooth",
+      "value": "In der großen Halle 114 sid1012",
+      "empty": false
+    },
+    {
+      "tab": "Messe Details",
+      "label": "Zeitraum der Veranstaltung",
+      "name": "./eventtimeperiod",
+      "value": "10:00-18:00",
+      "empty": false
+    },
+    {
+      "tab": "Messe Details",
+      "label": "Kategorien",
+      "name": "./subjects",
+      "value": "Category 1, Category 3",
+      "empty": false
+    },
+    {
+      "tab": "Summary",
+      "label": "Zusammenfassung",
+      "name": "./content/eventsummary",
+      "value": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. sid1013",
+      "empty": false
+    },
+    {
+      "tab": "Veranstalter",
+      "label": "Institut",
+      "name": "./institutes/item0/./eventinstitute",
+      "value": "IZFP : Fraunhofer-Institut für Zerstörungsfreie Prüfverfahren - Institutsteil Dresden IZFP",
+      "empty": false
+    },
+    {
+      "tab": "Adresse (URL)",
+      "label": "Messe Link-Text",
+      "name": "./content/tradefairlink",
+      "value": "Fraunhofer Messe für Forschung und Technik sid1014",
+      "empty": false
+    },
+    {
+      "tab": "Adresse (URL)",
+      "label": "Messe Link-Url",
+      "name": "./content/tradefairlinkurl",
+      "value": "https://www.fraunhofer.de",
+      "empty": false
+    },
+    {
+      "tab": "Adresse (URL)",
+      "label": "In neuem Fenster öffnen",
+      "name": "./openInNewWindow",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Adresse (URL)",
+      "label": "Messe Link-Tooltipp",
+      "name": "./content/tradefairlinkhelptext",
+      "value": "Duis autem vel eum iriure dolor sid1015",
+      "empty": false
+    }
+  ]
+}

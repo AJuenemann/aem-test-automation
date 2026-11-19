@@ -1,0 +1,18 @@
+{
+  "environments": [
+    {
+      "id": "dev",
+      "label": "DEV (Entwicklung, ggf. kein LDAP)",
+      "baseUrl": "https://aem-author-dev.ws.fraunhofer.de",
+      "publishUrl": "https://aem-publish1-dev.ws.fraunhofer.de",
+      "env": "dev"
+    },
+    {
+      "id": "test",
+      "label": "TEST (primäre Testumgebung)",
+      "baseUrl": "https://aem-author-test.ws.fraunhofer.de",
+      "publishUrl": "https://aem-publish1-test.ws.fraunhofer.de",
+      "env": "test"
+    }
+  ]
+}

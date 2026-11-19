@@ -1,0 +1,62 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    # Playwright-Image: konsistente Browser/Fonts -> stabile Screenshot-Baselines.
+    container:
+      image: mcr.microsoft.com/playwright:v1.49.0-jammy
+    env:
+      CI: 'true'
+      # Credentials/URL aus Repository- bzw. Environment-Secrets. Niemals im Repo.
+      # Lokal: DEV (primär, Samples verfügbar). CI: je nach Secret-Konfiguration.
+      AEM_BASE_URL: ${{ secrets.AEM_BASE_URL }}
+      AEM_ENV: ${{ secrets.AEM_ENV }}
+      AEM_USER: ${{ secrets.AEM_USER }}
+      AEM_PASSWORD: ${{ secrets.AEM_PASSWORD }}
+      AEM_PLAYGROUND_PATH: ${{ secrets.AEM_PLAYGROUND_PATH }}
+      AEM_READONLY_PATH: ${{ secrets.AEM_READONLY_PATH }}
+      # Publish-Instanz für die visuelle Regression (nur Publish). Fehlt sie,
+      # überspringen sich die Publish-Tests sauber.
+      AEM_PUBLISH_URL: ${{ secrets.AEM_PUBLISH_URL }}
+      # Samples-Wurzel (Komponenten-Beispielseiten). Default greift, wenn leer.
+      AEM_SAMPLES_ROOT: ${{ secrets.AEM_SAMPLES_ROOT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: aem-test-automation/package-lock.json
+
+      - name: Install dependencies
+        working-directory: aem-test-automation
+        run: npm ci
+
+      - name: Typecheck & lint
+        working-directory: aem-test-automation
+        run: |
+          npm run typecheck
+          npm run lint
+
+      - name: Run Playwright tests
+        working-directory: aem-test-automation
+        run: npx playwright test
+
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            aem-test-automation/playwright-report/
+            aem-test-automation/test-results/
+          retention-days: 14
