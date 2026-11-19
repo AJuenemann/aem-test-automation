@@ -30,6 +30,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SUITE_ROOT = path.resolve(__dirname, '..');
 const RUNS_DIR = path.join(__dirname, 'runs');
 const PUBLIC_DIR = path.join(__dirname, 'public');
+/** Alte Oberfläche als Fallback unter /legacy/ (Entfernung nach Abnahme der neuen UI). */
+const LEGACY_DIR = path.join(__dirname, 'public-legacy');
 const PORT = Number(process.env.WEBUI_PORT) || 4321;
 /** Live-Log-Reporter (relativ zum Suite-Root, Playwright lädt TS direkt). */
 const LIVE_REPORTER = './webui/live-reporter.ts';
@@ -949,6 +951,23 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
       return sendText(res, 404, 'Baseline nicht gefunden.');
     }
     return;
+  }
+
+  // Fallback: alte Oberfläche unter /legacy/ (bis zur Abnahme der neuen UI).
+  if (pathname === '/legacy') {
+    res.writeHead(302, { location: '/legacy/' });
+    res.end();
+    return;
+  }
+  if (pathname.startsWith('/legacy/')) {
+    let rel: string;
+    try {
+      rel = decodeURIComponent(pathname.slice('/legacy/'.length)) || 'index.html';
+    } catch {
+      return sendText(res, 400, 'Ungültiger Pfad.');
+    }
+    if (serveFileWithin(res, LEGACY_DIR, rel)) return;
+    return sendText(res, 404, 'Not found.');
   }
 
   // Frontend

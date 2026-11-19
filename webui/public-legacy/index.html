@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AEM Testautomatisierung</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <h1>AEM Testautomatisierung</h1>
+        <p class="subtitle">Tests auswählen, starten und auswerten. <a href="/">Zur neuen Oberfläche</a></p>
+      </div>
+      <button type="button" id="shutdown" class="ghost" title="Anwendung beenden und Port freigeben">
+        Beenden
+      </button>
+    </header>
+
+    <main>
+      <!-- Linke Spalte: geführte Konfiguration -->
+      <section id="config" aria-label="Konfiguration">
+        <!-- Schritt: Was testen -->
+        <div class="step">
+          <div class="step-head">
+            <h2>Was möchtest du testen?</h2>
+            <div class="step-tools">
+              <button type="button" id="select-all" class="link">Alle</button>
+              <button type="button" id="select-none" class="link" hidden>Keine</button>
+              <button type="button" id="refresh-catalog" class="link" title="Testkatalog neu einlesen">Aktualisieren</button>
+            </div>
+          </div>
+          <p class="selection-hint" id="selection-hint">Noch nichts ausgewählt — zum Starten mindestens einen Test wählen.</p>
+          <div class="catalog-filter">
+            <input type="search" id="catalog-search" class="catalog-search"
+              placeholder="Tests filtern (Name, Kategorie, Tag)…"
+              aria-label="Tests filtern" autocomplete="off" />
+            <div id="active-chips" class="chips" aria-label="Aktive Auswahl"></div>
+          </div>
+          <div id="catalog" class="catalog" aria-live="polite">Lade Tests…</div>
+        </div>
+
+        <!-- Schritt: Umgebung -->
+        <div class="step">
+          <h2>Gegen welche Umgebung?</h2>
+          <div id="env-cards" class="cards" role="radiogroup" aria-label="Testumgebung"></div>
+          <p id="env-hint" class="hint"></p>
+        </div>
+
+        <!-- Schritt: Wie ausführen -->
+        <div class="step">
+          <h2>Wie ausführen?</h2>
+          <div id="mode-cards" class="cards" role="radiogroup" aria-label="Ausführungsmodus">
+            <button type="button" class="card" data-mode="headless" aria-pressed="true">
+              <span class="card-title">Headless</span>
+              <span class="card-desc">Im Hintergrund, am schnellsten.</span>
+            </button>
+            <button type="button" class="card" data-mode="headed" aria-pressed="false">
+              <span class="card-title">Sichtbar</span>
+              <span class="card-desc">Browser-Fenster läuft mit.</span>
+            </button>
+          </div>
+
+          <div id="slowmo-row" class="slowmo" hidden>
+            <span class="slowmo-label">Tempo</span>
+            <div id="slowmo-steps" class="segmented" role="radiogroup" aria-label="Tempo im sichtbaren Lauf">
+              <button type="button" data-ms="0" aria-pressed="true">Normal</button>
+              <button type="button" data-ms="500" aria-pressed="false">Etwas langsamer</button>
+              <button type="button" data-ms="1500" aria-pressed="false">Langsam</button>
+              <button type="button" data-ms="3000" aria-pressed="false">Sehr langsam</button>
+            </div>
+            <span class="hint">„Normal" ist die Playwright-Standardgeschwindigkeit; die anderen Stufen pausieren pro Aktion.</span>
+          </div>
+
+          <details class="extra">
+            <summary>Weitere Optionen</summary>
+            <div class="extra-grid">
+              <label>Filter (--grep)
+                <input type="text" id="grep" placeholder="z.B. Seite anlegen" />
+              </label>
+              <label>Wiederholungen
+                <input type="number" id="repeat-each" min="1" value="1" />
+              </label>
+              <label class="check">
+                <input type="checkbox" id="update-snapshots" />
+                Baselines aktualisieren
+              </label>
+              <label class="check">
+                <input type="checkbox" id="smoke-gate" aria-describedby="smoke-gate-hint" />
+                Smoketest vorab ausführen
+              </label>
+            </div>
+            <p id="smoke-gate-hint" class="hint">Smoketest vorab: prüft zuerst die Umgebung (ca. 30 s). Schlägt er fehl, laufen die ausgewählten Tests nicht. Aus = es laufen nur die ausgewählten Tests.</p>
+            <p class="hint">Wiederholungen: 1 = normal. Höher nur zur Flakiness-Diagnose — prüft, ob ein Test zufällig fehlschlägt.</p>
+            <!-- workers ist intern fest auf 1: AEM verträgt keinen parallelen Zugriff. -->
+            <input type="hidden" id="workers" value="1" />
+          </details>
+        </div>
+
+        <!-- Schritt: Aufräumen (von Tests angelegte Seiten entfernen) -->
+        <div class="step" id="cleanup-panel">
+          <h2>Testseiten aufräumen</h2>
+          <p class="panel-hint">Von Tests angelegte Seiten und Visitenkarten unter den Spielwiesen finden und löschen.</p>
+          <div class="cleanup-actions">
+            <button type="button" id="cleanup-scan" class="btn">Testseiten suchen</button>
+            <button type="button" id="cleanup-delete" class="danger" hidden>Ausgewählte löschen</button>
+          </div>
+          <div id="cleanup-result" class="cleanup-result"></div>
+        </div>
+
+        <!-- Start -->
+        <div class="start-bar">
+          <button type="button" id="run" class="primary big">Tests starten</button>
+          <button type="button" id="cancel" class="danger" disabled>Abbrechen</button>
+          <details class="preview-wrap">
+            <summary>Befehl anzeigen</summary>
+            <pre id="preview" class="preview"></pre>
+          </details>
+        </div>
+
+        <div class="alt-action">
+          <button type="button" id="open-uimode" class="btn"
+            title="Öffnet Playwrights eigene Oberfläche in einem separaten Fenster. Übernimmt Umgebung, Projekte und Filter — die Testauswahl (Datei/Zeile) wird dort NICHT übernommen (von Playwright nicht unterstützt).">
+            Playwright UI-Mode öffnen
+          </button>
+          <small class="hint">Eigenes Playwright-Fenster. Übernimmt Umgebung, Projekte und Filter — die Datei/Zeile-Auswahl dort über das Suchfeld.</small>
+        </div>
+      </section>
+
+      <!-- Rechte Spalte: Ergebnisse -->
+      <section id="results" aria-label="Ergebnisse">
+        <div class="results-head">
+          <h2>Ergebnis</h2>
+          <div class="results-actions">
+            <a id="open-report" href="/report" target="_blank" rel="noopener" class="btn">Report &amp; Traces</a>
+            <button type="button" id="toggle-advanced" class="btn" aria-pressed="false">Baseline-Vergleich</button>
+          </div>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+          Noch kein Lauf. Links auswählen und „Tests starten".
+        </div>
+
+        <div id="status-line" class="status-line" hidden></div>
+        <div id="blocker" class="blocker" hidden></div>
+        <div id="capture-hint" class="capture-hint" hidden>
+          ⏭ <strong><span id="capture-count">0</span> Tests übersprungen</strong> — Referenz-Fixtures fehlen.
+          <button type="button" id="run-capture" class="btn capture-hint-btn">Capture jetzt ausführen ▶</button>
+          <small>Führt <code>CAPTURE_DIALOGS=1</code> aus und hält den aktuellen Dialog-Stand fest.</small>
+        </div>
+        <div id="summary" class="summary" hidden></div>
+
+        <details id="log-box" hidden>
+          <summary>Live-Log</summary>
+          <pre id="log" class="log"></pre>
+        </details>
+
+        <table id="result-table" class="result-table" hidden>
+          <thead>
+            <tr><th>Bereich</th><th>Testsuite</th><th>Test</th><th>Status</th><th>Dauer</th><th>Artefakte</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <!-- Frühere Testergebnisse: dauerhaft sichtbar, kein Toggle nötig -->
+        <div class="advanced-panel">
+          <h3>Frühere Testergebnisse</h3>
+          <div id="history" class="history">—</div>
+        </div>
+
+        <!-- Baseline-Vergleich: selten genutzt, hinter Toggle -->
+        <div id="advanced" hidden>
+          <div class="advanced-panel" id="baseline-panel">
+            <h3>Referenzbilder vergleichen</h3>
+            <p class="panel-hint">Zwei Umgebungen nebeneinander (alt vs. neu).</p>
+            <div class="field inline">
+              <label for="base-a">Umgebung A</label>
+              <select id="base-a"></select>
+              <label for="base-b">Umgebung B</label>
+              <select id="base-b"></select>
+            </div>
+            <p id="baseline-note" class="empty-hint" hidden>
+              Nur eine Umgebung vorhanden — Vergleich braucht zwei.
+            </p>
+            <div id="baselines" class="baselines">—</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="app.js"></script>
+
+    <dialog id="runs-delete-dialog">      <h3>Läufe löschen</h3>
+      <p id="runs-delete-msg">X Läufe endgültig löschen?</p>
+      <p class="dialog-warning">
+        Diese Aktion kann nicht rückgängig gemacht werden.<br>
+        Report, Traces und Screenshots werden unwiederbringlich gelöscht.
+      </p>
+      <div class="dialog-actions">
+        <button type="button" id="runs-delete-cancel" class="btn">Abbrechen</button>
+        <button type="button" id="runs-delete-confirm" class="danger">Endgültig löschen</button>
+      </div>
+    </dialog>
+  </body>
+</html>

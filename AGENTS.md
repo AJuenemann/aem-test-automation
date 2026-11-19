@@ -78,8 +78,26 @@ Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und di
 
 Umfang: 59 AEM-Testfälle (12 Smoketest inkl. Login, 11 Basisfunktionen,
 24 Komponenten, 3 Integrationstest, 9 Regressionstest), dazu 11 Capture-Läufe
-und 55 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
+und 80 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
+
+## Web-UI: Aufbau und Fallback
+
+- Neue Oberfläche in `webui/public/`: `index.html` (Shell, Icon-Sprite), `tokens.css`
+  (einzige Farbpalette, hell/dunkel über `data-theme`), `app.css`, `app.js` (Router,
+  Theme) und `js/` (`core.js` Zustand/API, `logic.js` reine Logik, `testrun.js`,
+  `results.js`, `history.js`, `tools.js`). Vanilla-ES-Module, kein Build.
+- Die Module sprechen über Ereignisse (`emit`/`on` in `core.js`), nicht über
+  zyklische Importe. Reine Logik gehört nach `logic.js`: nur dort ist sie unter Node testbar.
+- Fallback: die bisherige Oberfläche liegt unverändert in `webui/public-legacy/` und
+  wird unter `/legacy/` ausgeliefert (`server.ts`). Beide nutzen dieselben `/api/*`-
+  Endpunkte. **API-Änderungen nur additiv**, sonst bricht die jeweils andere UI.
+  Eigene localStorage-Schlüssel: `aem-webui-prefs-v2` und `aem-webui-theme` (neu),
+  `aem-webui-prefs-v1` (alt). Entfernen von `public-legacy/` und der Weiche erst nach
+  ausdrücklicher Abnahme durch den User.
+- Tests: `tests/unit/webui-ui-logic.spec.ts` (Logik, Token-Kontrast) und
+  `tests/unit/webui-ui.spec.ts` (Browser gegen gemockte API). Neue Farben in
+  `tokens.css` müssen den Kontrast-Test bestehen.
 
 ## Lauf-Archivierung und -Verwaltung
 

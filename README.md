@@ -4,7 +4,7 @@ Playwright-/TypeScript-Testautomatisierung für die Fraunhofer AEM 6.5 LTS Migra
 (Tickets FHGWCMS-2415 / FHGWCMS-2416). Die Suite prüft über echte Redakteurs-
 Gesten, ob die Fraunhofer-Website nach dem Update wie vorher funktioniert. Sie
 umfasst 59 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
-inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 55 Unit-Tests
+inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 80 Unit-Tests
 ohne AEM (Stand 19.11.2026). Die vollständige Liste mit Ablauf und Erwartung steht in
 [`docs/TESTFAELLE.md`](docs/TESTFAELLE.md).
 
@@ -274,6 +274,17 @@ unangetastet; die UI ruft nur `playwright` auf.
 ```bash
 npm run webui        # Service startet auf http://localhost:4321, öffnet den Browser
 ```
+
+**Aufbau (seit 19.11.2026)**: Drei Reiter. **Testlauf** führt in drei Schritten (Tests
+auswählen → Umgebung wählen → Ausführung festlegen) und hat eine immer sichtbare
+Start-Leiste. Geschlossene Schritte zeigen ihre Auswahl als Zusammenfassung;
+„Alle offen" zeigt alle Schritte zugleich. **Ergebnisse** zeigt die Kernaussage des
+Laufs („2 von 6 Tests fehlgeschlagen"), Fehlschläge zuerst, Statusfilter, Details
+und Artefakte je Test sowie rechts die früheren Läufe. **Werkzeuge** enthält Aufräumen,
+Referenzbilder vergleichen und den Playwright UI-Mode. Die Oberfläche ist hell oder
+dunkel (Umschalter oben, Standard = Systemeinstellung). Die Farbpalette steht zentral
+in `webui/public/tokens.css`. Die bisherige Oberfläche läuft vorerst unverändert unter
+`/legacy/` weiter (Link „Alte Oberfläche"), bis die neue abgenommen ist.
 
 Der Standardbrowser öffnet sich automatisch (abschaltbar via `WEBUI_NO_OPEN=1`).
 **Beenden**: „Beenden"-Button oben rechts in der UI oder `Strg+C` im Terminal —

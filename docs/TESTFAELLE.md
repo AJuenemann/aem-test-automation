@@ -45,7 +45,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 ## Gesamtübersicht (Stand 19.11.2026)
 
 59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 55 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+nur auf Anforderung) und 80 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -602,6 +602,39 @@ Sprachversionen.
     speichert die Lauf-Einstellungen, das Tempo nur im sichtbaren Lauf (headless = 0).
 - **Erwartet**: alle Fälle grün; die Web-UI-Logik ist unabhängig von einer echten
   AEM-Umgebung abgesichert.
+
+### UNIT-UI-LOGIK — Logik und Kontrast der neuen Web-UI (`tests/unit/webui-ui-logic.spec.ts`)
+- **Zweck**: sichert die DOM-freie Logik der neuen Oberfläche (`webui/public/js/logic.js`)
+  und die Lesbarkeit der Farbpalette (`webui/public/tokens.css`) ab. Kein AEM, kein Browser.
+- **Fälle** (15):
+  - **Theme** (`resolveTheme`): gespeicherte Wahl schlägt die Systemeinstellung, sonst gilt das System.
+  - **Auswahl**: Testschlüssel trennt Geschwister mit gleicher Datei und Zeile; `env:`-Tag schränkt
+    die Umgebung ein; Unit-only erzwingt Headless; Suche über Titel, Suite, Kategorie, Tags.
+  - **Ergebnisse**: Statusart (instabil = bestanden mit Wiederholung, Timeout = Fehlschlag);
+    Gruppierung mit Fehlschlägen zuerst und stabiler Reihenfolge; Kernaussage („2 von 6 Tests
+    fehlgeschlagen", „Alle 4 Tests bestanden", abgebrochen, leer); Formate für Dauer und Größe.
+  - **Historie**: Lauf-Label (max. 3 Dateien), Einstellungs-Kurztext, Gruppierung nach Monat und
+    Tag (aktueller Monat offen, „Heute"/„Gestern").
+  - **Kontrast (WCAG AA)**: Textpaare der Tokens erreichen im hellen und im dunklen Theme 4,5:1
+    (UI-Elemente wie der Fokusrahmen 3:1).
+- **Erwartet**: alle Fälle grün.
+
+### UNIT-UI-BROWSER — Bedienung der neuen Web-UI (`tests/unit/webui-ui.spec.ts`)
+- **Zweck**: prüft die Oberfläche im Browser gegen einen lokalen Server, der `webui/public`
+  ausliefert und `/api/*` mit festen Daten beantwortet. Kein AEM, kein Login, kein echter Lauf;
+  gelöscht oder gestartet wird nichts.
+- **Fälle** (10):
+  - **Testlauf**: Start ohne Auswahl gesperrt, mit Auswahl frei; Schritt-Kopf und Start-Leiste
+    fassen die Auswahl zusammen. Im Schrittmodus ist genau ein Schritt offen, „Alle offen" öffnet alle.
+  - **Umgebung**: Ein Test mit `@env:test` ist unter DEV gesperrt und fällt beim Wechsel aus der
+    Auswahl. Aufgeklappte Kategorien bleiben beim Neuzeichnen offen.
+  - **Nur Unit-Tests**: „Sichtbar" ist gesperrt, Headless aktiv.
+  - **Shell**: Reiter per Hash-Routing, Reload und Home-Taste; Theme-Umschalter speichert die Wahl,
+    ohne Wahl folgt die UI dem System.
+  - **Ergebnisse**: Früherer Lauf zeigt Kernaussage, Fehlschlag zuerst, Filter wirkt;
+    Löschen verlangt Bestätigung und sendet bei „Abbrechen" nichts.
+  - **Werkzeuge**: Aufräum-Suche listet Testseiten; Löschen fragt erst nach.
+- **Erwartet**: alle Fälle grün.
 
 ---
 

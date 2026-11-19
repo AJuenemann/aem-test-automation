@@ -1,205 +1,357 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>AEM Testautomatisierung</title>
+    <!-- Theme vor dem ersten Zeichnen setzen (kein Aufblitzen). Logik: js/logic.js resolveTheme. -->
+    <script>
+      (function () {
+        try {
+          var s = localStorage.getItem('aem-webui-theme');
+          var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.dataset.theme = s === 'light' || s === 'dark' ? s : dark ? 'dark' : 'light';
+        } catch (e) { document.documentElement.dataset.theme = 'light'; }
+      })();
+    </script>
+    <link rel="stylesheet" href="/tokens.css" />
     <link rel="stylesheet" href="/app.css" />
   </head>
   <body>
-    <header>
+    <!-- Icon-Sprite (Linienicons, 24x24) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+      <defs>
+        <symbol id="i-list" viewBox="0 0 24 24"><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></symbol>
+        <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15v3"/><path d="M12 9v9"/><path d="M17 5v13"/></symbol>
+        <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+        <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+        <symbol id="i-skip" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+        <symbol id="i-external" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+        <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/></symbol>
+        <symbol id="i-server" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol>
+        <symbol id="i-terminal" viewBox="0 0 24 24"><path d="m4 17 6-6-6-6"/><path d="M12 19h8"/></symbol>
+        <symbol id="i-window" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 4v4"/><path d="M2 8h20"/><path d="M6 4v4"/></symbol>
+        <symbol id="i-compare" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></symbol>
+        <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></symbol>
+        <symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.22 3.48a.5.5 0 0 0 .78-.42V7.94a.5.5 0 0 0-.78-.42L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+        <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+        <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"/></symbol>
+        <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+        <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+      </defs>
+    </svg>
+
+    <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+    <header class="topbar">
       <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></span>
         <h1>AEM Testautomatisierung</h1>
-        <p class="subtitle">Tests auswählen, starten und auswerten.</p>
       </div>
-      <button type="button" id="shutdown" class="ghost" title="Anwendung beenden und Port freigeben">
-        Beenden
-      </button>
+
+      <nav class="tabs" role="tablist" aria-label="Bereiche">
+        <a role="tab" id="tab-btn-testlauf" href="#/testlauf" aria-controls="tab-testlauf" data-tab="testlauf">
+          <svg class="icon" aria-hidden="true"><use href="#i-list"/></svg><span>Testlauf</span>
+        </a>
+        <a role="tab" id="tab-btn-ergebnisse" href="#/ergebnisse" aria-controls="tab-ergebnisse" data-tab="ergebnisse">
+          <svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Ergebnisse</span>
+          <span class="tab-dot" id="tab-dot" hidden></span>
+        </a>
+        <a role="tab" id="tab-btn-werkzeuge" href="#/werkzeuge" aria-controls="tab-werkzeuge" data-tab="werkzeuge">
+          <svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg><span>Werkzeuge</span>
+        </a>
+      </nav>
+
+      <div class="top-actions">
+        <button type="button" id="run-pill" class="run-pill" hidden>
+          <span class="spinner" aria-hidden="true"></span><span id="run-pill-text">Lauf aktiv</span>
+        </button>
+        <button type="button" id="theme-toggle" class="icon-btn" aria-label="Zum dunklen Theme wechseln" title="Hell / Dunkel">
+          <svg class="icon theme-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+          <svg class="icon theme-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+        </button>
+        <a class="btn btn-ghost btn-sm" href="/legacy/" title="Bisherige Oberfläche öffnen">Alte Oberfläche</a>
+        <button type="button" id="shutdown" class="icon-btn" aria-label="Anwendung beenden" title="Anwendung beenden und Port freigeben">
+          <svg class="icon" aria-hidden="true"><use href="#i-power"/></svg>
+        </button>
+      </div>
     </header>
 
-    <main>
-      <!-- Linke Spalte: geführte Konfiguration -->
-      <section id="config" aria-label="Konfiguration">
-        <!-- Schritt: Was testen -->
-        <div class="step">
-          <div class="step-head">
-            <h2>Was möchtest du testen?</h2>
-            <div class="step-tools">
-              <button type="button" id="select-all" class="link">Alle</button>
-              <button type="button" id="select-none" class="link" hidden>Keine</button>
-              <button type="button" id="refresh-catalog" class="link" title="Testkatalog neu einlesen">Aktualisieren</button>
+    <main id="main" tabindex="-1">
+      <!-- ===================== Testlauf ===================== -->
+      <section id="tab-testlauf" class="panel" role="tabpanel" aria-labelledby="tab-btn-testlauf" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Testlauf vorbereiten</h2>
+            <p class="lede">Tests wählen, Umgebung festlegen, starten.</p>
+          </div>
+          <div class="segmented" role="group" aria-label="Darstellung der Schritte">
+            <button type="button" data-stepmode="single" aria-pressed="true">Schritt für Schritt</button>
+            <button type="button" data-stepmode="all" aria-pressed="false">Alle offen</button>
+          </div>
+        </div>
+
+        <ol class="steps" id="steps">
+          <!-- Schritt 1: Tests -->
+          <li class="step" data-step="1">
+            <h3 class="step-title">
+              <button type="button" class="step-head" aria-expanded="true" aria-controls="step-body-1">
+                <span class="step-num" aria-hidden="true"></span>
+                <span class="step-label">Tests auswählen</span>
+                <span class="step-summary" id="sum-1"></span>
+                <svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg>
+              </button>
+            </h3>
+            <div class="step-body" id="step-body-1">
+              <div class="catalog-toolbar">
+                <label class="search">
+                  <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                  <span class="sr-only">Tests filtern</span>
+                  <input type="search" id="catalog-search" placeholder="Tests filtern (Name, Kategorie, Tag)" autocomplete="off" />
+                </label>
+                <div class="toolbar-links">
+                  <button type="button" id="select-all" class="link">Alle</button>
+                  <button type="button" id="select-none" class="link" hidden>Keine</button>
+                  <button type="button" id="refresh-catalog" class="link" title="Testkatalog neu einlesen">Aktualisieren</button>
+                </div>
+              </div>
+              <div id="active-chips" class="chips" aria-label="Aktive Auswahl"></div>
+              <div id="catalog" class="catalog" aria-live="polite">Lade Tests…</div>
+              <div class="step-foot"><button type="button" class="btn" data-next="2">Weiter: Umgebung</button></div>
             </div>
-          </div>
-          <p class="selection-hint" id="selection-hint">Noch nichts ausgewählt — zum Starten mindestens einen Test wählen.</p>
-          <div class="catalog-filter">
-            <input type="search" id="catalog-search" class="catalog-search"
-              placeholder="Tests filtern (Name, Kategorie, Tag)…"
-              aria-label="Tests filtern" autocomplete="off" />
-            <div id="active-chips" class="chips" aria-label="Aktive Auswahl"></div>
-          </div>
-          <div id="catalog" class="catalog" aria-live="polite">Lade Tests…</div>
-        </div>
+          </li>
 
-        <!-- Schritt: Umgebung -->
-        <div class="step">
-          <h2>Gegen welche Umgebung?</h2>
-          <div id="env-cards" class="cards" role="radiogroup" aria-label="Testumgebung"></div>
-          <p id="env-hint" class="hint"></p>
-        </div>
+          <!-- Schritt 2: Umgebung -->
+          <li class="step" data-step="2">
+            <h3 class="step-title">
+              <button type="button" class="step-head" aria-expanded="false" aria-controls="step-body-2">
+                <span class="step-num" aria-hidden="true"></span>
+                <span class="step-label">Umgebung wählen</span>
+                <span class="step-summary" id="sum-2"></span>
+                <svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg>
+              </button>
+            </h3>
+            <div class="step-body" id="step-body-2">
+              <div id="env-cards" class="choice-grid" role="group" aria-label="Testumgebung"></div>
+              <p id="env-hint" class="hint"></p>
+              <div class="step-foot"><button type="button" class="btn" data-next="3">Weiter: Ausführung</button></div>
+            </div>
+          </li>
 
-        <!-- Schritt: Wie ausführen -->
-        <div class="step">
-          <h2>Wie ausführen?</h2>
-          <div id="mode-cards" class="cards" role="radiogroup" aria-label="Ausführungsmodus">
-            <button type="button" class="card" data-mode="headless" aria-pressed="true">
-              <span class="card-title">Headless</span>
-              <span class="card-desc">Im Hintergrund, am schnellsten.</span>
+          <!-- Schritt 3: Ausführung -->
+          <li class="step" data-step="3">
+            <h3 class="step-title">
+              <button type="button" class="step-head" aria-expanded="false" aria-controls="step-body-3">
+                <span class="step-num" aria-hidden="true"></span>
+                <span class="step-label">Ausführung festlegen</span>
+                <span class="step-summary" id="sum-3"></span>
+                <svg class="icon chev" aria-hidden="true"><use href="#i-chevron"/></svg>
+              </button>
+            </h3>
+            <div class="step-body" id="step-body-3">
+              <div id="mode-cards" class="choice-grid" role="group" aria-label="Ausführungsmodus">
+                <button type="button" class="choice" data-mode="headless" aria-pressed="true">
+                  <span class="choice-title">Headless</span>
+                  <span class="choice-desc">Im Hintergrund, am schnellsten.</span>
+                </button>
+                <button type="button" class="choice" data-mode="headed" aria-pressed="false">
+                  <span class="choice-title">Sichtbar</span>
+                  <span class="choice-desc">Browser-Fenster läuft mit.</span>
+                </button>
+              </div>
+
+              <div id="slowmo-row" class="slowmo" hidden>
+                <span class="field-label" id="slowmo-label">Tempo</span>
+                <div id="slowmo-steps" class="segmented" role="group" aria-labelledby="slowmo-label">
+                  <button type="button" data-ms="0" aria-pressed="true">Normal</button>
+                  <button type="button" data-ms="500" aria-pressed="false">Etwas langsamer</button>
+                  <button type="button" data-ms="1500" aria-pressed="false">Langsam</button>
+                  <button type="button" data-ms="3000" aria-pressed="false">Sehr langsam</button>
+                </div>
+                <p class="hint">„Normal" ist die Playwright-Standardgeschwindigkeit. Die anderen Stufen pausieren pro Aktion.</p>
+              </div>
+
+              <details class="more">
+                <summary>Weitere Optionen</summary>
+                <div class="more-grid">
+                  <label class="field">
+                    <span class="field-label">Filter (--grep)</span>
+                    <input type="text" id="grep" placeholder="z. B. Seite anlegen" />
+                  </label>
+                  <label class="field">
+                    <span class="field-label">Wiederholungen</span>
+                    <input type="number" id="repeat-each" min="1" value="1" />
+                    <span class="hint">1 = normal. Höher nur zur Flakiness-Diagnose.</span>
+                  </label>
+                  <label class="check">
+                    <input type="checkbox" id="update-snapshots" />
+                    <span>Baselines aktualisieren</span>
+                  </label>
+                  <label class="check">
+                    <input type="checkbox" id="smoke-gate" aria-describedby="smoke-gate-hint" />
+                    <span>Smoketest vorab ausführen</span>
+                  </label>
+                </div>
+                <p id="smoke-gate-hint" class="hint">Der Smoketest prüft zuerst die Umgebung (ca. 30 s). Schlägt er fehl, laufen die gewählten Tests nicht. Aus: Es laufen nur die gewählten Tests.</p>
+              </details>
+            </div>
+          </li>
+        </ol>
+
+        <!-- Immer sichtbare Start-Leiste -->
+        <div class="startbar" id="startbar">
+          <div class="startbar-info">
+            <strong id="sb-count">Noch nichts ausgewählt</strong>
+            <span id="sb-detail" class="muted"></span>
+          </div>
+          <div class="startbar-actions">
+            <button type="button" id="cmd-toggle" class="btn btn-ghost" aria-expanded="false" aria-controls="cmd-panel">
+              <svg class="icon" aria-hidden="true"><use href="#i-terminal"/></svg>Befehl
             </button>
-            <button type="button" class="card" data-mode="headed" aria-pressed="false">
-              <span class="card-title">Sichtbar</span>
-              <span class="card-desc">Browser-Fenster läuft mit.</span>
+            <button type="button" id="cancel" class="btn btn-danger" hidden>
+              <svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg>Abbrechen
+            </button>
+            <button type="button" id="run" class="btn btn-primary btn-lg" disabled>
+              <svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>Tests starten
             </button>
           </div>
-
-          <div id="slowmo-row" class="slowmo" hidden>
-            <span class="slowmo-label">Tempo</span>
-            <div id="slowmo-steps" class="segmented" role="radiogroup" aria-label="Tempo im sichtbaren Lauf">
-              <button type="button" data-ms="0" aria-pressed="true">Normal</button>
-              <button type="button" data-ms="500" aria-pressed="false">Etwas langsamer</button>
-              <button type="button" data-ms="1500" aria-pressed="false">Langsam</button>
-              <button type="button" data-ms="3000" aria-pressed="false">Sehr langsam</button>
-            </div>
-            <span class="hint">„Normal" ist die Playwright-Standardgeschwindigkeit; die anderen Stufen pausieren pro Aktion.</span>
-          </div>
-
-          <details class="extra">
-            <summary>Weitere Optionen</summary>
-            <div class="extra-grid">
-              <label>Filter (--grep)
-                <input type="text" id="grep" placeholder="z.B. Seite anlegen" />
-              </label>
-              <label>Wiederholungen
-                <input type="number" id="repeat-each" min="1" value="1" />
-              </label>
-              <label class="check">
-                <input type="checkbox" id="update-snapshots" />
-                Baselines aktualisieren
-              </label>
-              <label class="check">
-                <input type="checkbox" id="smoke-gate" aria-describedby="smoke-gate-hint" />
-                Smoketest vorab ausführen
-              </label>
-            </div>
-            <p id="smoke-gate-hint" class="hint">Smoketest vorab: prüft zuerst die Umgebung (ca. 30 s). Schlägt er fehl, laufen die ausgewählten Tests nicht. Aus = es laufen nur die ausgewählten Tests.</p>
-            <p class="hint">Wiederholungen: 1 = normal. Höher nur zur Flakiness-Diagnose — prüft, ob ein Test zufällig fehlschlägt.</p>
-            <!-- workers ist intern fest auf 1: AEM verträgt keinen parallelen Zugriff. -->
-            <input type="hidden" id="workers" value="1" />
-          </details>
-        </div>
-
-        <!-- Schritt: Aufräumen (von Tests angelegte Seiten entfernen) -->
-        <div class="step" id="cleanup-panel">
-          <h2>Testseiten aufräumen</h2>
-          <p class="panel-hint">Von Tests angelegte Seiten und Visitenkarten unter den Spielwiesen finden und löschen.</p>
-          <div class="cleanup-actions">
-            <button type="button" id="cleanup-scan" class="btn">Testseiten suchen</button>
-            <button type="button" id="cleanup-delete" class="danger" hidden>Ausgewählte löschen</button>
-          </div>
-          <div id="cleanup-result" class="cleanup-result"></div>
-        </div>
-
-        <!-- Start -->
-        <div class="start-bar">
-          <button type="button" id="run" class="primary big">Tests starten</button>
-          <button type="button" id="cancel" class="danger" disabled>Abbrechen</button>
-          <details class="preview-wrap">
-            <summary>Befehl anzeigen</summary>
-            <pre id="preview" class="preview"></pre>
-          </details>
-        </div>
-
-        <div class="alt-action">
-          <button type="button" id="open-uimode" class="btn"
-            title="Öffnet Playwrights eigene Oberfläche in einem separaten Fenster. Übernimmt Umgebung, Projekte und Filter — die Testauswahl (Datei/Zeile) wird dort NICHT übernommen (von Playwright nicht unterstützt).">
-            Playwright UI-Mode öffnen
-          </button>
-          <small class="hint">Eigenes Playwright-Fenster. Übernimmt Umgebung, Projekte und Filter — die Datei/Zeile-Auswahl dort über das Suchfeld.</small>
+          <div id="cmd-panel" class="cmd-panel" hidden><pre id="preview"></pre></div>
         </div>
       </section>
 
-      <!-- Rechte Spalte: Ergebnisse -->
-      <section id="results" aria-label="Ergebnisse">
-        <div class="results-head">
-          <h2>Ergebnis</h2>
-          <div class="results-actions">
-            <a id="open-report" href="/report" target="_blank" rel="noopener" class="btn">Report &amp; Traces</a>
-            <button type="button" id="toggle-advanced" class="btn" aria-pressed="false">Baseline-Vergleich</button>
+      <!-- ===================== Ergebnisse ===================== -->
+      <section id="tab-ergebnisse" class="panel results-layout" role="tabpanel" aria-labelledby="tab-btn-ergebnisse" hidden>
+        <div class="res-main">
+          <div id="res-empty" class="empty card">
+            <svg class="icon icon-xl" aria-hidden="true"><use href="#i-inbox"/></svg>
+            <h2>Noch kein Lauf</h2>
+            <p>Starte einen Testlauf oder öffne rechts einen früheren Lauf.</p>
+            <a class="btn btn-primary" href="#/testlauf">Zum Testlauf</a>
           </div>
-        </div>
 
-        <div id="empty-state" class="empty-state">
-          Noch kein Lauf. Links auswählen und „Tests starten".
-        </div>
-
-        <div id="status-line" class="status-line" hidden></div>
-        <div id="blocker" class="blocker" hidden></div>
-        <div id="capture-hint" class="capture-hint" hidden>
-          ⏭ <strong><span id="capture-count">0</span> Tests übersprungen</strong> — Referenz-Fixtures fehlen.
-          <button type="button" id="run-capture" class="btn capture-hint-btn">Capture jetzt ausführen ▶</button>
-          <small>Führt <code>CAPTURE_DIALOGS=1</code> aus und hält den aktuellen Dialog-Stand fest.</small>
-        </div>
-        <div id="summary" class="summary" hidden></div>
-
-        <details id="log-box" hidden>
-          <summary>Live-Log</summary>
-          <pre id="log" class="log"></pre>
-        </details>
-
-        <table id="result-table" class="result-table" hidden>
-          <thead>
-            <tr><th>Bereich</th><th>Testsuite</th><th>Test</th><th>Status</th><th>Dauer</th><th>Artefakte</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-
-        <!-- Frühere Testergebnisse: dauerhaft sichtbar, kein Toggle nötig -->
-        <div class="advanced-panel">
-          <h3>Frühere Testergebnisse</h3>
-          <div id="history" class="history">—</div>
-        </div>
-
-        <!-- Baseline-Vergleich: selten genutzt, hinter Toggle -->
-        <div id="advanced" hidden>
-          <div class="advanced-panel" id="baseline-panel">
-            <h3>Referenzbilder vergleichen</h3>
-            <p class="panel-hint">Zwei Umgebungen nebeneinander (alt vs. neu).</p>
-            <div class="field inline">
-              <label for="base-a">Umgebung A</label>
-              <select id="base-a"></select>
-              <label for="base-b">Umgebung B</label>
-              <select id="base-b"></select>
+          <div id="res-view" hidden>
+            <div class="res-head card" id="res-head">
+              <span class="res-status" id="res-status-ico" aria-hidden="true"></span>
+              <div class="res-head-text">
+                <h2 id="res-title" tabindex="-1"></h2>
+                <p id="res-meta" class="muted"></p>
+              </div>
+              <div class="res-head-actions">
+                <button type="button" id="res-cancel" class="btn btn-danger" hidden>
+                  <svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg>Abbrechen
+                </button>
+                <a id="open-report" href="/report" target="_blank" rel="noopener" class="btn">
+                  Report &amp; Traces<svg class="icon" aria-hidden="true"><use href="#i-external"/></svg>
+                </a>
+              </div>
+              <div class="progress" id="res-progress" hidden><span></span></div>
             </div>
-            <p id="baseline-note" class="empty-hint" hidden>
-              Nur eine Umgebung vorhanden — Vergleich braucht zwei.
-            </p>
-            <div id="baselines" class="baselines">—</div>
+
+            <div id="res-blocker" class="banner banner-fail" role="alert" hidden></div>
+            <div id="res-notice" class="banner banner-info" role="status" hidden></div>
+            <div id="res-capture" class="banner banner-warn" hidden>
+              <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
+              <div class="banner-text">
+                <strong><span id="capture-count">0</span> Tests übersprungen:</strong> Referenz-Fixtures fehlen.
+                <span class="muted">Der Capture-Lauf hält den aktuellen Dialog-Stand fest (<code>CAPTURE_DIALOGS=1</code>).</span>
+              </div>
+              <button type="button" id="run-capture" class="btn btn-sm">Capture jetzt ausführen</button>
+            </div>
+
+            <div class="filters" id="res-filters" role="group" aria-label="Ergebnisse filtern" hidden></div>
+            <div id="res-groups"></div>
+
+            <details id="res-log" class="log-card card">
+              <summary>Live-Log</summary>
+              <pre id="log" class="log"></pre>
+            </details>
           </div>
+        </div>
+
+        <aside class="res-side card" aria-labelledby="history-title">
+          <h3 id="history-title"><svg class="icon" aria-hidden="true"><use href="#i-history"/></svg>Frühere Läufe</h3>
+          <div id="history" class="history">—</div>
+        </aside>
+      </section>
+
+      <!-- ===================== Werkzeuge ===================== -->
+      <section id="tab-werkzeuge" class="panel" role="tabpanel" aria-labelledby="tab-btn-werkzeuge" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Werkzeuge</h2>
+            <p class="lede">Hilfsfunktionen neben dem eigentlichen Testlauf.</p>
+          </div>
+        </div>
+
+        <div class="tools-grid">
+          <article class="card tool" aria-labelledby="tool-cleanup-title">
+            <h3 id="tool-cleanup-title"><svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg>Testseiten aufräumen</h3>
+            <p>Von Tests angelegte Seiten, Visitenkarten und Assets unter den Spielwiesen finden und löschen. Durchsucht alle Umgebungen.</p>
+            <div class="tool-actions">
+              <button type="button" id="cleanup-scan" class="btn">Testseiten suchen</button>
+              <button type="button" id="cleanup-delete" class="btn btn-danger" hidden>Ausgewählte löschen</button>
+            </div>
+            <div id="cleanup-result" class="cleanup-result" aria-live="polite"></div>
+          </article>
+
+          <article class="card tool" aria-labelledby="tool-ui-title">
+            <h3 id="tool-ui-title"><svg class="icon" aria-hidden="true"><use href="#i-window"/></svg>Playwright UI-Mode</h3>
+            <p>Öffnet Playwrights eigene Oberfläche in einem separaten Fenster. Übernommen werden Umgebung, Projekte und Filter. Die Testauswahl nach Datei und Zeile übernimmt Playwright nicht: Dort das Suchfeld nutzen.</p>
+            <div class="tool-actions">
+              <button type="button" id="open-uimode" class="btn">UI-Mode öffnen</button>
+            </div>
+            <p id="uimode-result" class="hint" role="status"></p>
+          </article>
+
+          <article class="card tool tool-wide" aria-labelledby="tool-base-title">
+            <h3 id="tool-base-title"><svg class="icon" aria-hidden="true"><use href="#i-compare"/></svg>Referenzbilder vergleichen</h3>
+            <p>Zwei Umgebungen nebeneinander, zum Beispiel alt gegen neu.</p>
+            <div class="base-controls">
+              <label class="field"><span class="field-label">Umgebung A</span><select id="base-a"></select></label>
+              <label class="field"><span class="field-label">Umgebung B</span><select id="base-b"></select></label>
+            </div>
+            <p id="baseline-note" class="hint" hidden>Nur eine Umgebung vorhanden. Ein Vergleich braucht zwei.</p>
+            <div id="baselines" class="baselines">—</div>
+          </article>
         </div>
       </section>
     </main>
 
-    <script type="module" src="/app.js"></script>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
-    <dialog id="runs-delete-dialog">      <h3>Läufe löschen</h3>
-      <p id="runs-delete-msg">X Läufe endgültig löschen?</p>
-      <p class="dialog-warning">
-        Diese Aktion kann nicht rückgängig gemacht werden.<br>
-        Report, Traces und Screenshots werden unwiederbringlich gelöscht.
-      </p>
-      <div class="dialog-actions">
-        <button type="button" id="runs-delete-cancel" class="btn">Abbrechen</button>
-        <button type="button" id="runs-delete-confirm" class="danger">Endgültig löschen</button>
-      </div>
+    <!-- Allgemeiner Bestätigungsdialog -->
+    <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+      <form method="dialog">
+        <h3 id="confirm-title">Bestätigen</h3>
+        <p id="confirm-message"></p>
+        <p id="confirm-detail" class="dialog-detail" hidden></p>
+        <div class="dialog-actions">
+          <button type="submit" value="cancel" class="btn">Abbrechen</button>
+          <button type="submit" value="ok" id="confirm-ok" class="btn btn-primary">Bestätigen</button>
+        </div>
+      </form>
     </dialog>
+
+    <!-- Referenzbild in Vollansicht -->
+    <dialog id="lightbox" aria-label="Referenzbild">
+      <form method="dialog">
+        <button type="submit" class="icon-btn lightbox-close" aria-label="Schließen"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button>
+      </form>
+      <figure><img alt="" /><figcaption></figcaption></figure>
+    </dialog>
+
+    <script type="module" src="/app.js"></script>
   </body>
 </html>
