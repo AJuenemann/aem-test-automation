@@ -4,7 +4,7 @@ Playwright-/TypeScript-Testautomatisierung für die Fraunhofer AEM 6.5 LTS Migra
 (Tickets FHGWCMS-2415 / FHGWCMS-2416). Die Suite prüft über echte Redakteurs-
 Gesten, ob die Fraunhofer-Website nach dem Update wie vorher funktioniert. Sie
 umfasst 59 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
-inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 124 Unit-Tests
+inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 126 Unit-Tests
 ohne AEM (Stand 19.11.2026). Die vollständige Liste mit Ablauf und Erwartung steht in
 [`docs/TESTFAELLE.md`](docs/TESTFAELLE.md).
 
@@ -282,7 +282,7 @@ Der Umschalter oben rechts wechselt zwischen „Assistent" (ein Schritt nach dem
 Laufs („2 von 6 Tests fehlgeschlagen"), Fehlschläge zuerst, Statusfilter, Details
 und Artefakte je Test sowie rechts die früheren Läufe. **Werkzeuge** enthält Aufräumen,
 Referenzbilder vergleichen und den Playwright UI-Mode. Die Oberfläche ist hell oder
-dunkel (Umschalter oben, Standard = Systemeinstellung). Links davon wechselt der Sprachschalter zwischen Deutsch und Englisch (US); angezeigt wird die aktive Sprache (`DE`/`EN`). Startsprache ist die Systemsprache (Deutsch → DE, sonst EN), danach gilt die Wahl. Testtitel und Playwright-Texte bleiben unübersetzt. Die Farbpalette steht zentral
+dunkel (Umschalter oben, Standard = Systemeinstellung). Links davon wechselt der Sprachschalter zwischen Deutsch und Englisch (US); angezeigt wird die aktive Sprache (`DE`/`EN`). Startsprache ist die Systemsprache (Deutsch → DE, sonst EN). Die Wahl gilt bis zum nächsten Start von `npm run webui` (ein Reload behält sie). Testtitel und Playwright-Texte bleiben unübersetzt. Die Farbpalette steht zentral
 in `webui/public/tokens.css`. Die bisherige Oberfläche läuft vorerst unverändert unter
 `/legacy/` weiter (Link „Alte Oberfläche"), bis die neue abgenommen ist.
 

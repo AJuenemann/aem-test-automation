@@ -78,7 +78,7 @@ Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und di
 
 Umfang: 59 AEM-Testfälle (12 Smoketest inkl. Login, 11 Basisfunktionen,
 24 Komponenten, 3 Integrationstest, 9 Regressionstest), dazu 11 Capture-Läufe
-und 124 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
+und 126 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 ## Web-UI: Aufbau und Fallback
@@ -99,8 +99,9 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
   (flache Schlüssel, Platzhalter `{name}`, Plural `.one`/`.other`), Kern in `js/i18n.js`
   (`t`, `tn`, `locale`, DOM-frei, Default `de`). Statisches HTML nutzt `data-i18n`,
   `data-i18n-title`, `-aria-label`, `-placeholder`; `app.js` übersetzt es (`applyStatic`).
-  Der Sprachschalter `#lang-toggle` speichert `aem-webui-lang`; ohne Wahl gilt die Systemsprache
-  (`resolveLang` in `logic.js`). Module zeichnen sich bei `lang-change` neu (idempotente
+  Der Sprachschalter `#lang-toggle` speichert `aem-webui-lang` samt Start-Kennung des Dienstes
+  (`aem-webui-lang-server`, wie bei der Umgebung): Nach einem Neustart von `npm run webui` gilt wieder
+  die Systemsprache (`resolveLang` in `logic.js`, `syncLangWithServer` in `app.js`). Module zeichnen sich bei `lang-change` neu (idempotente
   Render-Funktionen, Zustand bleibt; Gruppen über `groupKey`, nicht über das Label).
   **Neue Texte immer in beiden Wörterbüchern, nie als Literal im JS.** Server-Texte additiv:
   `labelEn`/`descriptionEn` in `categories.json` und `environments.json`, `blockerInfo`

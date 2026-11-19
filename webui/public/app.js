@@ -1,9 +1,9 @@
 // Einstieg der Web-UI: Sprache, Reiter-Routing, Theme, Lauf-Anzeige im Kopf, Beenden.
 // Vanilla-JS mit ES-Modulen, kein Build-Schritt. Die bisherige Oberfläche liegt
 // unverändert unter /legacy/ (Fallback bis zur Abnahme).
-import { $, $$, on, emit, loadPrefs, api, confirmDialog } from './js/core.js';
+import { $, $$, on, emit, state, loadPrefs, api, confirmDialog } from './js/core.js';
 import { resolveTheme, resolveLang } from './js/logic.js';
-import { t, setLang, getLang, LANG_KEY } from './js/i18n.js';
+import { t, setLang, getLang, LANG_KEY, LANG_SERVER_KEY } from './js/i18n.js';
 import * as testrun from './js/testrun.js';
 import * as results from './js/results.js';
 import * as history from './js/history.js';
@@ -42,13 +42,37 @@ function applyLang(lang) {
   emit('lang-change', { lang });
 }
 
+const systemLanguages = () => navigator.languages || [navigator.language];
+let langChosenInSession = false;
+
 function initLang() {
-  applyLang(resolveLang(storedLang(), navigator.languages || [navigator.language]));
+  applyLang(resolveLang(storedLang(), systemLanguages()));
   $('#lang-toggle').addEventListener('click', () => {
     const next = getLang() === 'de' ? 'en' : 'de';
-    try { localStorage.setItem(LANG_KEY, next); } catch { /* privater Modus */ }
+    langChosenInSession = true;
+    try {
+      localStorage.setItem(LANG_KEY, next);
+      localStorage.setItem(LANG_SERVER_KEY, state.serverStartId || '');
+    } catch { /* privater Modus */ }
     applyLang(next);
   });
+}
+
+/**
+ * Wie bei der Umgebung gilt die gespeicherte Sprachwahl nur, solange derselbe Dienst läuft
+ * (Reload). Nach einem Neustart von `npm run webui` gilt wieder die Systemsprache.
+ * Aufruf, sobald die Start-Kennung des Dienstes bekannt ist.
+ */
+function syncLangWithServer() {
+  const id = state.serverStartId;
+  if (!id) return;
+  try {
+    if (langChosenInSession) { localStorage.setItem(LANG_SERVER_KEY, id); return; }
+    if (!storedLang() || localStorage.getItem(LANG_SERVER_KEY) === id) return;
+    localStorage.removeItem(LANG_KEY);
+    localStorage.removeItem(LANG_SERVER_KEY);
+  } catch { return; }
+  applyLang(resolveLang(null, systemLanguages()));
 }
 
 // ---------------------------------------------------------------------------
@@ -191,6 +215,7 @@ async function main() {
   }).catch(() => {});
 
   await testrun.loadEnvironments();
+  syncLangWithServer();
   await testrun.loadCatalog();
 }
 

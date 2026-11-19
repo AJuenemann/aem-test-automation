@@ -300,13 +300,15 @@ const REPORT = {
 
 let server: Server;
 let base = '';
+let serverStartId = 'srv-1';
+test.beforeEach(() => { serverStartId = 'srv-1'; });
 test.beforeAll(async () => {
   server = createServer(async (req, res) => {
     const url = new URL(req.url || '/', 'http://x');
     const json = (data: unknown) => { res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(data)); };
     switch (url.pathname) {
       case '/api/tests': return json(CATALOG);
-      case '/api/environments': return json({ environments: ENVS, serverStartId: 'srv-1' });
+      case '/api/environments': return json({ environments: ENVS, serverStartId });
       case '/api/runs': return json({ runs: [RUN], totalSizeBytes: 2048 });
       case '/api/status': return json({});
       case '/api/preview': return json({ preview: 'npx playwright test' });
@@ -418,6 +420,33 @@ test.describe('Web-UI i18n: Umschalten', { tag: '@unit' }, () => {
     await expect(lang).toHaveText('DE');
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+  });
+
+  test('Neustart des Dienstes: die gespeicherte Sprachwahl gilt nicht mehr, es gilt die Systemsprache', async ({ page }) => {
+    await open(page);
+    await page.locator('#lang-toggle').click();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    // Reload mit demselben Dienst: die Wahl bleibt.
+    await page.reload();
+    await expect(page.locator('.cat-group')).toHaveCount(CATALOG.groups.length);
+    await expect(page.locator('#lang-toggle')).toHaveText('EN');
+    // Neustart des Dienstes (neue Start-Kennung): zurück zur Systemsprache (de-DE).
+    serverStartId = 'srv-2';
+    await page.reload();
+    await expect(page.locator('#lang-toggle')).toHaveText('DE');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+    await expect(page.locator('#sb-count')).toHaveText('Noch nichts ausgewählt');
+    expect(await page.evaluate(() => localStorage.getItem('aem-webui-lang'))).toBeNull();
+    // Nach einer neuen Wahl gilt sie wieder für diesen Dienst.
+    await page.locator('#lang-toggle').click();
+    await page.reload();
+    await expect(page.locator('#lang-toggle')).toHaveText('EN');
+  });
+
+  test('Sprachwahl aus einer älteren Version (ohne Start-Kennung) wird beim ersten Start zurückgesetzt', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('aem-webui-lang', 'en'));
+    await open(page);
+    await expect(page.locator('#lang-toggle')).toHaveText('DE');
   });
 
   test('Der Theme-Schalter beschriftet sich in der aktiven Sprache', async ({ page }) => {

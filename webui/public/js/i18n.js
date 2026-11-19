@@ -7,6 +7,8 @@ import en from './i18n/en.js';
 export const LANGS = ['de', 'en'];
 export const DICTIONARIES = { de, en };
 export const LANG_KEY = 'aem-webui-lang';
+/** Start-Kennung des Dienstes, zu der die gespeicherte Sprachwahl gehört (neuer Start = Systemsprache). */
+export const LANG_SERVER_KEY = 'aem-webui-lang-server';
 
 let current = 'de';
 

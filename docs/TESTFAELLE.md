@@ -45,7 +45,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 ## Gesamtübersicht (Stand 19.11.2026)
 
 59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 124 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+nur auf Anforderung) und 126 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -654,7 +654,7 @@ Sprachversionen.
 - **Zweck**: sichert die Zweisprachigkeit der neuen Oberfläche ab (Sprachwahl, Wörterbücher,
   Umschalten). Kein AEM, kein Login. Testtitel, Dateinamen und Playwright-Texte bleiben
   unübersetzt und werden nicht geprüft.
-- **Fälle** (29, davon 9 im Browser gegen den lokalen Mock-Server):
+- **Fälle** (31, davon 11 im Browser gegen den lokalen Mock-Server):
   - **Sprachwahl** (`resolveLang`): Systemsprache `de*` → DE, sonst EN, die gespeicherte Wahl gewinnt.
   - **Kern**: Platzhalter, Fallback (DE, dann Schlüssel), Plural, Locale; Formatierer
     (Kernaussage, Einstellungen, Bereiche, „Heute"/„Gestern", Monat) auch auf Englisch;
@@ -669,7 +669,8 @@ Sprachversionen.
     keine deutschen Zeichenketten mehr in den JS-Modulen.
   - **Startsprache** (Browser): `en-US` und `fr-FR` → EN, `de-AT` → DE.
   - **Umschalten** (Browser): Schalter links vom Theme-Schalter, Wahl bleibt nach Reload und gewinnt
-    gegen die Systemsprache; Theme-Schalter, Beenden-Dialog; Testlauf behält Auswahl, offene
+    gegen die Systemsprache; nach einem Neustart des Dienstes (neue Start-Kennung) gilt wieder die
+    Systemsprache, auch bei einer Wahl aus der Vorversion ohne Kennung; Theme-Schalter, Beenden-Dialog; Testlauf behält Auswahl, offene
     Kategorie und Umgebung; Ergebnisse (Kernaussage, Blocker per Code, Durchlauf, Datum) und
     Historie (Auswahl bleibt); Werkzeuge (Aufräum-Ergebnis, Hinweis per Code, Auswahl bleibt);
     in EN steht kein deutscher Anzeigetext mehr in allen Reitern, Schritten und Dialogen;
