@@ -32,6 +32,12 @@ const RUNS_DIR = path.join(__dirname, 'runs');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 /** Alte Oberfläche als Fallback unter /legacy/ (Entfernung nach Abnahme der neuen UI). */
 const LEGACY_DIR = path.join(__dirname, 'public-legacy');
+/**
+ * Neu pro Start des Dienstes. Die Oberfläche merkt sich damit, ob ihre gespeicherte
+ * Umgebung aus diesem oder einem früheren Start stammt (nach einem Neustart ist
+ * bewusst keine Umgebung vorgewählt).
+ */
+const SERVER_START_ID = randomUUID();
 const PORT = Number(process.env.WEBUI_PORT) || 4321;
 /** Live-Log-Reporter (relativ zum Suite-Root, Playwright lädt TS direkt). */
 const LIVE_REPORTER = './webui/live-reporter.ts';
@@ -627,7 +633,8 @@ async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> 
   if (pathname === '/api/environments' && req.method === 'GET') {
     try {
       const raw = await fs.readFile(path.join(__dirname, 'environments.json'), 'utf-8');
-      return sendJson(res, 200, JSON.parse(raw));
+      // serverStartId ist additiv: die alte Oberfläche ignoriert das Feld.
+      return sendJson(res, 200, { ...JSON.parse(raw), serverStartId: SERVER_START_ID });
     } catch (err) {
       return sendJson(res, 500, {
         error: `environments.json konnte nicht gelesen werden: ${(err as Error).message}`,

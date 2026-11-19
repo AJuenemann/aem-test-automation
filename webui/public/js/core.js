@@ -30,6 +30,8 @@ export const state = {
   searchTerm: '',
   runs: [],
   activeRunId: null,
+  /** Kennung des laufenden Dienstes (wechselt bei jedem Start von npm run webui). */
+  serverStartId: null,
 };
 
 export const currentEnvironment = () =>
@@ -58,6 +60,7 @@ export function savePrefs() {
       mode: state.mode,
       slowMo: state.slowMo,
       selectedEnvId: state.selectedEnvId,
+      serverStartId: state.serverStartId,
       options: state.options,
       stepMode: state.stepMode,
     }));
@@ -77,6 +80,7 @@ export function loadPrefs() {
   if (typeof o.updateSnapshots === 'boolean') state.options.updateSnapshots = o.updateSnapshots;
   if (typeof o.smokeGate === 'boolean') state.options.smokeGate = o.smokeGate;
   state._prefEnv = p.selectedEnvId;
+  state._prefServerId = p.serverStartId;
 }
 
 // --- API ---------------------------------------------------------------------

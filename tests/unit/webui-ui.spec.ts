@@ -58,6 +58,7 @@ const REPORT = {
 let server: Server;
 let base = '';
 let posts: string[] = [];
+let serverStartId = 'srv-1';
 
 test.beforeAll(async () => {
   server = createServer(async (req, res) => {
@@ -66,7 +67,7 @@ test.beforeAll(async () => {
     if (req.method === 'POST') posts.push(url.pathname);
     switch (url.pathname) {
       case '/api/tests': return json(CATALOG);
-      case '/api/environments': return json({ environments: ENVS });
+      case '/api/environments': return json({ environments: ENVS, serverStartId });
       case '/api/runs': return json({ runs: [RUN], totalSizeBytes: 2048 });
       case '/api/status': return json({});
       case '/api/preview': return json({ preview: 'npx playwright test' });
@@ -74,6 +75,13 @@ test.beforeAll(async () => {
       case '/api/cleanup/list':
         return json({ playgrounds: ['/content/fhgtest'], environments: [{ id: 'dev', label: 'DEV', pages: ['level1-x-20261119-101010-abcd'], warnings: [] }] });
       case `/api/run/${RUN.id}/report`: return json(REPORT);
+      case '/api/run': return json({ id: RUN.id }); // POST: Lauf starten
+      case `/api/run/${RUN.id}/stream`:
+        // Kurzer Lauf: eine Logzeile, dann „fertig".
+        res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' });
+        res.write('event: log\ndata: "Lauf…\\n"\n\n');
+        res.end('event: done\ndata: {"status":"failed"}\n\n');
+        return;
       default: {
         const rel = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
         const abs = path.resolve(PUBLIC, rel);
@@ -91,7 +99,7 @@ test.beforeAll(async () => {
   base = `http://127.0.0.1:${typeof addr === 'object' && addr ? addr.port : 0}`;
 });
 test.afterAll(() => new Promise<void>((r) => server.close(() => r())));
-test.beforeEach(() => { posts = []; });
+test.beforeEach(() => { posts = []; serverStartId = 'srv-1'; });
 
 async function open(page: Page, hash = '') {
   await page.goto(`${base}/${hash}`);
@@ -99,41 +107,134 @@ async function open(page: Page, hash = '') {
   await expect(page.locator('.cat-group')).toHaveCount(CATALOG.groups.length);
 }
 
+/** Test per Haken wählen (Kategorie aufklappen, dann Test anhaken). */
+async function selectTest(page: Page, group: string, name: RegExp) {
+  const g = page.locator('.cat-group', { hasText: group });
+  if ((await g.getAttribute('open')) === null) await g.locator('.cat-head').click();
+  await g.getByRole('checkbox', { name }).check();
+}
+const chooseEnv = (page: Page, name: string) => page.locator('#env-cards .choice', { hasText: name }).click();
+const step = (page: Page, n: number) => page.locator(`#steps .step[data-step="${n}"]`);
+
 test.describe('Web-UI (neu): Testlauf', { tag: '@unit' }, () => {
-  test('Start ist ohne Auswahl gesperrt und mit Auswahl frei, Schritt-Kopf fasst zusammen', async ({ page }) => {
+  test('Start braucht Test und Umgebung, die Start-Leiste nennt, was fehlt', async ({ page }) => {
     await open(page);
     await expect(page.locator('#run')).toBeDisabled();
     await expect(page.locator('#sb-count')).toHaveText('Noch nichts ausgewählt');
-    await page.locator('.cat-group', { hasText: 'Smoketest' }).locator('.cat-head').click();
-    await page.getByRole('checkbox', { name: /Login geht/ }).check();
+    await selectTest(page, 'Smoketest', /Login geht/);
+    await expect(page.locator('#sb-count')).toHaveText('1 Test gewählt');
+    await expect(page.locator('#sb-detail')).toHaveText('Wähle in Schritt 2 eine Umgebung.');
+    await expect(page.locator('#run')).toBeDisabled();
+    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
+    await chooseEnv(page, 'DEV');
     await expect(page.locator('#run')).toBeEnabled();
-    await expect(page.locator('#sum-1')).toHaveText('1 Test in 1 Bereich');
     await expect(page.locator('#sb-count')).toHaveText('1 Test bereit');
+    await expect(page.locator('#sum-1')).toHaveText('1 Test in 1 Bereich');
   });
 
-  test('Zurücksetzen: leert Auswahl und Suchfeld und klappt die Kategorien zu', async ({ page }) => {
+  test('Umgebung: nach dem Start keine vorgewählt, Reload behält die Wahl, Neustart des Dienstes nicht', async ({ page }) => {
     await open(page);
-    const reset = page.locator('#reset-selection');
-    await expect(reset).toBeHidden();
-    await page.locator('.cat-group', { hasText: 'Smoketest' }).locator('.cat-head').click();
-    await page.getByRole('checkbox', { name: /Login geht/ }).check();
-    await page.locator('#catalog-search').fill('login');
-    await expect(reset).toBeVisible();
-    await reset.click();
-    await expect(page.locator('#catalog-search')).toHaveValue('');
-    await expect(page.locator('#sb-count')).toHaveText('Noch nichts ausgewählt');
-    await expect(page.locator('.cat-group[open]')).toHaveCount(0);
+    await expect(page.locator('#env-cards .choice[aria-pressed="true"]')).toHaveCount(0);
+    await expect(page.locator('#sum-2')).toHaveText('Nicht gewählt');
+    await selectTest(page, 'Smoketest', /Login geht/);
+    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
+    await chooseEnv(page, 'TEST');
+    await expect(page.locator('#sum-2')).toHaveText('TEST');
+    // Reload mit demselben Dienst: „zuletzt verwendet" gilt.
+    await page.reload();
     await expect(page.locator('.cat-group')).toHaveCount(CATALOG.groups.length);
-    await expect(reset).toBeHidden();
+    await expect(page.locator('#sum-2')).toHaveText('TEST');
+    // Neustart des Dienstes (neue Start-Kennung): wieder keine Umgebung.
+    serverStartId = 'srv-2';
+    await page.reload();
+    await expect(page.locator('.cat-group')).toHaveCount(CATALOG.groups.length);
+    await expect(page.locator('#sum-2')).toHaveText('Nicht gewählt');
+    // Nach der ersten Wahl gilt wieder „zuletzt verwendet".
+    await selectTest(page, 'Smoketest', /Login geht/);
+    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
+    await chooseEnv(page, 'DEV');
+    await page.reload();
+    await expect(page.locator('.cat-group')).toHaveCount(CATALOG.groups.length);
+    await expect(page.locator('#sum-2')).toHaveText('DEV');
+  });
+
+  test('Assistent: ohne Test geht es nicht weiter, ohne Umgebung nicht zu Schritt 3', async ({ page }) => {
+    await open(page);
+    const next1 = page.getByRole('button', { name: 'Weiter: Umgebung' });
+    await expect(next1).toBeDisabled();
+    await expect(page.locator('#hint-next-1')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Umgebung wählen' })).toBeDisabled();
+    await expect(page.getByRole('button', { name: 'Ausführung festlegen' })).toBeDisabled();
+
+    await selectTest(page, 'Smoketest', /Login geht/);
+    await expect(next1).toBeEnabled();
+    await expect(page.locator('#hint-next-1')).toBeHidden();
+    await next1.click();
+    await expect(step(page, 2)).toHaveAttribute('data-open', 'true');
+    // Schritt 3 braucht zusätzlich eine Umgebung.
+    await expect(page.getByRole('button', { name: 'Weiter: Ausführung' })).toBeDisabled();
+    await expect(page.locator('#hint-next-2')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Ausführung festlegen' })).toBeDisabled();
+    await chooseEnv(page, 'DEV');
+    await page.getByRole('button', { name: 'Weiter: Ausführung' }).click();
+    await expect(step(page, 3)).toHaveAttribute('data-open', 'true');
+
+    // Auswahl leeren: der Assistent springt auf Schritt 1 zurück, die Folgeschritte sind gesperrt.
+    await page.getByRole('button', { name: 'Tests auswählen' }).click();
+    await page.locator('#reset-selection').click();
+    await expect(step(page, 1)).toHaveAttribute('data-open', 'true');
+    await expect(page.getByRole('button', { name: 'Umgebung wählen' })).toBeDisabled();
+  });
+
+  test('Assistent: nach einem beendeten Lauf steht der Testlauf wieder auf Schritt 1', async ({ page }) => {
+    await open(page);
+    await selectTest(page, 'Smoketest', /Login geht/);
+    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
+    await chooseEnv(page, 'DEV');
+    await page.getByRole('button', { name: 'Ausführung festlegen' }).click();
+    await expect(step(page, 3)).toHaveAttribute('data-open', 'true');
+    await page.locator('#run').click();
+    await expect(page).toHaveURL(/#\/ergebnisse$/);
+    await expect(page.locator('#res-title')).toHaveText('1 von 3 Tests fehlgeschlagen');
+    await page.getByRole('tab', { name: 'Testlauf' }).click();
+    await expect(step(page, 1)).toHaveAttribute('data-open', 'true');
+    await expect(step(page, 3)).toHaveAttribute('data-open', 'false');
+    // Auswahl und Umgebung bleiben für einen Wiederholungslauf erhalten.
+    await expect(page.locator('#sb-count')).toHaveText('1 Test bereit');
+    await expect(page.locator('#sum-2')).toHaveText('DEV');
+  });
+
+  test('Alle Schritte: keine Sperre, die Start-Leiste bleibt gesperrt', async ({ page }) => {
+    await open(page);
+    await page.getByRole('button', { name: 'Alle Schritte' }).click();
+    await expect(page.locator('#steps .step[data-open="true"]')).toHaveCount(3);
+    await expect(page.getByRole('button', { name: 'Umgebung wählen' })).toBeEnabled();
+    await expect(page.locator('#run')).toBeDisabled();
+  });
+
+  test('Schritte: Häkchen erst, wenn der Schritt gesehen wurde (nicht schon wegen der Vorbelegung)', async ({ page }) => {
+    await open(page);
+    await selectTest(page, 'Smoketest', /Login geht/);
+    await expect(step(page, 2)).toHaveAttribute('data-done', 'false');
+    await expect(step(page, 3)).toHaveAttribute('data-done', 'false');
+    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
+    await chooseEnv(page, 'DEV');
+    await page.getByRole('button', { name: 'Ausführung festlegen' }).click();
+    await expect(step(page, 2)).toHaveAttribute('data-done', 'true');
+    await expect(step(page, 2)).toHaveAttribute('data-open', 'false');
+    await page.getByRole('button', { name: 'Tests auswählen' }).click();
+    await expect(step(page, 3)).toHaveAttribute('data-done', 'true'); // gesehen, jetzt geschlossen
+    await expect(step(page, 3)).toHaveAttribute('data-open', 'false');
   });
 
   test('Schritte: genau ein Schritt offen, „Alle Schritte" öffnet alle', async ({ page }) => {
     await open(page);
     const open_ = page.locator('#steps .step[data-open="true"]');
     await expect(open_).toHaveCount(1);
+    await selectTest(page, 'Smoketest', /Login geht/);
     await page.getByRole('button', { name: 'Umgebung wählen' }).click();
     await expect(open_).toHaveCount(1);
-    await expect(page.locator('#steps .step[data-step="2"]')).toHaveAttribute('data-open', 'true');
+    await expect(step(page, 2)).toHaveAttribute('data-open', 'true');
     await page.getByRole('button', { name: 'Alle Schritte' }).click();
     await expect(open_).toHaveCount(3);
   });
@@ -155,28 +256,41 @@ test.describe('Web-UI (neu): Testlauf', { tag: '@unit' }, () => {
     await expect(steps).toHaveCount(1);
   });
 
-  test('Umgebung: Test mit env-Tag ist in der falschen Umgebung gesperrt und fällt aus der Auswahl', async ({ page }) => {
+  test('Zurücksetzen: leert Auswahl und Suchfeld und klappt die Kategorien zu', async ({ page }) => {
     await open(page);
-    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
-    await page.locator('#env-cards .choice', { hasText: 'TEST' }).click();
-    await page.getByRole('button', { name: 'Tests auswählen' }).click();
-    const ldap = page.locator('.cat-group', { hasText: 'Integrationstest' });
-    await ldap.locator('.cat-head').click();
-    await expect(ldap.getByRole('checkbox', { name: /LDAP-Import/ })).toBeEnabled();
-    await ldap.getByRole('checkbox', { name: /LDAP-Import/ }).check();
-    await expect(page.locator('#sb-count')).toHaveText('1 Test bereit');
-    // Zurück auf DEV: der Test ist nicht verfügbar und wird abgewählt.
-    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
-    await page.locator('#env-cards .choice', { hasText: 'DEV' }).click();
+    const reset = page.locator('#reset-selection');
+    await expect(reset).toBeHidden();
+    await selectTest(page, 'Smoketest', /Login geht/);
+    await page.locator('#catalog-search').fill('login');
+    await expect(reset).toBeVisible();
+    await reset.click();
+    await expect(page.locator('#catalog-search')).toHaveValue('');
     await expect(page.locator('#sb-count')).toHaveText('Noch nichts ausgewählt');
-    await page.getByRole('button', { name: 'Tests auswählen' }).click();
+    await expect(page.locator('.cat-group[open]')).toHaveCount(0);
+    await expect(page.locator('.cat-group')).toHaveCount(CATALOG.groups.length);
+    await expect(reset).toBeHidden();
+  });
+
+  test('Umgebung: Test mit env-Tag wird beim Wechsel in eine andere Umgebung entfernt und gemeldet', async ({ page }) => {
+    await open(page);
+    // Ohne Umgebung ist der Test wählbar; unter TEST bleibt er, unter DEV fällt er heraus.
+    await selectTest(page, 'Integrationstest', /LDAP-Import/);
+    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
+    await chooseEnv(page, 'TEST');
+    await expect(page.locator('#sb-count')).toHaveText('1 Test bereit');
+    await chooseEnv(page, 'DEV');
+    await expect(page.locator('#toast')).toContainText('nicht verfügbar');
+    await expect(page.locator('#sb-count')).toHaveText('Noch nichts ausgewählt');
+    // Die Auswahl ist leer: der Assistent springt zu Schritt 1, der Test ist dort gesperrt.
+    await expect(step(page, 1)).toHaveAttribute('data-open', 'true');
     await expect(page.locator('.cat-group', { hasText: 'Integrationstest' }).getByRole('checkbox', { name: /LDAP-Import/ })).toBeDisabled();
   });
 
   test('Nur Unit-Tests: „Sichtbar" ist gesperrt', async ({ page }) => {
     await open(page);
-    await page.locator('.cat-group', { hasText: 'Unit' }).locator('.cat-head').click();
-    await page.getByRole('checkbox', { name: /Guard blockiert/ }).check();
+    await selectTest(page, 'Unit', /Guard blockiert/);
+    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
+    await chooseEnv(page, 'DEV');
     await page.getByRole('button', { name: 'Ausführung festlegen' }).click();
     await expect(page.locator('[data-mode="headed"]')).toBeDisabled();
     await expect(page.locator('[data-mode="headless"]')).toHaveAttribute('aria-pressed', 'true');
@@ -215,7 +329,11 @@ test.describe('Web-UI (neu): Shell, Theme, Ergebnisse, Werkzeuge', { tag: '@unit
   test('Ergebnisse: früherer Lauf zeigt Kernaussage, Fehlschlag zuerst, Filter wirkt', async ({ page }) => {
     await open(page, '#/ergebnisse');
     await expect(page.locator('#res-empty')).toBeVisible();
-    await page.locator('.run-entry').first().click();
+    // Die Historie nennt den Bereich und die Kernaussage statt Dateinamen.
+    const entry = page.locator('.run-entry').first();
+    await expect(entry.locator('.run-sel')).toContainText('Smoketest');
+    await expect(entry.locator('.run-sub')).toContainText('1 von 3 Tests fehlgeschlagen');
+    await entry.click();
     await expect(page.locator('#res-title')).toHaveText('1 von 3 Tests fehlgeschlagen');
     const rows = page.locator('.trow');
     await expect(rows).toHaveCount(3);
@@ -236,6 +354,17 @@ test.describe('Web-UI (neu): Shell, Theme, Ergebnisse, Werkzeuge', { tag: '@unit
     await page.getByRole('button', { name: 'Abbrechen' }).click();
     await expect(page.locator('#confirm-dialog')).toBeHidden();
     expect(posts).not.toContain('/api/runs/delete');
+  });
+
+  test('Werkzeuge: UI-Mode ist ohne gewählte Umgebung gesperrt, danach frei', async ({ page }) => {
+    await open(page, '#/werkzeuge');
+    await expect(page.locator('#open-uimode')).toBeDisabled();
+    await page.goto(`${base}/#/testlauf`);
+    await selectTest(page, 'Smoketest', /Login geht/);
+    await page.getByRole('button', { name: 'Umgebung wählen' }).click();
+    await chooseEnv(page, 'DEV');
+    await page.getByRole('tab', { name: 'Werkzeuge' }).click();
+    await expect(page.locator('#open-uimode')).toBeEnabled();
   });
 
   test('Werkzeuge: Aufräum-Suche listet Testseiten, Löschen fragt erst nach', async ({ page }) => {

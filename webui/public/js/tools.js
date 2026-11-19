@@ -1,6 +1,6 @@
 // Reiter „Werkzeuge": Testseiten aufräumen, Referenzbilder vergleichen, UI-Mode.
 import {
-  $, $$, state, esc, api, toast, confirmDialog, currentEnvironment,
+  $, $$, state, esc, api, on, toast, confirmDialog, currentEnvironment,
 } from './core.js';
 import { collectSelection } from './testrun.js';
 
@@ -153,7 +153,16 @@ async function openUiMode() {
   out.textContent = `Gestartet in einem eigenen Fenster.${hints.length ? ` Übernommen: ${hints.join(' · ')}.` : ''}`;
 }
 
+/** UI-Mode braucht eine Umgebung (die Aufräum-Suche nicht: sie durchsucht alle). */
+function updateUiModeAvailability() {
+  const btn = $('#open-uimode');
+  btn.disabled = !currentEnvironment();
+  btn.title = btn.disabled ? 'Zuerst unter „Testlauf" eine Umgebung wählen.' : '';
+}
+
 export function init() {
+  on('env-change', updateUiModeAvailability);
+  updateUiModeAvailability();
   $('#cleanup-scan').addEventListener('click', cleanupScan);
   $('#cleanup-delete').addEventListener('click', cleanupDelete);
   $('#open-uimode').addEventListener('click', openUiMode);

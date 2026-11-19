@@ -106,6 +106,20 @@ test.describe('Web-UI-Logik (logic.js)', { tag: '@unit' }, () => {
     expect(L.runSelectionLabel({ selection: 'alt' })).toBe('alt');
   });
 
+  test('Historie: Bereich statt Dateinamen, Kernaussage wie in der Detailansicht', () => {
+    const map = new Map([['a.spec.ts', 'Smoketest'], ['b.spec.ts', 'Komponenten (L2)'], ['c.spec.ts', 'Integrationstest']]);
+    const tests = (...f: string[]) => ({ originalRequest: { tests: f.map((file) => ({ file })) } });
+    expect(L.runAreaLabel(tests('b.spec.ts', 'b.spec.ts'), map)).toBe('Komponenten (L2)');
+    expect(L.runAreaLabel(tests('a.spec.ts', 'b.spec.ts'), map)).toBe('Smoketest, Komponenten (L2)');
+    expect(L.runAreaLabel(tests('a.spec.ts', 'b.spec.ts', 'c.spec.ts'), map)).toBe('Smoketest, Komponenten (L2) (+1)');
+    // Nicht zuordenbar (ältere Läufe, ausgeblendete Kategorien): leer, die Oberfläche nimmt dann die Dateinamen.
+    expect(L.runAreaLabel(tests('unit/x.spec.ts'), map)).toBe('');
+    expect(L.runAreaLabel({ originalRequest: { projects: ['unit'] } }, map)).toBe('');
+    expect(L.runHeadline({ status: 'passed', summary: { passed: 24, failed: 0, total: 24 } })).toBe('Alle 24 Tests bestanden');
+    expect(L.runHeadline({ status: 'failed', summary: { passed: 3, failed: 1, total: 4 } })).toBe('1 von 4 Tests fehlgeschlagen');
+    expect(L.runHeadline({ status: 'cancelled' })).toBe('Lauf abgebrochen');
+  });
+
   test('Lauf-Einstellungen: Kurztext', () => {
     expect(L.runSettingsLabel({ headed: false })).toBe('Headless');
     expect(L.runSettingsLabel({ headed: true, slowMo: 1500, repeatEach: 3, smokeGate: true }))

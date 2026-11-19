@@ -60,6 +60,7 @@ function route() {
   }
   document.title = `${TITLES[tab]} · AEM Testautomatisierung`;
   if (tab === 'werkzeuge') tools.onShow();
+  if (tab === 'testlauf') testrun.onShow();
 }
 
 function initTabs() {

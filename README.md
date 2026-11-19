@@ -4,7 +4,7 @@ Playwright-/TypeScript-Testautomatisierung für die Fraunhofer AEM 6.5 LTS Migra
 (Tickets FHGWCMS-2415 / FHGWCMS-2416). Die Suite prüft über echte Redakteurs-
 Gesten, ob die Fraunhofer-Website nach dem Update wie vorher funktioniert. Sie
 umfasst 59 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
-inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 82 Unit-Tests
+inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 89 Unit-Tests
 ohne AEM (Stand 19.11.2026). Die vollständige Liste mit Ablauf und Erwartung steht in
 [`docs/TESTFAELLE.md`](docs/TESTFAELLE.md).
 
@@ -322,8 +322,9 @@ dezent daneben. Funktionen:
   - Die Kategorien kommen aus Playwright-Tags (z.B. `@smoke`, `@level1`) und sind
     in `webui/categories.json` auf lesbare Namen gemappt — neue Stufe = neuer
     Eintrag dort plus Tag an den Tests.
-- **Umgebung**: DEV/TEST aus `webui/environments.json` (DEV ist primär). Die UI
-  setzt daraus `AEM_BASE_URL`, `AEM_PUBLISH_URL` und `AEM_ENV`; **Credentials kommen weiter aus `.env`**
+- **Umgebung**: DEV/TEST aus `webui/environments.json`. Nach jedem Start von `npm run webui`
+  ist **keine Umgebung vorgewählt**: Sie wird bewusst gewählt, bevor ein Lauf startet. Ein Reload
+  behält die Wahl, ein Neustart des Dienstes nicht. Die UI setzt daraus `AEM_BASE_URL`, `AEM_PUBLISH_URL` und `AEM_ENV`; **Credentials kommen weiter aus `.env`**
   (werden nie in der UI eingegeben). Die Publish-URL steht je Preset als
   `publishUrl` in `webui/environments.json` und überschreibt `AEM_PUBLISH_URL` aus
   `.env`. Fehlt `publishUrl` im Preset, gilt der Wert aus `.env`.

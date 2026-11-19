@@ -3,22 +3,29 @@ import {
   $, $$, state, esc, icon, api, on, toast, confirmDialog, baseRunFields,
 } from './core.js';
 import {
-  fmtSize, groupRunsByMonthDay, runSelectionLabel, runSettingsLabel,
+  fmtSize, groupRunsByMonthDay, runAreaLabel, runHeadline, runSelectionLabel, runSettingsLabel,
 } from './logic.js';
 import { showRun, startRunRequest } from './results.js';
+import { fileToGroupMap } from './testrun.js';
 
 let shownRunId = null;
+let totalSizeBytes = 0;
 
 export async function loadHistory() {
   const r = await api('/api/runs');
   state.runs = r.data.runs || [];
+  totalSizeBytes = r.data.totalSizeBytes || 0;
+  renderList();
+}
+
+function renderList() {
   const el = $('#history');
   if (!state.runs.length) {
     el.innerHTML = '<p class="muted">Noch keine früheren Läufe. Die Liste füllt sich nach dem ersten Testlauf.</p>';
     return;
   }
   el.innerHTML = '';
-  el.appendChild(renderHistory(state.runs, r.data.totalSizeBytes || 0));
+  el.appendChild(renderHistory(state.runs, totalSizeBytes));
   updateActions();
 }
 
@@ -94,18 +101,20 @@ function renderRun(run) {
   const kind = flaky ? 'flaky' : run.status;
   const time = new Date(run.startedAt).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
   const env = (run.environment || '—').split(' ')[0];
-  const result = run.summary
-    ? `${run.summary.passed}/${run.summary.total} ok${run.summary.flaky ? ` · ${run.summary.flaky} instabil` : ''}`
-    : run.status;
+  // Wie in der Detailansicht: Bereich als Überschrift, darunter die Kernaussage.
+  const area = runAreaLabel(run, fileToGroupMap());
+  const sel = area || runSelectionLabel(run);
+  const files = runSelectionLabel(run);
+  const headline = runHeadline(run) + (run.summary?.flaky ? ` (${run.summary.flaky} instabil)` : '');
+  const headKind = run.summary?.failed > 0 ? 'failed' : flaky ? 'flaky' : '';
   const settings = runSettingsLabel(run.settings);
-  const sel = runSelectionLabel(run);
 
   li.innerHTML =
     `<input type="checkbox" class="run-cb" data-id="${esc(run.id)}" data-size="${run.sizeBytes || 0}" aria-label="Lauf von ${esc(time)} wählen">` +
     `<span class="run-ico ${kind}" title="${flaky ? 'Bestanden, aber instabil' : esc(run.status)}">${icon(flaky ? 'alert' : RUN_ICON[run.status] || 'skip')}</span>` +
-    `<span class="run-sel"><span class="run-time">${esc(time)}</span> · ${esc(sel)}</span>` +
+    `<span class="run-sel" title="${esc(`${sel} · ${files}`)}"><span class="run-time">${esc(time)}</span> · ${esc(sel)}</span>` +
     `<a class="run-link" href="/report/${esc(run.id)}/" target="_blank" rel="noopener" aria-label="Report öffnen">Report</a>` +
-    `<span class="run-sub">${esc(env)} · ${esc(result)}${settings ? ' · ' + esc(settings) : ''} · ${fmtSize(run.sizeBytes)}</span>`;
+    `<span class="run-sub"><span class="run-head ${headKind}">${esc(headline)}</span> · ${esc(env)}${settings ? ' · ' + esc(settings) : ''} · ${fmtSize(run.sizeBytes).replace(' ', '\u00a0')}</span>`;
 
   $('.run-cb', li).addEventListener('click', (e) => e.stopPropagation());
   $('.run-cb', li).addEventListener('change', () => { syncGroups(); updateActions(); });
@@ -183,5 +192,7 @@ async function rerunSelected() {
 
 export function init() {
   on('run-done', () => loadHistory().catch(() => {}));
+  // Der Katalog kommt oft nach der Historie: Bereiche erst dann auflösen.
+  on('catalog-loaded', renderList);
   loadHistory().catch(() => {});
 }

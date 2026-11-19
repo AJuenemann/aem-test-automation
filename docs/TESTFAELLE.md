@@ -45,7 +45,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 ## Gesamtübersicht (Stand 19.11.2026)
 
 59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 82 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+nur auf Anforderung) und 89 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -606,14 +606,15 @@ Sprachversionen.
 ### UNIT-UI-LOGIK — Logik und Kontrast der neuen Web-UI (`tests/unit/webui-ui-logic.spec.ts`)
 - **Zweck**: sichert die DOM-freie Logik der neuen Oberfläche (`webui/public/js/logic.js`)
   und die Lesbarkeit der Farbpalette (`webui/public/tokens.css`) ab. Kein AEM, kein Browser.
-- **Fälle** (15):
+- **Fälle** (16):
   - **Theme** (`resolveTheme`): gespeicherte Wahl schlägt die Systemeinstellung, sonst gilt das System.
   - **Auswahl**: Testschlüssel trennt Geschwister mit gleicher Datei und Zeile; `env:`-Tag schränkt
     die Umgebung ein; Unit-only erzwingt Headless; Suche über Titel, Suite, Kategorie, Tags.
   - **Ergebnisse**: Statusart (instabil = bestanden mit Wiederholung, Timeout = Fehlschlag);
     Gruppierung mit Fehlschlägen zuerst und stabiler Reihenfolge; Kernaussage („2 von 6 Tests
     fehlgeschlagen", „Alle 4 Tests bestanden", abgebrochen, leer); Formate für Dauer und Größe.
-  - **Historie**: Lauf-Label (max. 3 Dateien), Einstellungs-Kurztext, Gruppierung nach Monat und
+  - **Historie**: Bereich statt Dateinamen (`runAreaLabel`, Dateinamen nur als Ersatz und Tooltip),
+    Kernaussage wie in der Detailansicht (`runHeadline`), Lauf-Label (max. 3 Dateien), Einstellungs-Kurztext, Gruppierung nach Monat und
     Tag (aktueller Monat offen, „Heute"/„Gestern").
   - **Kontrast (WCAG AA)**: Textpaare der Tokens erreichen im hellen und im dunklen Theme 4,5:1
     (UI-Elemente wie der Fokusrahmen 3:1).
@@ -623,18 +624,29 @@ Sprachversionen.
 - **Zweck**: prüft die Oberfläche im Browser gegen einen lokalen Server, der `webui/public`
   ausliefert und `/api/*` mit festen Daten beantwortet. Kein AEM, kein Login, kein echter Lauf;
   gelöscht oder gestartet wird nichts.
-- **Fälle** (12):
-  - **Testlauf**: Start ohne Auswahl gesperrt, mit Auswahl frei; Schritt-Kopf und Start-Leiste
-    fassen die Auswahl zusammen. „Zurücksetzen" leert Auswahl und Suchfeld und klappt die
-    Kategorien zu; der Button erscheint nur, wenn es etwas zurückzusetzen gibt. Im Schrittmodus ist genau ein Schritt offen, „Alle Schritte" öffnet alle (Umschalter „Assistent" / „Alle Schritte"). Standard ist „Assistent", die letzte Wahl bleibt nach einem Reload erhalten.
-  - **Umgebung**: Ein Test mit `@env:test` ist unter DEV gesperrt und fällt beim Wechsel aus der
-    Auswahl. Aufgeklappte Kategorien bleiben beim Neuzeichnen offen.
+- **Fälle** (18):
+  - **Testlauf**: Start braucht mindestens einen Test und eine Umgebung; die Start-Leiste nennt,
+    was fehlt. „Zurücksetzen" leert Auswahl und Suchfeld und klappt die Kategorien zu; der Button
+    erscheint nur, wenn es etwas zurückzusetzen gibt.
+  - **Umgebung**: Nach dem Start des Dienstes ist keine Umgebung vorgewählt. Ein Reload behält die
+    Wahl, ein Neustart des Dienstes (neue Start-Kennung) nicht; nach der ersten Wahl gilt wieder
+    „zuletzt verwendet". Ein Test mit `@env:test` wird beim Wechsel nach DEV aus der Auswahl
+    entfernt und gemeldet. Aufgeklappte Kategorien bleiben beim Neuzeichnen offen.
+  - **Assistent**: Ohne Test geht es nicht zu Schritt 2, ohne Umgebung nicht zu Schritt 3 (Knopf und
+    Kopfzeile gesperrt, Hinweis sichtbar). Wird die Auswahl geleert, springt der Assistent auf
+    Schritt 1. „Alle Schritte" sperrt nichts; dort bleibt nur die Start-Leiste gesperrt.
+    Nach einem beendeten Lauf steht der Assistent beim Zurückkehren in den Testlauf wieder auf
+    Schritt 1; Auswahl und Umgebung bleiben.
+  - **Schrittmodus**: Standard ist „Assistent", die letzte Wahl bleibt nach Reload erhalten.
+    Das grüne Häkchen eines Schritts erscheint erst, wenn er geöffnet wurde (Umgebung und Ausführung
+    sind vorbelegt bzw. leer, das zählt nicht).
   - **Nur Unit-Tests**: „Sichtbar" ist gesperrt, Headless aktiv.
   - **Shell**: Reiter per Hash-Routing, Reload und Home-Taste; Theme-Umschalter speichert die Wahl,
     ohne Wahl folgt die UI dem System.
-  - **Ergebnisse**: Früherer Lauf zeigt Kernaussage, Fehlschlag zuerst, Filter wirkt;
+  - **Ergebnisse**: Die Historie nennt Bereich und Kernaussage. Früherer Lauf zeigt Kernaussage, Fehlschlag zuerst, Filter wirkt;
     Löschen verlangt Bestätigung und sendet bei „Abbrechen" nichts.
-  - **Werkzeuge**: Aufräum-Suche listet Testseiten; Löschen fragt erst nach.
+  - **Werkzeuge**: UI-Mode ist ohne Umgebung gesperrt. Aufräum-Suche listet Testseiten; Löschen
+    fragt erst nach.
 - **Erwartet**: alle Fälle grün.
 
 ---

@@ -27,6 +27,7 @@ const shortEnv = (label) => (label || '').split(' (')[0];
 // ---------------------------------------------------------------------------
 /** Startet einen Lauf und wechselt zur Ergebnisansicht. { ok, error? } */
 export async function startRunRequest(req) {
+  if (!req.environment) return { ok: false, error: 'Zuerst eine Umgebung wählen (Testlauf, Schritt 2).' };
   const r = await api('/api/run', req);
   if (!r.ok) return { ok: false, error: r.data.error || 'Start fehlgeschlagen.' };
   beginView(r.data.id, { envLabel: shortEnv(req.environment?.label), settings: req });

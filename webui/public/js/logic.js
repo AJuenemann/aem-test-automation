@@ -161,6 +161,25 @@ export function runSelectionLabel(run) {
   return run.selection || '—';
 }
 
+/**
+ * Bereiche (Kategorien) der Tests eines Laufs, z. B. „Komponenten (L2)". `fileToGroup` bildet
+ * Testdatei auf Kategorie-Label ab (aus dem Katalog). Leer, wenn sich nichts zuordnen lässt
+ * (ältere Läufe, ausgeblendete Kategorien wie Unit): dann gilt `runSelectionLabel`.
+ */
+export function runAreaLabel(run, fileToGroup) {
+  const tests = run.originalRequest?.tests;
+  if (!tests?.length) return '';
+  const labels = [...new Set(tests.map((t) => fileToGroup.get(t.file)).filter(Boolean))];
+  if (!labels.length) return '';
+  const shown = labels.slice(0, 2).join(', ');
+  return labels.length > 2 ? `${shown} (+${labels.length - 2})` : shown;
+}
+
+/** Kernaussage eines Laufs für die Historie (wie in der Detailansicht). */
+export function runHeadline(run) {
+  return headline(run.summary, run.status) || (run.status === 'running' ? 'Läuft' : run.status || '');
+}
+
 const sameDay = (a, b) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
