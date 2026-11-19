@@ -1,6 +1,6 @@
 // Reiter „Ergebnisse": Lauf starten, Live-Stream, Kernaussage, Filter, Ergebnisliste.
 import {
-  $, $$, state, esc, icon, api, emit, on, toast, baseRunFields, currentEnvironment, apiError, envShort,
+  $, $$, state, esc, icon, api, emit, on, toast, baseRunFields, currentEnvironment, apiError, envShort, contentLangAttr,
 } from './core.js';
 import { t, tn, hasKey, locale, getLang } from './i18n.js';
 import {
@@ -315,15 +315,16 @@ function rowHtml(row, openByDefault) {
       : `<span class="badge badge-fail" title="${esc(t('res.row.retried.title'))}">${esc(t('res.row.retried', { n }))}</span>`;
   }
   let body = '';
-  if (row.errorSummary) body += `<p class="err-summary">${esc(row.errorSummary)}</p>`;
-  if (row.errorDetail && row.errorDetail !== row.errorSummary) body += `<pre class="err-detail">${esc(row.errorDetail)}</pre>`;
-  if (row.skipReason) body += `<p class="skip-reason">${esc(row.skipReason)}</p>`;
+  const de = contentLangAttr();
+  if (row.errorSummary) body += `<p class="err-summary"${de}>${esc(row.errorSummary)}</p>`;
+  if (row.errorDetail && row.errorDetail !== row.errorSummary) body += `<pre class="err-detail"${de}>${esc(row.errorDetail)}</pre>`;
+  if (row.skipReason) body += `<p class="skip-reason"${de}>${esc(row.skipReason)}</p>`;
   const arts = (row.attachments || []).filter((a) => a.url).map(artifactLink).join('');
   if (arts) body += `<div class="artifacts">${arts}</div>`;
   if (!body) body = `<p class="muted">${esc(t('res.row.noDetails'))}</p>`;
   return `<details class="trow st-${kind}"${openByDefault ? ' open' : ''}>` +
     `<summary><span class="st-ico">${icon(KIND_ICON[kind])}</span>` +
-    `<span class="trow-title"><span>${esc(title)}</span><small>${esc(row.file)}${repeat}</small></span>` +
+    `<span class="trow-title"><span${de}>${esc(title)}</span><small><span${de}>${esc(row.file)}</span>${repeat}</small></span>` +
     `${badge}<span class="trow-meta">${fmtDuration(row.durationMs)}</span>${icon('chevron', 'chev')}</summary>` +
     `<div class="trow-body">${body}</div></details>`;
 }

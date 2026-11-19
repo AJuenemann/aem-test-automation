@@ -78,7 +78,7 @@ Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und di
 
 Umfang: 59 AEM-Testfälle (12 Smoketest inkl. Login, 11 Basisfunktionen,
 24 Komponenten, 3 Integrationstest, 9 Regressionstest), dazu 11 Capture-Läufe
-und 121 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
+und 124 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 ## Web-UI: Aufbau und Fallback
@@ -106,7 +106,8 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
   `labelEn`/`descriptionEn` in `categories.json` und `environments.json`, `blockerInfo`
   (`{code, params}`), `code`/`params` bei bekannten Fehlern (`CodedError`), `repeatIndex`/
   `repeatTotal`. Nicht übersetzt: Testtitel, Dateinamen, Playwright-Fehlertexte, `skip`-Gründe,
-  Playwright-Report. `webui-ui.spec.ts` nagelt `locale: 'de-DE'` fest, `webui-i18n.spec.ts`
+  Playwright-Report; sie tragen in EN `lang="de"` (`markContent`/`contentLangAttr` in `core.js`).
+  Zahlen folgen der Sprache (`oneDecimal` in `logic.js`). `webui-ui.spec.ts` nagelt `locale: 'de-DE'` fest, `webui-i18n.spec.ts`
   prüft Vollständigkeit und Umschalten.
 - Tests: `tests/unit/webui-ui-logic.spec.ts` (Logik, Token-Kontrast) und
   `tests/unit/webui-ui.spec.ts` (Browser gegen gemockte API). Neue Farben in

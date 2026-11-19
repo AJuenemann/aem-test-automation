@@ -1,7 +1,7 @@
 // Reiter „Testlauf": Schritte (Tests, Umgebung, Ausführung) und Start-Leiste.
 import {
   $, $$, state, esc, icon, api, on, emit, toast, savePrefs, currentEnvironment, baseRunFields,
-  groupKey, groupLabel, groupDescription, envLabel, envShort,
+  groupKey, groupLabel, groupDescription, envLabel, envShort, markContent,
 } from './core.js';
 import { t, tn } from './i18n.js';
 import {
@@ -193,10 +193,12 @@ function renderTestRow(test, file) {
 
   const name = document.createElement('span');
   name.className = 'test-name';
+  markContent(name);
   name.textContent = test.title;
   name.title = allowed ? test.title : reason;
   const origin = document.createElement('span');
   origin.className = 'test-origin';
+  markContent(origin);
   origin.textContent = file.label;
   lbl.append(cb, name);
   if (!allowed) lbl.insertAdjacentHTML('beforeend', icon('lock', 'lock'));

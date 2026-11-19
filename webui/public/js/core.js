@@ -46,6 +46,16 @@ export const envLabel = (env) => (english() && env?.labelEn) || env?.label || ''
 /** Kurzname vor der Klammer, z. B. „DEV“. Sprachneutral. */
 export const envShort = (label) => (label || '').split(' (')[0];
 
+/**
+ * Testtitel, Dateinamen und Fehlertexte aus den Tests sind deutsch. In der englischen Oberfläche
+ * bekommen diese Elemente `lang="de"`, damit Screenreader sie richtig aussprechen.
+ */
+export const contentLangAttr = () => (english() ? ' lang="de"' : '');
+export const markContent = (el) => {
+  if (english()) el.lang = 'de'; else el.removeAttribute('lang');
+  return el;
+};
+
 export const currentEnvironment = () =>
   state.environments.find((e) => e.id === state.selectedEnvId);
 

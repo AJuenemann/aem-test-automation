@@ -291,6 +291,8 @@ export default {
   'settings.headed': 'Visible, {tempo}',
   'settings.smokeGate': 'Smoke test first',
   'settings.snapshots': 'Baselines updated',
+  'run.files.one': '{n} file',
+  'run.files.other': '{n} files',
   'run.all': 'All tests',
   'run.all.projects': 'All tests ({projects})',
   'day.today': 'Today',

@@ -92,11 +92,11 @@ test.describe('Web-UI-Logik (logic.js)', { tag: '@unit' }, () => {
 
   test('Formate: Dauer, Uhr, Größe', () => {
     expect(L.fmtDuration(420)).toBe('420 ms');
-    expect(L.fmtDuration(1500)).toBe('1.5 s');
+    expect(L.fmtDuration(1500)).toBe('1,5 s');
     expect(L.fmtClock(65_000)).toBe('1:05');
     expect(L.fmtSize(0)).toBe('0 B');
-    expect(L.fmtSize(2048)).toBe('2.0 KB');
-    expect(L.fmtSize(3 * 1024 * 1024)).toBe('3.0 MB');
+    expect(L.fmtSize(2048)).toBe('2,0 KB');
+    expect(L.fmtSize(3 * 1024 * 1024)).toBe('3,0 MB');
   });
 
   test('Lauf-Label: Dateinamen ohne Endung, max. 3, Rest als Zähler', () => {

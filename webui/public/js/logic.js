@@ -117,9 +117,13 @@ export function headline(summary, status) {
   return t('headline.some', { passed, total });
 }
 
+/** Zahl mit einer Nachkommastelle in der Schreibweise der aktiven Sprache (1,5 / 1.5). */
+const oneDecimal = (n) =>
+  new Intl.NumberFormat(locale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n);
+
 export function fmtDuration(ms) {
   if (ms < 1000) return `${ms} ms`;
-  return `${(ms / 1000).toFixed(1)} s`;
+  return `${oneDecimal(ms / 1000)} s`;
 }
 
 /** m:ss für laufende Zeitangaben. */
@@ -130,8 +134,8 @@ export function fmtClock(ms) {
 
 export function fmtSize(bytes) {
   if (!bytes || bytes < 1024) return `${bytes || 0} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  if (bytes < 1024 * 1024) return `${oneDecimal(bytes / 1024)} KB`;
+  return `${oneDecimal(bytes / 1024 / 1024)} MB`;
 }
 
 export const slowmoLabel = (ms) => (hasKey(`slowmo.${ms}`) ? t(`slowmo.${ms}`) : `${ms} ms`);
@@ -146,15 +150,29 @@ export function runSettingsLabel(s) {
   return parts.join(', ');
 }
 
+/**
+ * Auswahl-Text, den der Server in meta.json schreibt („3 Test(s)“, „2 Datei(en)“, „alle“), in der
+ * aktiven Sprache. Anderer Text (z. B. Projektnamen) bleibt, wie er ist.
+ */
+function storedSelection(selection) {
+  const tests = /^(\d+) Test\(s\)$/.exec(selection || '');
+  if (tests) return tn('count.tests', Number(tests[1]));
+  const files = /^(\d+) Datei\(en\)$/.exec(selection || '');
+  if (files) return tn('run.files', Number(files[1]));
+  if (selection === 'alle') return t('run.all');
+  return selection || '';
+}
+
 /** Lesbares Label für die Testauswahl eines Laufs (max. 3 Dateien, Rest als „+N"). */
 export function runSelectionLabel(run) {
   const tests = run.originalRequest?.tests;
   const projects = run.originalRequest?.projects;
+  const specFiles = run.originalRequest?.files;
   if (tests?.length) {
     const files = [...new Set(
       tests.map((t) => (t.file || '').split('/').pop().replace(/\.(spec|test)\.[cm]?[jt]sx?$/i, '')),
     )].filter(Boolean);
-    if (!files.length) return run.selection || '—';
+    if (!files.length) return storedSelection(run.selection) || '—';
     const shown = files.slice(0, 3).join(', ');
     return files.length > 3 ? `${shown} (+${files.length - 3})` : shown;
   }
@@ -162,7 +180,8 @@ export function runSelectionLabel(run) {
     const meaningful = projects.filter((p) => p !== 'setup');
     return meaningful.length ? t('run.all.projects', { projects: meaningful.join(', ') }) : t('run.all');
   }
-  return run.selection || '—';
+  if (specFiles?.length) return tn('run.files', specFiles.length);
+  return storedSelection(run.selection) || '—';
 }
 
 /**

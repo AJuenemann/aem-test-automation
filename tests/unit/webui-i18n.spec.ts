@@ -110,6 +110,36 @@ test.describe('Web-UI i18n: Sprachwahl und Kern', { tag: '@unit' }, () => {
     expect(L.runHeadline({ status: 'running' })).toBe('Running');
   });
 
+  test('Zahlen: Dezimalzeichen folgt der Sprache (1,5 s / 1.5 s)', () => {
+    I.setLang('de');
+    expect(L.fmtDuration(1500)).toBe('1,5 s');
+    expect(L.fmtDuration(420)).toBe('420 ms');
+    expect(L.fmtSize(2048)).toBe('2,0 KB');
+    expect(L.fmtSize(3 * 1024 * 1024)).toBe('3,0 MB');
+    I.setLang('en');
+    expect(L.fmtDuration(1500)).toBe('1.5 s');
+    expect(L.fmtSize(2048)).toBe('2.0 KB');
+    expect(L.fmtSize(3 * 1024 * 1024)).toBe('3.0 MB');
+    expect(L.fmtSize(512)).toBe('512 B');
+  });
+
+  test('Lauf-Auswahl: gespeicherter deutscher Text und Datei-Auswahl erscheinen in der aktiven Sprache', () => {
+    const run = (selection: string, originalRequest?: object) => ({ selection, originalRequest });
+    I.setLang('en');
+    expect(L.runSelectionLabel(run('3 Test(s)'))).toBe('3 tests');
+    expect(L.runSelectionLabel(run('1 Test(s)'))).toBe('1 test');
+    expect(L.runSelectionLabel(run('2 Datei(en)'))).toBe('2 files');
+    expect(L.runSelectionLabel(run('alle'))).toBe('All tests');
+    expect(L.runSelectionLabel(run('unit, chromium'))).toBe('unit, chromium');
+    expect(L.runSelectionLabel(run('x', { files: ['a.spec.ts'] }))).toBe('1 file');
+    expect(L.runSelectionLabel({})).toBe('—');
+    I.setLang('de');
+    expect(L.runSelectionLabel(run('3 Test(s)'))).toBe('3 Tests');
+    expect(L.runSelectionLabel(run('2 Datei(en)'))).toBe('2 Dateien');
+    expect(L.runSelectionLabel(run('alle'))).toBe('Alle Tests');
+    expect(L.runSelectionLabel(run('x', { files: ['a.spec.ts', 'b.spec.ts'] }))).toBe('2 Dateien');
+  });
+
   test('Suche: findet Kategorien über deutschen und englischen Namen', () => {
     const t = { title: 'Seite anlegen', tags: [] };
     const f = { label: 'Seiten-CRUD', file: 'basics/page-crud.spec.ts' };
@@ -489,7 +519,7 @@ test.describe('Web-UI i18n: Umschalten', { tag: '@unit' }, () => {
   test('Ergebnisse: Auswahl in der Historie bleibt beim Umschalten', async ({ page }) => {
     await open(page, '#/ergebnisse');
     await page.locator('.run-entry .run-cb').check();
-    await expect(page.locator('#runs-delete')).toHaveText('1 löschen (2.0 KB)');
+    await expect(page.locator('#runs-delete')).toHaveText('1 löschen (2,0 KB)');
     await page.locator('#lang-toggle').click();
     await expect(page.locator('.run-entry .run-cb')).toBeChecked();
     await expect(page.locator('#runs-delete')).toHaveText('Delete 1 (2.0 KB)');
@@ -510,6 +540,26 @@ test.describe('Web-UI i18n: Umschalten', { tag: '@unit' }, () => {
     await expect(page.locator('#cleanup-scan')).toHaveText('Find test pages');
     await expect(page.locator('#open-uimode')).toBeDisabled();
     await expect(page.locator('#open-uimode')).toHaveAttribute('title', 'Choose an environment under "Test run" first.');
+  });
+
+  test('Testinhalte sind als Deutsch ausgezeichnet, solange die Oberfläche Englisch ist', async ({ page }) => {
+    await open(page);
+    // Deutsch: kein lang-Attribut an den Testtexten (sie erben lang="de").
+    await expect(page.locator('.test-name').first()).not.toHaveAttribute('lang', /.*/);
+    await page.locator('#lang-toggle').click();
+    await expect(page.locator('.test-name').first()).toHaveAttribute('lang', 'de');
+    await expect(page.locator('.test-origin').first()).toHaveAttribute('lang', 'de');
+    // Ergebnisse: Titel, Datei und Fehlertext sind deutsch, die UI-Texte außen nicht.
+    await page.getByRole('tab', { name: 'Results' }).click();
+    await page.locator('.run-entry').click();
+    const row = page.locator('.trow').first();
+    await expect(row.locator('.trow-title > span')).toHaveAttribute('lang', 'de');
+    await expect(row.locator('.trow-title small > span')).toHaveAttribute('lang', 'de');
+    await expect(row.locator('.trow-title small')).not.toHaveAttribute('lang', /.*/);
+    await expect(page.locator('.err-summary')).toHaveAttribute('lang', 'de');
+    await page.locator('#lang-toggle').click();
+    await expect(page.locator('.err-summary')).not.toHaveAttribute('lang', /.*/);
+    await expect(page.locator('.trow-title > span').first()).not.toHaveAttribute('lang', /.*/);
   });
 
   test('Beenden-Dialog erscheint in der aktiven Sprache', async ({ page }) => {
