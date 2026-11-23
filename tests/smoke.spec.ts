@@ -60,6 +60,8 @@ const PUBLISH_PAGE = '/content/zv/de';
 const PUBLISH_MISSING_PAGE = '/content/zv/de/qa-seite-gibt-es-nicht';
 /** Samples-Inhalte, auf die Dialog-, Overlay- und Visual-Tests aufbauen (Seiten und DAM). */
 const SAMPLES_PATHS = ['/content/samples/de', '/content/dam/samples'];
+/** Startseite der Samples auf Publish (Seiten werden dort nur ausgeliefert, wenn sie veröffentlicht sind). */
+const SAMPLES_PUBLISH_PAGE = '/content/samples/de';
 
 test.describe('Smoketest', { tag: '@smoke', annotation: describeEn('Smoke test') }, () => {
   for (const c of CONSOLES) {
@@ -126,7 +128,7 @@ test.describe('Smoketest', { tag: '@smoke', annotation: describeEn('Smoke test')
   // Voraussetzung der Komponenten-Tests: Die Samples-Site und ihre Assets liegen auf dem Author. Fehlen
   // sie (z.B. nach einem Wiederanlauf der Instanz, DEV 23.11.2026), scheitern Dialog-, Overlay- und
   // Visual-Tests erst später mit schwer lesbaren Fehlern. Rein lesend, nur HTTP-Status.
-  test('Samples-Inhalte liegen auf dem Author', titleEn('Samples content is present on the author'), async ({ page }) => {
+  test('Samples-Inhalte liegen auf Author und Publish', titleEn('Samples content is present on author and publish'), async ({ page, publishPage }) => {
     const base = getAemConfig().baseUrl;
     const missing: string[] = [];
     for (const samplePath of SAMPLES_PATHS) {
@@ -134,6 +136,12 @@ test.describe('Smoketest', { tag: '@smoke', annotation: describeEn('Smoke test')
       if (res.status() !== 200) missing.push(`${samplePath}: HTTP ${res.status()}`);
     }
     expect(missing, 'Samples-Inhalte fehlen auf dem Author (Samples-Paket einspielen lassen).').toEqual([]);
+    // Publish: Die Bildvergleiche der Komponentenseiten, die Fehlerseite und die Filterseite brauchen die
+    // Samples dort (DEV 23.11.2026: auf Author da, auf Publish noch nicht veröffentlicht). Ohne Publish-URL entfällt das.
+    if (publishPage.unavailableReason() === null) {
+      const res = await page.request.get(`${publishPage.config().url}${SAMPLES_PUBLISH_PAGE}.html`);
+      expect(res.status(), `${SAMPLES_PUBLISH_PAGE}.html auf Publish: Samples nicht veröffentlicht (HTTP ${res.status()}).`).toBe(200);
+    }
   });
 
   // Technische Prüfung (wie ACL-Test): kein Redakteursweg, aber der häufigste

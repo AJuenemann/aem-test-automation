@@ -57,49 +57,50 @@ grünem Lauf.
 | SMOKE-8 | Publish zeigt die Fraunhofer-Fehlerseite für fehlende Seiten | Smoketest | `smoke.spec.ts` | DEV, TEST |
 | SMOKE-9 | Alle OSGi-Bundles sind aktiv | Smoketest | `smoke.spec.ts` | DEV, TEST |
 | SMOKE-10 | Replication-Agents sind eingerichtet und nicht blockiert | Smoketest | `smoke.spec.ts` | DEV, TEST |
-| SMOKE-11 | Tag-Verwaltung lädt und enthält die Samples-Tags | Smoketest | `smoke.spec.ts` | TEST (DEV 23.11.2026: rot, Samples-Tags fehlen) |
-| SMOKE-12 | Samples-Inhalte liegen auf dem Author | Smoketest | `smoke.spec.ts` | offen (DEV 23.11.2026: rot, Samples fehlen; TEST nicht erreichbar) |
+| SMOKE-11 | Tag-Verwaltung lädt und enthält die Samples-Tags | Smoketest | `smoke.spec.ts` | DEV (23.11.2026), TEST (19.11.2026) |
+| SMOKE-12 | Samples-Inhalte liegen auf Author und Publish | Smoketest | `smoke.spec.ts` | offen (DEV 23.11.2026: rot, Samples fehlen auf Publish; TEST nicht erreichbar) |
 | CRUD-1 | Seite anlegen, bearbeiten und löschen | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
 | CRUD-2 | Seite löschen über Tastatur-Shortcut (Backspace) | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
-| PAGE-1 | Seite kopieren und im selben Ordner einfügen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | TEST (DEV: nach der Änderung vom 19.11. nicht nachgeprüft) |
+| PAGE-1 | Seite kopieren und im selben Ordner einfügen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV (23.11.2026), TEST |
 | PAGE-2 | Unterseite unter eine andere Startseite verschieben | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV, TEST |
 | PAGE-3 | Seite umbenennen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV, TEST |
 | PAGE-4 | Seiteneigenschaften speichern und erneut anzeigen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV, TEST |
-| PAGE-5 | Tag in den Seiteneigenschaften setzen und erneut anzeigen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | TEST (DEV: Samples fehlen seit 23.11.2026) |
+| PAGE-5 | Tag in den Seiteneigenschaften setzen und erneut anzeigen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV (23.11.2026), TEST |
 | COMP-1 | Komponente hinzufügen und wieder entfernen | Basisfunktionen (L1) | `basics/component-edit.spec.ts` | DEV, TEST |
 | VER-1 | Version erstellen und wiederherstellen | Basisfunktionen (L1) | `basics/versioning.spec.ts` | DEV, TEST |
 | REP-1 | Seite aktivieren und wieder deaktivieren | Basisfunktionen (L1) | `basics/replication.spec.ts` | DEV, TEST |
 | ASSET-1 | Bild in einen Testordner der DAM hochladen und verarbeiten lassen | Basisfunktionen (L1) | `basics/asset-upload.spec.ts` | DEV, TEST |
-| COMP-DLG-1..11 | Dialog "<Komponente>": Reiter & Feldinhalte wie Referenz | Komponenten (L2) | `components/dialog.spec.ts` | TEST (DEV: Samples fehlen seit 23.11.2026) |
+| COMP-DLG-1..11 | Dialog "<Komponente>": Reiter & Feldinhalte wie Referenz | Komponenten (L2) | `components/dialog.spec.ts` | DEV (23.11.2026), TEST |
 | COMP-AUTH-1 | FAQ mit Textblock befüllen, im Editor und auf Publish prüfen | Komponenten (L2) | `components/component-authoring.spec.ts` | DEV, TEST |
-| COMP-VIS-1..11 | Gerenderte Seite "<Komponente>" entspricht Baseline | Komponenten (L2) | `components/visual-publish.spec.ts` | TEST (DEV: Samples fehlen seit 23.11.2026) |
+| COMP-VIS-1..11 | Gerenderte Seite "<Komponente>" entspricht Baseline | Komponenten (L2) | `components/visual-publish.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
 | VIS-1 | Gerenderte Seite entspricht Baseline (Testseite) | Komponenten (L2) | `basics/visual-regression.spec.ts` | DEV, TEST |
 | ACL-1 | AC-Tool-Konsole ist erreichbar | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
 | ACL-2 | AC-Tool-Bundles sind aktiv | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
 | LDAP-1 | Import ist startbar: Kontakt suchen, in Spielwiese importieren, bereinigen | Integrationstest | `integration/ldap-import.spec.ts` | nur TEST |
-| OVL-1/2 | Asset-Finder-Suche "Visitenkarten" / "Externe Links" liefert Treffer | Regressionstest | `regression/asset-finder.spec.ts` | TEST (DEV: Samples fehlen seit 23.11.2026) |
-| OVL-3 | Asset setzen (leer) und ersetzen (vorhanden) | Regressionstest | `regression/download-fileupload.spec.ts` | TEST (DEV: Samples fehlen seit 23.11.2026) |
+| OVL-1/2 | Asset-Finder-Suche "Visitenkarten" / "Externe Links" liefert Treffer | Regressionstest | `regression/asset-finder.spec.ts` | DEV (23.11.2026), TEST |
+| OVL-3 | Asset setzen (leer) und ersetzen (vorhanden) | Regressionstest | `regression/download-fileupload.spec.ts` | DEV (23.11.2026), TEST |
 | OVL-4 | Formular über die Timeline erreichbar und abbrechbar | Regressionstest | `regression/tree-restore.spec.ts` | DEV, TEST |
-| OVL-5 | Fehlerseite (404) entspricht Baseline | Regressionstest | `regression/error-pages.spec.ts` | TEST (DEV: Samples fehlen seit 23.11.2026) |
+| OVL-5 | Fehlerseite (404) entspricht Baseline | Regressionstest | `regression/error-pages.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
 | LANG-1/2 | Sprachwahl "English" / "Deutsch" öffnet die Gegenseite | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | LANG-3 | Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
-| TAG-1 | Filterseite liefert getaggte Treffer | Regressionstest | `regression/tags-filter.spec.ts` | TEST (DEV: Samples fehlen seit 23.11.2026) |
+| TAG-1 | Filterseite liefert getaggte Treffer | Regressionstest | `regression/tags-filter.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
 
 **Historie des Cockpits** (`cockpit/runs/`): beginnt am 19.11.2026. Letzter vollständiger Lauf auf TEST am
 19.11.2026 (18:04), alle 58 Tests grün (ohne Login). Auf DEV: Smoketest am 23.11.2026 08:45 mit 10 von 11 grün
 (SMOKE-11 rot); Anmeldung auf DEV am 19.11.2026 (zweimal) und am 23.11.2026 09:52 gescheitert, DEV war nicht
 erreichbar. Läufe über die Kommandozeile stehen nicht in der Historie (z. B. alle DEV-Prüfungen vor dem 19.11.2026).
 
-**Stand DEV (23.11.2026):** Auf DEV fehlen die Samples (Seiten, DAM, Tags). Das Testplan-Kapitel 6 beschreibt,
-dass DEV den Produktionsstand ohne Beispielseiten erhält; die Sicherung des Tech Leads lässt sich einspielen.
-Betroffen sind SMOKE-11, SMOKE-12, PAGE-5, COMP-DLG, COMP-VIS-1..11, OVL-1/2, OVL-3, OVL-5 und TAG-1 (alle
-`Verifiziert` mit „TEST"). VIS-1 und COMP-AUTH-1 brauchen keine Samples.
+**Stand DEV (23.11.2026, alter Softwarestand AEM 6.5.25.0, Produktionsinhalt, Samples wieder eingespielt):**
+Gesamtlauf über die Kommandozeile: 46 Tests grün, 13 rot, 12 übersprungen (11 Dialog-Erfassungen, LDAP nur TEST).
+Rot sind COMP-VIS-1..11, OVL-5 und TAG-1. Alle brauchen die Samples auf **Publish**, dort fehlen sie
+(HTTP 404, nur auf dem Author eingespielt). Darauf weist SMOKE-12 hin. Sobald die Samples veröffentlicht sind,
+sind diese 13 Tests erneut zu laufen. DEV und TEST sind jetzt die Referenz für den Vorher-Stand (Hydra ist
+voraussichtlich nicht erreichbar); die Baselines und Dialog-Referenzen sind **vor dem Upgrade** zu sichern.
 
 Die am 18.11.2026 neuen Tests (PAGE-1 bis PAGE-4, ASSET-1, COMP-AUTH-1) sind seit
 19.11.2026 auch auf TEST grün und mehrfach wiederholt. PAGE-1 (Kopieren) wartet
 seitdem auf die Spalten-Vorschau, bevor er kopiert. Dieser Stand lief 10× headless
-und 2× sichtbar auf TEST grün. Auf DEV ist er noch nicht nachgeprüft (DEV-Author
-am 19.11.2026 nicht erreichbar, HTTP 503).
+und 2× sichtbar auf TEST grün und am 23.11.2026 auf DEV grün.
 
 ---
 
@@ -177,20 +178,20 @@ ausführen" zuschaltbar (Stand 19.11.2026).
 - **Zweck**: Die Filterseite der Samples fragt diese Tags ab (TAG-1). Fehlen sie,
   ist das ein Umgebungs-Blocker für Filter- und Suchtests.
 
-### SMOKE-12 — Samples-Inhalte liegen auf dem Author
-- **Schritte**: `/content/samples/de.json` und `/content/dam/samples.json` auf dem Author lesen (nur HTTP-Status).
-- **Erwartet**: Beide Pfade liefern HTTP 200. Fehlt einer, nennt der Test die fehlenden Pfade mit Status
-  („`/content/samples/de: HTTP 404`") und den Hinweis, das Samples-Paket einspielen zu lassen.
-- **Zweck**: Voraussetzung der Komponenten-Tests (Dialoge, Overlays, Visual, Asset-Finder). Fehlen die Samples,
-  zeigt der Smoketest die Ursache vorab, statt dass Folgetests mit schwer lesbaren Fehlern scheitern. Ergänzt
-  SMOKE-11: Der Tag-Test prüft nur den Tag-Namensraum, nicht die Seiten und das DAM.
+### SMOKE-12 — Samples-Inhalte liegen auf Author und Publish
+- **Schritte**: Auf dem Author `/content/samples/de.json` und `/content/dam/samples.json` lesen (nur HTTP-Status).
+  Mit gesetzter Publish-URL zusätzlich `/content/samples/de.html` auf Publish aufrufen.
+- **Erwartet**: Alle Abfragen liefern HTTP 200. Fehlt etwas, nennt der Test die Pfade mit Status
+  („`/content/samples/de: HTTP 404`") und den Hinweis, das Samples-Paket einspielen bzw. die Samples veröffentlichen zu lassen.
+- **Zweck**: Voraussetzung der Komponenten-Tests (Dialoge, Overlays, Visual, Asset-Finder, Fehlerseite, Filterseite).
+  Fehlen die Samples, zeigt der Smoketest die Ursache vorab, statt dass Folgetests mit schwer lesbaren Fehlern scheitern.
+  Ergänzt SMOKE-11: Der Tag-Test prüft nur den Tag-Namensraum.
 - **Einordnung**: rein lesend, schnell, auf DEV und TEST möglich, wie die übrigen Smoketests. Als Teil des
   Smoketests hängt er am Gate: Mit eingeschaltetem Gate (CLI/CI Standard, Cockpit per Schalter) laufen bei
   fehlenden Samples auch die Basisfunktionen nicht, obwohl sie `/content/fhgtest` nutzen und keine Samples brauchen.
 - **Grenze**: Prüft nicht, ob die Seiten ihre Tags tragen (`cq:tags`, TAG-1) und nicht die Businesscards.
-- **Stand**: DEV am 23.11.2026 rot (laut Testplan Kapitel 6 erhält DEV den Produktionsstand ohne Samples, die Sicherung des Tech Leads lässt sich einspielen) (beide Pfade HTTP 404, `/etc/tags/Samples` fehlt ebenso, SMOKE-11 ist ebenfalls rot).
-  Positivfall noch nicht gelaufen (TEST am 23.11.2026 nicht erreichbar, HTTP 503). Abfrage-Form geprüft:
-  `<pfad>.json` liefert auf vorhandenen Pfaden 200 (`/content/zv/de`, Spielwiesen).
+- **Stand**: Auf DEV am 23.11.2026 rot: Samples auf Author vorhanden (wieder eingespielt), auf Publish nicht
+  veröffentlicht (HTTP 404). Der Author-Teil war grün. Auf TEST noch nicht gelaufen.
 
 ### SMOKE-10 — Replication-Agents sind eingerichtet und nicht blockiert
 - **Realer Befund**: Auf DEV war `publish_aem-publish1-dev` vom 10. bis

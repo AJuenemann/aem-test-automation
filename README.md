@@ -126,7 +126,7 @@ cp .env.example .env   # Werte eintragen (siehe unten)
 | Variable              | Pflicht | Beschreibung                                                     |
 | --------------------- | ------- | --------------------------------------------------------------- |
 | `AEM_BASE_URL`        | ja      | Author-Basis-URL, ohne Slash am Ende                            |
-| `AEM_ENV`             | ja      | `test` \| `dev` \| `legacy` = Hydra (trennt die Screenshot-Baselines) |
+| `AEM_ENV`             | ja      | `test` \| `dev` \| `legacy` (trennt die Screenshot-Baselines; `legacy` = Hydra, derzeit ungenutzt) |
 | `AEM_USER`            | ja      | Login-Benutzer                                                  |
 | `AEM_PASSWORD`        | ja      | Login-Passwort                                                  |
 | `AEM_PLAYGROUND_PATH` | nein    | Spielwiese (Default `/content/fhgtest`); nur hier wird geschrieben |
@@ -225,12 +225,16 @@ Test in `tests/unit/titles-en.spec.ts` meldet fehlende englische Namen.
 
 ## Vorher-/Nachher-Vergleich (alt vs. neu)
 
-Baselines liegen pro `AEM_ENV` getrennt. Workflow:
+Die Referenz ist der Stand **vor dem Upgrade** auf DEV und TEST (dort läuft noch die alte Software). Die
+ursprünglich vorgesehene Referenzumgebung „Hydra" ist voraussichtlich nicht erreichbar. Baselines liegen pro
+`AEM_ENV` getrennt. Workflow:
 
 ```bash
-AEM_ENV=legacy AEM_BASE_URL=<hydra-url> npm run update-snapshots  # Baseline alt (Hydra)
-AEM_ENV=test   AEM_BASE_URL=<neue-url> npm test                   # Vergleich neu
+AEM_ENV=dev  npm run baseline:visual   # VOR dem Upgrade: Vorher-Stand erzeugen (ebenso für test)
+AEM_ENV=dev  npm test                  # NACH dem Upgrade: gegen den Vorher-Stand vergleichen
 ```
+
+**Nach dem Upgrade keine Baselines oder Dialog-Referenzen neu erzeugen**, sonst ist der Vorher-Stand weg.
 
 Konsistente Screenshots brauchen dieselbe Ausführungsumgebung. Baselines deshalb
 in CI (Playwright-Docker-Image) erzeugen, nicht lokal.
@@ -379,8 +383,8 @@ dezent daneben. Funktionen:
   wiederhergestellt. Die Testauswahl wird bewusst NICHT gemerkt. Ist eine
   gemerkte Umgebung nicht mehr vorhanden, greift wieder das primäre Preset. LEGACY ist kein UI-Preset mehr (kein
   aktueller Nutzen); der Vorher-/Nachher-Vergleich läuft weiter per CLI mit
-  `AEM_ENV=legacy` (siehe unten). Die Referenzumgebung heißt Hydra; Zugriff besteht
-  bisher nicht.
+  `AEM_ENV=legacy` (siehe unten). Die Referenzumgebung „Hydra" ist voraussichtlich nicht
+  erreichbar, als Referenz dient der Stand vor dem Upgrade auf DEV und TEST.
 - **Umgebungs-Einschränkung je Test**: Ein Test mit Tag `@env:<id>` (z.B.
   `@env:test`) läuft nur in diesen Umgebungen. In der Auswahl werden solche Tests
   bei einer nicht passenden Umgebung **ausgegraut** (Tooltip „In der ausgewählten

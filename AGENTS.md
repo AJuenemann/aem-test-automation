@@ -15,7 +15,7 @@ betroffene Services (siehe Priorisierung).
 | -------- | -------------------------------------------- | --------------------------- |
 | TEST     | https://aem-author-test.ws.fraunhofer.de     | primäre Testumgebung        |
 | DEV      | https://aem-author-dev.ws.fraunhofer.de      | Entwicklung; ggf. kein LDAP |
-| LEGACY   | alte AEM-Version, Referenzumgebung „Hydra"   | Vorher-/Nachher-Referenz; **bisher kein Zugriff** |
+| LEGACY   | ursprünglich vorgesehene Referenz „Hydra"    | **kein Zugriff, voraussichtlich nicht möglich**; ungenutzt |
 
 - Spielwiesen (schreibend): `/content/fhgtest` für Seiten,
   `/content/businesscards/fhgtest` für Visitenkarten (LDAP-Import) und
@@ -26,8 +26,12 @@ betroffene Services (siehe Priorisierung).
 - Zugang über `.env` / CI-Secrets. Keine Credentials im Repo.
 - Cockpit-Presets: nur DEV (primär) und TEST. LEGACY ist kein UI-Button mehr
   (kein aktueller Nutzen); die Vorher-/Nachher-Referenz läuft per CLI mit
-  `AEM_ENV=legacy`. Die Referenzumgebung heißt **Hydra** (technischer Name `legacy`); Zugriff
-  besteht bisher nicht, Läufe dagegen sind noch nicht möglich.
+  `AEM_ENV=legacy`. Die Referenzumgebung „Hydra" (technischer Name `legacy`) ist voraussichtlich nicht
+  erreichbar. **Referenz ist der Stand vor dem Upgrade auf DEV und TEST** (dort läuft noch die alte
+  Software, DEV 23.11.2026: AEM 6.5.25.0). Er wird vor dem Upgrade erfasst: Baselines, Dialog-Referenzen und
+  weitere Referenzdateien entstehen jetzt auf DEV und TEST. **Nach dem Upgrade nicht neu erzeugen** (weder
+  „Baselines aktualisieren" noch `npm run baseline:visual` noch `npm run capture-dialogs`), sonst geht der
+  Vorher-Stand verloren.
 - Visuelle Baselines (Vorher-Stand) erzeugen: Cockpit „Baselines aktualisieren"
   oder `npm run baseline:visual`. Immer `--update-snapshots=all`: Ohne Modus gilt
   `changed`, das überschreibt nur Baselines, deren Vergleich fehlschlägt. Kleine
@@ -62,12 +66,13 @@ in `tests/basics/`).
 - Smoketest (`tests/smoke.spec.ts`, Projekt `smoke`): 12 rein lesende Checks als
   Vorstufe. Schlägt er fehl, bricht der Lauf ab (Umgebungs-Blocker). Enthält den
   Replication-Agents-Check und den Samples-Check (SMOKE-12: `/content/samples/de` und
-  `/content/dam/samples` vorhanden, Voraussetzung der Komponenten-Tests). Mit Gate sperren fehlende
-  Samples auch die Basisfunktionen, die sie nicht brauchen. **DEV 23.11.2026: Samples fehlen**
-  (404 auf `/content/samples`, `/content/dam/samples`, `/etc/tags/Samples`; SMOKE-11 und SMOKE-12 rot),
-  Laut Testplan (Kapitel 6) erhält DEV den Produktionsstand ohne Samples; der Tech Lead hat sie gesichert,
-  die Sicherung lässt sich einspielen. Bis dahin laufen die Samples-abhängigen Tests nur auf TEST
-  (siehe Stand-Hinweis in `docs/TESTFAELLE.md`).
+  `/content/dam/samples` auf dem Author, mit Publish-URL zusätzlich `/content/samples/de.html` auf Publish;
+  Voraussetzung der Komponenten-Tests). Mit Gate sperren fehlende Samples auch die Basisfunktionen,
+  die sie nicht brauchen. **DEV 23.11.2026:** Produktionsinhalt eingespielt, Samples auf dem Author wieder
+  da, auf **Publish nicht veröffentlicht** (HTTP 404). Deshalb sind SMOKE-12 und 13 Tests rot
+  (COMP-VIS-1..11, OVL-5, TAG-1); alle anderen Tests der Suite sind grün (Gesamtlauf 46 grün).
+  Veröffentlichen der Samples nur mit Freigabe (außerhalb der Spielwiesen), siehe „Eingriffe außerhalb der
+  Spielwiesen". TEST erhält den aktuellen Produktionsinhalt inklusive Samples in Kürze.
 - Replication (REP-1): prüft zusätzlich die Zustellung auf Publish (200 nach
   Aktivieren, 404 nach Deaktivieren).
 - Sprachversionen (LANG-1..3): Sprachwahl und Hreflang am `zv`-Seitenpaar.
