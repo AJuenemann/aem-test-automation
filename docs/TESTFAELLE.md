@@ -45,7 +45,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 ## Gesamtübersicht (Stand 19.11.2026)
 
 59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 132 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+nur auf Anforderung) und 144 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -690,6 +690,21 @@ Sprachversionen.
 - **Dazu erweitert**: `cockpit-report.spec.ts` (+4: `detectBlockerInfo`, `blockerText`,
   `repeatIndex`/`repeatTotal`), `cockpit-catalog.spec.ts` (+1: `labelEn`/`descriptionEn` additiv).
   `cockpit-ui.spec.ts` nagelt die Sprache auf `de-DE` fest.
+- **Erwartet**: alle Fälle grün.
+
+### UNIT-PORTGUARD — Port-Prüfung beim Start des Cockpits (`tests/unit/cockpit-portguard.spec.ts`, ab 23.11.2026)
+- **Zweck**: Ein belegter Port blockiert den Start. Ist es eine hängende eigene Instanz, wird sie freigeräumt,
+  ein fremder Prozess nie. Kein AEM; die Start-Fälle starten das echte Cockpit auf einem freien Port und halten
+  es mit `SIGSTOP` an (Port belegt, Dienst antwortet nicht). Alle Prozesse werden am Ende beendet.
+- **Fälle** (12):
+  - **Bausteine** (7): PIDs aus `lsof` lesen; nur das Cockpit dieses Projekts gilt als eigen (absoluter Pfad, relativ nur mit
+    Suite-Root als Arbeitsverzeichnis; fremde, ähnlich benannte und andere Projekte nicht); Kommandozeile kürzen; Warntext
+    (mit und ohne alte pf-Weiterleitung, nennt Ausweich-Port und Befehle); Beenden mit SIGTERM, mit SIGKILL-Rückfall bei einem
+    Prozess, der SIGTERM ignoriert, und bei einem angehaltenen Prozess; lauschenden Prozess samt Befehl und Arbeitsverzeichnis finden.
+  - **Start** (5): freier Port startet normal ohne Warnung; hängende eigene Instanz wird mit `COCKPIT_FORCE=1` beendet und
+    die neue übernimmt den Port; ohne Terminal und ohne `COCKPIT_FORCE` wird nichts beendet (Meldung nennt die Option);
+    ein fremder Prozess bleibt auch mit `COCKPIT_FORCE=1` unangetastet (Meldung nennt PID und `COCKPIT_PORT`); eine antwortende
+    eigene Instanz wird wie bisher ersetzt.
 - **Erwartet**: alle Fälle grün.
 
 ### UNIT-TITLES-EN — Englische Testnamen (`tests/unit/titles-en.spec.ts`, ab 19.11.2026)

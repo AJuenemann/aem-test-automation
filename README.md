@@ -4,7 +4,7 @@ Playwright-/TypeScript-Testautomatisierung für die Fraunhofer AEM 6.5 LTS Migra
 (Tickets FHGWCMS-2415 / FHGWCMS-2416). Die Suite prüft über echte Redakteurs-
 Gesten, ob die Fraunhofer-Website nach dem Update wie vorher funktioniert. Sie
 umfasst 59 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
-inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 132 Unit-Tests
+inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen und 144 Unit-Tests
 ohne AEM (Stand 19.11.2026). Die vollständige Liste mit Ablauf und Erwartung steht in
 [`docs/TESTFAELLE.md`](docs/TESTFAELLE.md).
 
@@ -322,8 +322,27 @@ fragt `npm run cockpit` im Terminal nach („Neu starten? [j/N]"). Bei „j" wir
 laufende Instanz sauber beendet (über `/api/shutdown`) und neu gestartet. Ohne
 Terminal (z.B. in einer Pipe) bricht der Start ab, statt ungefragt zu beenden.
 `COCKPIT_FORCE=1 npm run cockpit` überspringt die Rückfrage und startet sofort neu
-(für Debugging/Skripte). Belegt ein **fremder** Prozess den Port, wird nichts
-beendet — Hinweis auf einen anderen `COCKPIT_PORT`. Die Oberfläche ist geführt aufgebaut (Was testen → Umgebung → Wie
+(für Debugging/Skripte).
+
+**Port-Prüfung beim Start** (`cockpit/portguard.ts`): Ist der Port belegt und antwortet das Cockpit
+dort nicht (hängende Instanz), ermittelt der Start per `lsof`, wer ihn hält. Ist es ein Cockpit
+**dieses Projekts**, fragt er nach („Beenden und neu starten? [j/N]", `COCKPIT_FORCE=1` überspringt
+die Rückfrage), beendet es (erst SIGTERM, nach 3 s SIGKILL) und startet auf dem Port. Belegt ein
+**fremder** Prozess den Port, wird nichts beendet; die Meldung nennt PID und Befehl und schlägt einen anderen
+`COCKPIT_PORT` vor. Nach dem Start prüft das Cockpit, ob es auf Verbindungen von diesem Rechner antwortet,
+und warnt sonst (siehe unten).
+
+**Browser meldet „Website nicht erreichbar“, obwohl `npm run cockpit` läuft**: Das Cockpit lauscht, aber
+Verbindungen zum Port kommen nicht an (`ERR_CONNECTION_TIMED_OUT`, `netstat` zeigt `SYN_RCVD`). Bekannte
+Ursache: Reste der pf-Weiterleitung 80 → 4321 vom 19.11.2026 (`/etc/pf.anchors/cockpit` und
+`/Library/LaunchDaemons/local.cockpit.pf.plist` laden sie bei jedem Systemstart neu). Der Start-Selbsttest
+nennt sie, wenn sie noch da ist. Entfernen (Administratorrechte):
+```bash
+sudo pfctl -a com.apple/cockpit -F all
+sudo launchctl bootout system /Library/LaunchDaemons/local.cockpit.pf.plist
+sudo rm /Library/LaunchDaemons/local.cockpit.pf.plist /etc/pf.anchors/cockpit
+```
+Ohne Eingriff hilft ein anderer Port: `COCKPIT_PORT=4322 npm run cockpit`. Die Oberfläche ist geführt aufgebaut (Was testen → Umgebung → Wie
 ausführen → Start); Tests erscheinen mit lesbarem Namen, der Dateipfad steht
 dezent daneben. Funktionen:
 

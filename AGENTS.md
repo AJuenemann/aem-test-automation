@@ -78,7 +78,7 @@ Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und di
 
 Umfang: 59 AEM-Testfälle (12 Smoketest inkl. Login, 11 Basisfunktionen,
 24 Komponenten, 3 Integrationstest, 9 Regressionstest), dazu 11 Capture-Läufe
-und 132 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
+und 144 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 ## Cockpit: Aufbau und Fallback
@@ -92,6 +92,16 @@ in Chrome ein sicherer Kontext; ein Name ohne `.localhost` zeigt „Nicht sicher
 ändert nur die ausgegebene/geöffnete URL, gebunden wird immer `127.0.0.1`. Ohne Port geht es
 nicht sauber: Port 80 an `127.0.0.1` braucht unter macOS Root (`EACCES`), und eine
 pf-Weiterleitung 80 → 4321 legte direkte Verbindungen zu 4321 lahm (19.11.2026). Nicht wieder einführen.
+**Reste bereinigen (Befund 23.11.2026):** Die Weiterleitung blieb als `/etc/pf.anchors/cockpit` und
+`/Library/LaunchDaemons/local.cockpit.pf.plist` auf dem Mac liegen. Der LaunchDaemon lädt sie bei jedem
+Systemstart (`pfctl -e`, Anker `com.apple/cockpit`), danach ist Port 4321 tot: Verbindungen bleiben in
+`SYN_RCVD`, der Browser meldet `ERR_CONNECTION_TIMED_OUT`, andere Ports gehen. Die Befehle zum Entfernen
+stehen im README. Der Start-Selbsttest (`warnIfUnreachable`) nennt die Ursache, wenn der Anker noch da ist.
+**Port-Prüfung beim Start** (`cockpit/portguard.ts`, `start()` in `server.ts`): antwortet auf dem belegten
+Port kein Cockpit, bestimmt `lsof` den Halter. Nur ein Cockpit dieses Projekts (Kommandozeile mit
+absolutem Pfad von `cockpit/server.ts`, oder relativ mit Suite-Root als Arbeitsverzeichnis) wird nach
+Rückfrage oder mit `COCKPIT_FORCE=1` beendet (SIGTERM, SIGCONT, nach 3 s SIGKILL). Fremde Prozesse
+werden nie beendet, auch nicht mit `COCKPIT_FORCE=1`.
 
 - Neue Oberfläche in `cockpit/public/`: `index.html` (Shell, Icon-Sprite), `tokens.css`
   (einzige Farbpalette, hell/dunkel über `data-theme`), `app.css`, `app.js` (Router,

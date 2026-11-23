@@ -24,6 +24,7 @@ import { buildRun, RunRequest } from './runArgs.js';
 import { buildReportView, detectBlocker, detectBlockerInfo, BlockerInfo, ReportView } from './report.js';
 import { sortRunsNewestFirst, runSettingsFrom, RunMeta } from './history.js';
 import { isAllowedCleanupPath, selectTestPages } from './cleanup.js';
+import { listeningPids, processInfo, isOwnCockpit, terminate, shortCommand, unreachableMessage, PF_ANCHOR_FILE, type ProcessInfo } from './portguard.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Suite-Root ist der Elternordner von cockpit/.
@@ -1251,16 +1252,13 @@ async function waitForPortFree(timeoutMs = 8000): Promise<boolean> {
 }
 
 /** Interaktive j/N-Frage; false, wenn kein TTY vorhanden ist. */
-async function confirmRestart(): Promise<boolean> {
+async function confirmRestart(
+  question = `Das Test-Cockpit läuft bereits auf Port ${PORT}. Neu starten? [j/N] `,
+): Promise<boolean> {
   if (!process.stdin.isTTY) return false;
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   try {
-    const answer = await new Promise<string>((resolve) =>
-      rl.question(
-        `Das Test-Cockpit läuft bereits auf Port ${PORT}. Neu starten? [j/N] `,
-        resolve,
-      ),
-    );
+    const answer = await new Promise<string>((resolve) => rl.question(question, resolve));
     return /^(j|ja|y|yes)$/i.test(answer.trim());
   } finally {
     rl.close();
@@ -1285,7 +1283,66 @@ function listenAndAnnounce(): void {
     // eslint-disable-next-line no-console
     console.log(`Beenden: Strg+C im Terminal oder „Beenden"-Button in der UI.\n`);
     openBrowser(targetUrl);
+    void warnIfUnreachable();
   });
+}
+
+/**
+ * Selbsttest nach dem Start: Antwortet das Cockpit auf Verbindungen von diesem Rechner? Hängt der Port
+ * (etwa durch einen Netzwerkfilter oder eine Sicherheitssoftware), steht sonst nur „Website nicht
+ * erreichbar“ im Browser, obwohl der Dienst läuft. Nur eine Warnung, es wird nichts geändert.
+ */
+async function warnIfUnreachable(): Promise<void> {
+  const pong = (await httpGetJson('/api/ping', 4000)) as { app?: string } | null;
+  if (pong?.app === 'aem-test-cockpit') return;
+  // eslint-disable-next-line no-console
+  console.error(unreachableMessage(PORT, existsSync(PF_ANCHOR_FILE)));
+}
+
+/**
+ * Der Port ist belegt, aber unser Cockpit antwortet nicht. Wer belegt ihn?
+ * - eigene (hängende) Instanz dieses Projekts: nach Rückfrage (oder COCKPIT_FORCE=1) beenden
+ * - fremder Prozess oder nicht ermittelbar: nichts beenden, Start abbrechen
+ */
+async function freeBusyPort(): Promise<void> {
+  const pids = (await listeningPids(PORT)).filter((pid) => pid !== process.pid);
+  const infos: ProcessInfo[] = await Promise.all(pids.map((pid) => processInfo(pid)));
+  const own: ProcessInfo[] = [];
+  const foreign: ProcessInfo[] = [];
+  for (const info of infos) (await isOwnCockpit(info, SUITE_ROOT) ? own : foreign).push(info);
+
+  if (foreign.length || own.length === 0) {
+    const who = foreign.length
+      ? foreign.map((i) => `  PID ${i.pid}: ${shortCommand(i.command)}`).join('\n')
+      : '  (Prozess nicht ermittelbar, `lsof` fehlt oder keine Berechtigung)';
+    // eslint-disable-next-line no-console
+    console.error(
+      `\nPort ${PORT} ist durch einen fremden Prozess belegt (nicht dieses Test-Cockpit). Er wird nicht beendet.\n${who}\n` +
+        `Wähle einen anderen Port über COCKPIT_PORT, z.B.:  COCKPIT_PORT=${PORT + 1} npm run cockpit\n`,
+    );
+    process.exit(1);
+  }
+
+  const list = own.map((i) => `PID ${i.pid}`).join(', ');
+  if (process.env.COCKPIT_FORCE !== '1') {
+    const ok = await confirmRestart(
+      `Ein Test-Cockpit (${list}) belegt Port ${PORT}, antwortet aber nicht. Beenden und neu starten? [j/N] `,
+    );
+    if (!ok) {
+      // eslint-disable-next-line no-console
+      console.error(
+        process.stdin.isTTY
+          ? `\nAbgebrochen: das nicht antwortende Test-Cockpit (${list}) bleibt bestehen.\n`
+          : `\nEin Test-Cockpit (${list}) belegt Port ${PORT}, antwortet aber nicht. Kein Terminal für die ` +
+              `Rückfrage verfügbar; Start abgebrochen. Mit COCKPIT_FORCE=1 beenden und neu starten ` +
+              `oder anderen COCKPIT_PORT wählen.\n`,
+      );
+      process.exit(1);
+    }
+  }
+  // eslint-disable-next-line no-console
+  console.log(`Beende das nicht antwortende Test-Cockpit (${list}) auf Port ${PORT}…`);
+  for (const info of own) await terminate(info.pid);
 }
 
 async function start(): Promise<void> {
@@ -1295,14 +1352,17 @@ async function start(): Promise<void> {
     return;
   }
 
-  // Belegt: läuft dort UNSERE UI oder ein fremder Prozess?
+  // Belegt: antwortet dort UNSER Cockpit? Sonst klären, ob eine hängende eigene Instanz oder ein
+  // fremder Prozess den Port hält (nur Ersteres wird nach Rückfrage beendet).
   if (!(await isOwnInstanceRunning())) {
-    // eslint-disable-next-line no-console
-    console.error(
-      `\nPort ${PORT} ist durch einen fremden Prozess belegt (nicht das Test-Cockpit).\n` +
-        `Wähle einen anderen Port über COCKPIT_PORT, z.B.:  COCKPIT_PORT=4322 npm run cockpit\n`,
-    );
-    process.exit(1);
+    await freeBusyPort();
+    if (!(await waitForPortFree())) {
+      // eslint-disable-next-line no-console
+      console.error(`\nPort ${PORT} wurde nicht frei. Anderen COCKPIT_PORT wählen, z.B.:  COCKPIT_PORT=${PORT + 1} npm run cockpit\n`);
+      process.exit(1);
+    }
+    listenAndAnnounce();
+    return;
   }
 
   // Eigene Instanz läuft. COCKPIT_FORCE überspringt die Rückfrage (Debugging).
