@@ -64,7 +64,9 @@ in `tests/basics/`).
   `/content/dam/samples` vorhanden, Voraussetzung der Komponenten-Tests). Mit Gate sperren fehlende
   Samples auch die Basisfunktionen, die sie nicht brauchen. **DEV 23.11.2026: Samples fehlen**
   (404 auf `/content/samples`, `/content/dam/samples`, `/etc/tags/Samples`; SMOKE-11 und SMOKE-12 rot),
-  Wiedereinspielen durch JET nötig.
+  Laut Testplan (Kapitel 6) erhält DEV den Produktionsstand ohne Samples; der Tech Lead hat sie gesichert,
+  die Sicherung lässt sich einspielen. Bis dahin laufen die Samples-abhängigen Tests nur auf TEST
+  (siehe Stand-Hinweis in `docs/TESTFAELLE.md`).
 - Replication (REP-1): prüft zusätzlich die Zustellung auf Publish (200 nach
   Aktivieren, 404 nach Deaktivieren).
 - Sprachversionen (LANG-1..3): Sprachwahl und Hreflang am `zv`-Seitenpaar.
