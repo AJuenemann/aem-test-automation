@@ -15,7 +15,7 @@ betroffene Services (siehe Priorisierung).
 | -------- | -------------------------------------------- | --------------------------- |
 | TEST     | https://aem-author-test.ws.fraunhofer.de     | primäre Testumgebung        |
 | DEV      | https://aem-author-dev.ws.fraunhofer.de      | Entwicklung; ggf. kein LDAP |
-| LEGACY   | alte AEM-Version                             | Vorher-/Nachher-Referenz    |
+| LEGACY   | alte AEM-Version, Referenzumgebung „Hydra"   | Vorher-/Nachher-Referenz; **bisher kein Zugriff** |
 
 - Spielwiesen (schreibend): `/content/fhgtest` für Seiten,
   `/content/businesscards/fhgtest` für Visitenkarten (LDAP-Import) und
@@ -26,7 +26,8 @@ betroffene Services (siehe Priorisierung).
 - Zugang über `.env` / CI-Secrets. Keine Credentials im Repo.
 - Cockpit-Presets: nur DEV (primär) und TEST. LEGACY ist kein UI-Button mehr
   (kein aktueller Nutzen); die Vorher-/Nachher-Referenz läuft per CLI mit
-  `AEM_ENV=legacy`.
+  `AEM_ENV=legacy`. Die Referenzumgebung heißt **Hydra** (technischer Name `legacy`); Zugriff
+  besteht bisher nicht, Läufe dagegen sind noch nicht möglich.
 - Visuelle Baselines (Vorher-Stand) erzeugen: Cockpit „Baselines aktualisieren"
   oder `npm run baseline:visual`. Immer `--update-snapshots=all`: Ohne Modus gilt
   `changed`, das überschreibt nur Baselines, deren Vergleich fehlschlägt. Kleine
