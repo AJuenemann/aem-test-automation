@@ -58,6 +58,8 @@ const CONSOLES: { title: string; titleEn: string; path: () => string; ready: str
 /** Echte Site (nur lesend: Editor + Publish) und eine garantiert fehlende Seite darunter. */
 const PUBLISH_PAGE = '/content/zv/de';
 const PUBLISH_MISSING_PAGE = '/content/zv/de/qa-seite-gibt-es-nicht';
+/** Samples-Inhalte, auf die Dialog-, Overlay- und Visual-Tests aufbauen (Seiten und DAM). */
+const SAMPLES_PATHS = ['/content/samples/de', '/content/dam/samples'];
 
 test.describe('Smoketest', { tag: '@smoke', annotation: describeEn('Smoke test') }, () => {
   for (const c of CONSOLES) {
@@ -119,6 +121,19 @@ test.describe('Smoketest', { tag: '@smoke', annotation: describeEn('Smoke test')
       'Tag-Bereich categories/samples fehlt.',
     ).toBeVisible({ timeout: 30_000 });
     expect(jsErrors(), 'Tag-Verwaltung: unerwartete JS-Fehler.').toEqual([]);
+  });
+
+  // Voraussetzung der Komponenten-Tests: Die Samples-Site und ihre Assets liegen auf dem Author. Fehlen
+  // sie (z.B. nach einem Wiederanlauf der Instanz, DEV 23.11.2026), scheitern Dialog-, Overlay- und
+  // Visual-Tests erst später mit schwer lesbaren Fehlern. Rein lesend, nur HTTP-Status.
+  test('Samples-Inhalte liegen auf dem Author', titleEn('Samples content is present on the author'), async ({ page }) => {
+    const base = getAemConfig().baseUrl;
+    const missing: string[] = [];
+    for (const samplePath of SAMPLES_PATHS) {
+      const res = await page.request.get(`${base}${samplePath}.json`);
+      if (res.status() !== 200) missing.push(`${samplePath}: HTTP ${res.status()}`);
+    }
+    expect(missing, 'Samples-Inhalte fehlen auf dem Author (Samples-Paket einspielen lassen).').toEqual([]);
   });
 
   // Technische Prüfung (wie ACL-Test): kein Redakteursweg, aber der häufigste

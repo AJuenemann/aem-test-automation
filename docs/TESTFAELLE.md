@@ -42,9 +42,9 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 
 ---
 
-## Gesamtübersicht (Stand 19.11.2026)
+## Gesamtübersicht (Stand 23.11.2026)
 
-59 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
+60 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
 nur auf Anforderung) und 144 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
@@ -58,6 +58,7 @@ grünem Lauf.
 | SMOKE-9 | Alle OSGi-Bundles sind aktiv | Smoketest | `smoke.spec.ts` | DEV, TEST |
 | SMOKE-10 | Replication-Agents sind eingerichtet und nicht blockiert | Smoketest | `smoke.spec.ts` | DEV, TEST |
 | SMOKE-11 | Tag-Verwaltung lädt und enthält die Samples-Tags | Smoketest | `smoke.spec.ts` | DEV, TEST |
+| SMOKE-12 | Samples-Inhalte liegen auf dem Author | Smoketest | `smoke.spec.ts` | offen (DEV 23.11.2026: rot, Samples fehlen; TEST nicht erreichbar) |
 | CRUD-1 | Seite anlegen, bearbeiten und löschen | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
 | CRUD-2 | Seite löschen über Tastatur-Shortcut (Backspace) | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
 | PAGE-1 | Seite kopieren und im selben Ordner einfügen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV, TEST |
@@ -165,6 +166,21 @@ ausführen" zuschaltbar (Stand 19.11.2026).
   `categories/samples` werden angezeigt, keine unerwarteten JS-Fehler.
 - **Zweck**: Die Filterseite der Samples fragt diese Tags ab (TAG-1). Fehlen sie,
   ist das ein Umgebungs-Blocker für Filter- und Suchtests.
+
+### SMOKE-12 — Samples-Inhalte liegen auf dem Author
+- **Schritte**: `/content/samples/de.json` und `/content/dam/samples.json` auf dem Author lesen (nur HTTP-Status).
+- **Erwartet**: Beide Pfade liefern HTTP 200. Fehlt einer, nennt der Test die fehlenden Pfade mit Status
+  („`/content/samples/de: HTTP 404`") und den Hinweis, das Samples-Paket einspielen zu lassen.
+- **Zweck**: Voraussetzung der Komponenten-Tests (Dialoge, Overlays, Visual, Asset-Finder). Fehlen die Samples,
+  zeigt der Smoketest die Ursache vorab, statt dass Folgetests mit schwer lesbaren Fehlern scheitern. Ergänzt
+  SMOKE-11: Der Tag-Test prüft nur den Tag-Namensraum, nicht die Seiten und das DAM.
+- **Einordnung**: rein lesend, schnell, auf DEV und TEST möglich, wie die übrigen Smoketests. Als Teil des
+  Smoketests hängt er am Gate: Mit eingeschaltetem Gate (CLI/CI Standard, Cockpit per Schalter) laufen bei
+  fehlenden Samples auch die Basisfunktionen nicht, obwohl sie `/content/fhgtest` nutzen und keine Samples brauchen.
+- **Grenze**: Prüft nicht, ob die Seiten ihre Tags tragen (`cq:tags`, TAG-1) und nicht die Businesscards.
+- **Stand**: DEV am 23.11.2026 rot (beide Pfade HTTP 404, `/etc/tags/Samples` fehlt ebenso, SMOKE-11 ist ebenfalls rot).
+  Positivfall noch nicht gelaufen (TEST am 23.11.2026 nicht erreichbar, HTTP 503). Abfrage-Form geprüft:
+  `<pfad>.json` liefert auf vorhandenen Pfaden 200 (`/content/zv/de`, Spielwiesen).
 
 ### SMOKE-10 — Replication-Agents sind eingerichtet und nicht blockiert
 - **Realer Befund**: Auf DEV war `publish_aem-publish1-dev` vom 10. bis
@@ -712,7 +728,7 @@ Sprachversionen.
   für das Cockpit (Sprache EN). Der Titel im Test bleibt deutsch (Quelle für `--grep`, Baselines,
   Berichte). Der englische Name steht als Annotation `_title-en` bzw. `_describe-en` am Test
   (`fixtures/titles.ts`); der Unterstrich blendet sie im Playwright-HTML-Report aus.
-- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 70 AEM-Tests
+- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 71 AEM-Tests
   (inkl. Login) `_title-en` und zu jeder Suite `_describe-en`, nichts ist leer oder unübersetzt.
   Der Katalog liefert zu jedem sichtbaren Test und jeder Datei den englischen Namen.
 - **Dazu erweitert**: `cockpit-catalog.spec.ts` (+1: liest `_title-en`/`_describe-en`, bei mehreren

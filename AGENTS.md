@@ -58,9 +58,13 @@ in `tests/basics/`).
 - Visuelle Regression (Publish) der Komponenten-Seiten und der Fehlerseite.
   Baselines liegen für DEV und TEST vor (siehe „Umgebungs-Matrix"). Sie sind
   lokal unter macOS erzeugt; vor CI-Nutzung im CI-Image neu erzeugen.
-- Smoketest (`tests/smoke.spec.ts`, Projekt `smoke`): 11 rein lesende Checks als
+- Smoketest (`tests/smoke.spec.ts`, Projekt `smoke`): 12 rein lesende Checks als
   Vorstufe. Schlägt er fehl, bricht der Lauf ab (Umgebungs-Blocker). Enthält den
-  Replication-Agents-Check.
+  Replication-Agents-Check und den Samples-Check (SMOKE-12: `/content/samples/de` und
+  `/content/dam/samples` vorhanden, Voraussetzung der Komponenten-Tests). Mit Gate sperren fehlende
+  Samples auch die Basisfunktionen, die sie nicht brauchen. **DEV 23.11.2026: Samples fehlen**
+  (404 auf `/content/samples`, `/content/dam/samples`, `/etc/tags/Samples`; SMOKE-11 und SMOKE-12 rot),
+  Wiedereinspielen durch JET nötig.
 - Replication (REP-1): prüft zusätzlich die Zustellung auf Publish (200 nach
   Aktivieren, 404 nach Deaktivieren).
 - Sprachversionen (LANG-1..3): Sprachwahl und Hreflang am `zv`-Seitenpaar.
@@ -76,7 +80,7 @@ in `tests/basics/`).
 Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und die Gesamtübersicht in
 `docs/TESTFAELLE.md`). Aktuell liegen keine Diag-Specs im Repo.
 
-Umfang: 59 AEM-Testfälle (12 Smoketest inkl. Login, 11 Basisfunktionen,
+Umfang: 60 AEM-Testfälle (13 Smoketest inkl. Login, 11 Basisfunktionen,
 24 Komponenten, 3 Integrationstest, 9 Regressionstest), dazu 11 Capture-Läufe
 und 144 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
