@@ -61,7 +61,7 @@ grünem Lauf.
 | SMOKE-12 | Samples-Inhalte liegen auf dem Author | Smoketest | `smoke.spec.ts` | offen (DEV 23.11.2026: rot, Samples fehlen; TEST nicht erreichbar) |
 | CRUD-1 | Seite anlegen, bearbeiten und löschen | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
 | CRUD-2 | Seite löschen über Tastatur-Shortcut (Backspace) | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
-| PAGE-1 | Seite kopieren und im selben Ordner einfügen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV, TEST |
+| PAGE-1 | Seite kopieren und im selben Ordner einfügen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | TEST (DEV: nach der Änderung vom 19.11. nicht nachgeprüft) |
 | PAGE-2 | Unterseite unter eine andere Startseite verschieben | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV, TEST |
 | PAGE-3 | Seite umbenennen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV, TEST |
 | PAGE-4 | Seiteneigenschaften speichern und erneut anzeigen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV, TEST |
@@ -84,6 +84,11 @@ grünem Lauf.
 | LANG-1/2 | Sprachwahl "English" / "Deutsch" öffnet die Gegenseite | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | LANG-3 | Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | TAG-1 | Filterseite liefert getaggte Treffer | Regressionstest | `regression/tags-filter.spec.ts` | TEST (DEV: Samples fehlen seit 23.11.2026) |
+
+**Historie des Cockpits** (`cockpit/runs/`): beginnt am 19.11.2026. Letzter vollständiger Lauf auf TEST am
+19.11.2026 (18:04), alle 58 Tests grün (ohne Login). Auf DEV: Smoketest am 23.11.2026 08:45 mit 10 von 11 grün
+(SMOKE-11 rot); Anmeldung auf DEV am 19.11.2026 (zweimal) und am 23.11.2026 09:52 gescheitert, DEV war nicht
+erreichbar. Läufe über die Kommandozeile stehen nicht in der Historie (z. B. alle DEV-Prüfungen vor dem 19.11.2026).
 
 **Stand DEV (23.11.2026):** Auf DEV fehlen die Samples (Seiten, DAM, Tags). Das Testplan-Kapitel 6 beschreibt,
 dass DEV den Produktionsstand ohne Beispielseiten erhält; die Sicherung des Tech Leads lässt sich einspielen.
