@@ -13,6 +13,7 @@
     "test:integration": "playwright test tests/integration",
     "test:regression": "playwright test tests/regression",
     "capture-dialogs": "CAPTURE_DIALOGS=1 playwright test tests/components/dialog-capture.spec.ts",
+    "capture-references": "CAPTURE_REFERENCES=1 playwright test tests/regression/references-capture.spec.ts",
     "update-snapshots": "playwright test --update-snapshots=all",
     "baseline:visual": "playwright test tests/basics/visual-regression.spec.ts tests/components/visual-publish.spec.ts tests/regression/error-pages.spec.ts --update-snapshots=all",
     "report": "playwright show-report",

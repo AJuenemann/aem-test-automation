@@ -81,6 +81,12 @@ in `tests/basics/`).
   (TAG-1).
 - Integrationstest: ACL-Tool (Konsole + Bundles). LDAP-Import (nur TEST): echter
   Import in `/content/businesscards/fhgtest`, danach Cleanup.
+- Publish-Referenzen (23.11.2026, DEV): Navigation (NAV-1), Hreflang-Paare (LANG-4), Bilder in drei Fenstergrößen
+  (IMG-1) und Fehlerseiten de/en (ERR-1) gegen den Vorher-Stand in `fixtures/references/<AEM_ENV>/`
+  (`fixtures/publish-snapshots.ts`). Erfassung: `CAPTURE_REFERENCES=1 npm run capture-references`; überschreibt
+  nichts (Schutz des Vorher-Stands), bewusst nur mit `CAPTURE_REFERENCES=overwrite`, nie nach dem Upgrade.
+  Bilder werden auf Renditionen (`.img.<name>.jpg`) verglichen, nicht auf einzelne Dateien: rotierende Slider
+  zeigen sonst je nach Zeitpunkt andere Bilder (Flake im Test am 23.11.2026).
 - Regressionstest (bekannte Migrationsrisiken): Asset-Finder (Visitenkarten/Externe Links). Download-Asset-Feld:
   per Drag & Drop aus dem Asset-Finder setzen und ersetzen. Baum wiederherstellen:
   Formular öffnen und abbrechen.
@@ -88,8 +94,8 @@ in `tests/basics/`).
 Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und die Gesamtübersicht in
 `docs/TESTFAELLE.md`). Aktuell liegen keine Diag-Specs im Repo.
 
-Umfang: 60 AEM-Testfälle (13 Smoketest inkl. Login, 11 Basisfunktionen,
-24 Komponenten, 3 Integrationstest, 9 Regressionstest), dazu 11 Capture-Läufe
+Umfang: 64 AEM-Testfälle (13 Smoketest inkl. Login, 11 Basisfunktionen,
+24 Komponenten, 3 Integrationstest, 13 Regressionstest), dazu 11 Capture-Läufe, 3 Referenz-Erfassungen
 und 144 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 

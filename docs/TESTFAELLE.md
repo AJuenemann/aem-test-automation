@@ -44,8 +44,8 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 
 ## Gesamtübersicht (Stand 23.11.2026)
 
-60 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP,
-nur auf Anforderung) und 144 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+64 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
+und 3 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 144 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -84,6 +84,10 @@ grünem Lauf.
 | LANG-1/2 | Sprachwahl "English" / "Deutsch" öffnet die Gegenseite | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | LANG-3 | Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | TAG-1 | Filterseite liefert getaggte Treffer | Regressionstest | `regression/tags-filter.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
+| NAV-1 | Navigation: Links sind unverändert und erreichbar | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
+| LANG-4 | Hreflang: weitere Seitenpaare verweisen gegenseitig aufeinander | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
+| IMG-1 | Bilder: laden in drei Fenstergrößen, scharf und unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
+| ERR-1 | Fehlerseiten zeigen auf Deutsch und Englisch das Fraunhofer-Design | Regressionstest | `regression/error-pages-lang.spec.ts` | DEV (23.11.2026) |
 
 **Historie des Cockpits** (`cockpit/runs/`): beginnt am 19.11.2026. Letzter vollständiger Lauf auf TEST am
 19.11.2026 (18:04), alle 58 Tests grün (ohne Login). Auf DEV: Smoketest am 23.11.2026 08:45 mit 10 von 11 grün
@@ -550,8 +554,8 @@ Sprachversionen.
 - **Hintergrund**: Am 17.11.2026 war die Filterseite auf TEST leer, weil die
   Tags im Author fehlten (`docs/TEST-tags-wiederhergestellt-20261117.md`). Der
   Bildvergleich COMP-VIS-10 zeigt so etwas nur als Bildabweichung.
-- **Hinweis**: Auf dem DEV-Author fehlen die Tags weiterhin. Wird auf DEV neu
-  veröffentlicht, wird der Test dort rot. Das ist gewollt.
+- **Hinweis**: Auf DEV-Publish ist die Filterseite am 23.11.2026 nicht erreichbar (HTTP 404), weil die Samples dort
+  nicht veröffentlicht sind. Der Test ist deshalb rot, die Tags selbst sind auf dem Author wieder da (SMOKE-11 grün).
 - **Grenze**: Geprüft wird „mindestens 1", nicht die genaue Zahl, damit
   inhaltliche Änderungen an den Samples nicht stören. Die Gegenprobe mit
   leerer Filterseite ist nicht durchgeführt.
@@ -563,6 +567,49 @@ Sprachversionen.
   `hreflang="en"` auf die en-Seite, die en-Seite per `hreflang="de"` zurück.
   Verglichen wird nur der Pfad, der Host ist der externe Name `www.fraunhofer.de`.
 
+### NAV-1 — Navigation: Links sind unverändert und erreichbar (`tests/regression/publish-reference.spec.ts`)
+- **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt, Referenz `fixtures/references/<AEM_ENV>/navigation.json` vorhanden
+  (Vorher-Stand, `npm run capture-references`). Nur lesend, ohne Login.
+- **Schritte**: Auf Publish die Startseiten `/content/zv/de` und `/content/zv/en` laden und alle Links in den
+  `<nav>`-Bereichen (Hauptnavigation, Menü, Servicenavigation) einsammeln. Mit der Referenz vergleichen, danach jedes
+  interne Ziel einmal aufrufen.
+- **Erwartet**: Dieselben Links wie im Vorher-Stand (kein fehlender, kein neuer), jedes interne Ziel liefert HTTP 200.
+  Die Meldung nennt bis zu 25 Abweichungen.
+- **Ersetzt**: MAN-09 Schritt 1 (Navigation durchklicken). Schritte 2 bis 4 (Navigationstitel ändern, veröffentlichen,
+  auf Publish prüfen) bleiben manuell.
+- **Grenze**: Prüft Ziel und Erreichbarkeit, nicht die Reihenfolge und nicht das Aussehen der Menüs.
+### LANG-4 — Hreflang weiterer Seitenpaare (`tests/regression/publish-reference.spec.ts`)
+- **Vorbedingung**: wie NAV-1, Referenz `hreflang-pairs.json` (12 Seitenpaare, per Breitensuche ab der deutschen
+  Startseite erfasst).
+- **Schritte**: Je Paar die deutsche Seite laden, `hreflang="en"` lesen, die englische Seite laden, `hreflang="de"` lesen.
+- **Erwartet**: Beide Seiten HTTP 200, die Verweise führen auf die erfassten Pfade (Vorher-Stand) und gegenseitig
+  zurück, die englische Seite hat `lang="en"`. Verglichen wird nur der Pfad.
+- **Ersetzt**: MAN-17 (Hreflang an weiteren Seitenpaaren). Ergänzt LANG-3 (ein Paar mit Sprachwahl im Kopf).
+### IMG-1 — Bilder laden in drei Fenstergrößen, scharf und unverändert (`tests/regression/publish-reference.spec.ts`)
+- **Vorbedingung**: wie NAV-1, Referenz `images.json`.
+- **Schritte**: Die Seiten `/content/zv/de` und `/content/zv/de/fuer-kunden-und-partner` bei 375, 768 und 1280 px Breite
+  laden, bis Lazy Loading durchgelaufen ist, und alle sichtbaren Bilder auswerten.
+- **Erwartet**: Es gibt sichtbare Bilder, keines lädt nicht, keines ist schmaler als 90 % der Anzeigebreite (SVG
+  ausgenommen). Die Menge der ausgelieferten Renditionen (`….img.<Rendition>.jpg` mit Breite, sonst Pfad mit Breite)
+  entspricht dem Vorher-Stand.
+- **Ersetzt**: MAN-17 (Bilder in verschiedenen Fenstergrößen). Rotierende Slider ändern die einzelnen Bilder, nicht
+  die Renditionen, deshalb wird auf Renditionen verglichen.
+- **Grenze**: Ob der Bildausschnitt oder das Motiv passt, wird nicht beurteilt.
+### ERR-1 — Fehlerseiten Deutsch und Englisch (`tests/regression/error-pages-lang.spec.ts`)
+- **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt. Nur lesend, ohne Login.
+- **Schritte**: Je zwei nicht vorhandene Adressen auf `/content/zv/de` und `/content/zv/en` aufrufen (Startebene und
+  Unterseite).
+- **Erwartet**: HTTP 404, Titel „Fehlerseite 404" (de) bzw. „Errorpage 404" (en), `lang` passend, Fraunhofer-Header,
+  nicht die rohe Sling-Meldung.
+- **Ersetzt**: MAN-18 (Fehlerseiten Deutsch und Englisch). Ergänzt SMOKE-8 (nur Deutsch) und OVL-5 (Bildvergleich).
+- **Grenze**: Geschützte Seiten (403) sind nicht geprüft, dafür fehlt eine bekannte Seite (Testplan Kapitel 12, Nr. 14).
+### REF-CAP — Vorher-Stand der Publish-Seiten erfassen (`tests/regression/references-capture.spec.ts`)
+- **Zweck**: erfasst Navigation, Hreflang-Paare und Bilder als Referenz unter `fixtures/references/<AEM_ENV>/`.
+- **Ausführen**: `CAPTURE_REFERENCES=1 npm run capture-references`. Ohne die Variable überspringt sich der Lauf.
+- **Schutz**: Eine vorhandene Referenz wird nicht überschrieben (Fehlermeldung). Neu erzeugen nur bewusst mit
+  `CAPTURE_REFERENCES=overwrite`, **nie nach dem Upgrade**: Die Dateien sind der Vorher-Stand.
+- **Stand**: DEV am 23.11.2026 erfasst (216 und 204 Navigationslinks, 12 Seitenpaare, 6 Bildlisten). TEST folgt,
+  sobald TEST den Produktionsinhalt hat und noch die alte Software läuft.
 ---
 
 # Technische Prüfungen
@@ -739,7 +786,7 @@ Sprachversionen.
   für das Cockpit (Sprache EN). Der Titel im Test bleibt deutsch (Quelle für `--grep`, Baselines,
   Berichte). Der englische Name steht als Annotation `_title-en` bzw. `_describe-en` am Test
   (`fixtures/titles.ts`); der Unterstrich blendet sie im Playwright-HTML-Report aus.
-- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 71 AEM-Tests
+- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 78 AEM-Tests
   (inkl. Login) `_title-en` und zu jeder Suite `_describe-en`, nichts ist leer oder unübersetzt.
   Der Katalog liefert zu jedem sichtbaren Test und jeder Datei den englischen Namen.
 - **Dazu erweitert**: `cockpit-catalog.spec.ts` (+1: liest `_title-en`/`_describe-en`, bei mehreren
