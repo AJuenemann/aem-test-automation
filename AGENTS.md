@@ -68,11 +68,9 @@ in `tests/basics/`).
   Replication-Agents-Check und den Samples-Check (SMOKE-12: `/content/samples/de` und
   `/content/dam/samples` auf dem Author, mit Publish-URL zusätzlich `/content/samples/de.html` auf Publish;
   Voraussetzung der Komponenten-Tests). Mit Gate sperren fehlende Samples auch die Basisfunktionen,
-  die sie nicht brauchen. **DEV 23.11.2026:** Produktionsinhalt eingespielt, Samples auf dem Author wieder
-  da, auf **Publish nicht veröffentlicht** (HTTP 404). Deshalb sind SMOKE-12 und 13 Tests rot
-  (COMP-VIS-1..11, OVL-5, TAG-1); alle anderen Tests der Suite sind grün (Gesamtlauf 46 grün).
-  Veröffentlichen der Samples nur mit Freigabe (außerhalb der Spielwiesen), siehe „Eingriffe außerhalb der
-  Spielwiesen". TEST erhält den aktuellen Produktionsinhalt inklusive Samples in Kürze.
+  die sie nicht brauchen. **DEV 24.11.2026:** Produktionsinhalt und Samples auf Author und Publish (Tags
+  nachgetragen, veröffentlicht mit Freigabe, `docs/DEV-samples-veroeffentlicht-20261124.md`). Gesamtlauf: alle Tests grün.
+  TEST erhält den aktuellen Produktionsinhalt inklusive Samples, läuft laut JET derzeit nicht sauber (nur DEV testen).
 - Replication (REP-1): prüft zusätzlich die Zustellung auf Publish (200 nach
   Aktivieren, 404 nach Deaktivieren).
 - Sprachversionen (LANG-1..3): Sprachwahl und Hreflang am `zv`-Seitenpaar.
@@ -604,8 +602,9 @@ Stand der Referenzen:
     3. Die 51 Seiten neu veröffentlicht.
   - Nachweis: `docs/TEST-tags-wiederhergestellt-20261117.md`. Die Filterseite
     zeigt jetzt 7 Treffer wie DEV.
-  - DEV-Author hat weiter leere Tags. Ein Neuveröffentlichen auf DEV würde die
-    DEV-Filterseite leeren (mit JET zu klären).
+  - DEV-Author: Tags am 24.11.2026 genauso nachgetragen und die Samples
+    veröffentlicht (`docs/DEV-samples-veroeffentlicht-20261124.md`, Freigabe
+    Andreas Jünemann). DEV-Filterseite: 7 Treffer.
   - Analyse 18.11.2026 (`docs/DEV-tags-analyse-20261118.md`): Die Samples kamen
     auf DEV-Author und DEV-Publish getrennt per Paket `Sicherung_Samples`
     (Juni 2026), nicht per Veröffentlichen. TEST erbte den leeren Stand über das

@@ -58,7 +58,7 @@ grünem Lauf.
 | SMOKE-9 | Alle OSGi-Bundles sind aktiv | Smoketest | `smoke.spec.ts` | DEV, TEST |
 | SMOKE-10 | Replication-Agents sind eingerichtet und nicht blockiert | Smoketest | `smoke.spec.ts` | DEV, TEST |
 | SMOKE-11 | Tag-Verwaltung lädt und enthält die Samples-Tags | Smoketest | `smoke.spec.ts` | DEV (23.11.2026), TEST (19.11.2026) |
-| SMOKE-12 | Samples-Inhalte liegen auf Author und Publish | Smoketest | `smoke.spec.ts` | offen (DEV 23.11.2026: rot, Samples fehlen auf Publish; TEST nicht erreichbar) |
+| SMOKE-12 | Samples-Inhalte liegen auf Author und Publish | Smoketest | `smoke.spec.ts` | DEV (24.11.2026); TEST offen (Samples fehlen) |
 | CRUD-1 | Seite anlegen, bearbeiten und löschen | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
 | CRUD-2 | Seite löschen über Tastatur-Shortcut (Backspace) | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
 | PAGE-1 | Seite kopieren und im selben Ordner einfügen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV (23.11.2026), TEST |
@@ -73,7 +73,7 @@ grünem Lauf.
 | ASSET-2 | Bild in einer Seite verwenden, Verweise zählen und über die Suche finden | Basisfunktionen (L1) | `basics/asset-usage.spec.ts` | DEV, TEST (24.11.2026) |
 | COMP-DLG-1..11 | Dialog "<Komponente>": Reiter & Feldinhalte wie Referenz | Komponenten (L2) | `components/dialog.spec.ts` | DEV (23.11.2026), TEST |
 | COMP-AUTH-1 | FAQ mit Textblock befüllen, im Editor und auf Publish prüfen | Komponenten (L2) | `components/component-authoring.spec.ts` | DEV, TEST |
-| COMP-VIS-1..11 | Gerenderte Seite "<Komponente>" entspricht Baseline | Komponenten (L2) | `components/visual-publish.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
+| COMP-VIS-1..11 | Gerenderte Seite "<Komponente>" entspricht Baseline | Komponenten (L2) | `components/visual-publish.spec.ts` | DEV (24.11.2026), TEST |
 | VIS-1 | Gerenderte Seite entspricht Baseline (Testseite) | Komponenten (L2) | `basics/visual-regression.spec.ts` | DEV, TEST |
 | ACL-1 | AC-Tool-Konsole ist erreichbar | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
 | ACL-2 | AC-Tool-Bundles sind aktiv | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
@@ -83,10 +83,10 @@ grünem Lauf.
 | OVL-3 | Asset setzen (leer) und ersetzen (vorhanden) | Regressionstest | `regression/download-fileupload.spec.ts` | DEV (23.11.2026), TEST |
 | OVL-4 | Formular über die Timeline erreichbar und abbrechbar | Regressionstest | `regression/tree-restore.spec.ts` | DEV, TEST |
 | OVL-6 | Gelöschte Unterseite wird zum Zeitpunkt davor wiederhergestellt | Regressionstest | `regression/tree-restore.spec.ts` | DEV (23.11.2026), TEST (24.11.2026) |
-| OVL-5 | Fehlerseite (404) entspricht Baseline | Regressionstest | `regression/error-pages.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
+| OVL-5 | Fehlerseite (404) entspricht Baseline | Regressionstest | `regression/error-pages.spec.ts` | DEV (24.11.2026), TEST |
 | LANG-1/2 | Sprachwahl "English" / "Deutsch" öffnet die Gegenseite | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | LANG-3 | Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
-| TAG-1 | Filterseite liefert getaggte Treffer | Regressionstest | `regression/tags-filter.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
+| TAG-1 | Filterseite liefert getaggte Treffer | Regressionstest | `regression/tags-filter.spec.ts` | DEV (24.11.2026), TEST |
 | NAV-1 | Navigation: Links sind unverändert und erreichbar | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
 | NAV-2 | Geänderter Navigationstitel erscheint auf Publish im Hauptmenü | Regressionstest | `regression/navigation-change.spec.ts` | DEV (24.11.2026); TEST rot: Replication blockiert |
 | LANG-4 | Hreflang: weitere Seitenpaare verweisen gegenseitig aufeinander | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
@@ -98,11 +98,10 @@ grünem Lauf.
 (SMOKE-11 rot); Anmeldung auf DEV am 19.11.2026 (zweimal) und am 23.11.2026 09:52 gescheitert, DEV war nicht
 erreichbar. Läufe über die Kommandozeile stehen nicht in der Historie (z. B. alle DEV-Prüfungen vor dem 19.11.2026).
 
-**Stand DEV (23.11.2026, alter Softwarestand AEM 6.5.25.0, Produktionsinhalt, Samples wieder eingespielt):**
-Gesamtlauf über die Kommandozeile: 46 Tests grün, 13 rot, 12 übersprungen (11 Dialog-Erfassungen, LDAP nur TEST).
-Rot sind COMP-VIS-1..11, OVL-5 und TAG-1. Alle brauchen die Samples auf **Publish**, dort fehlen sie
-(HTTP 404, nur auf dem Author eingespielt). Darauf weist SMOKE-12 hin. Sobald die Samples veröffentlicht sind,
-sind diese 13 Tests erneut zu laufen.
+**Stand DEV (24.11.2026, alter Softwarestand AEM 6.5.25.0, Produktionsinhalt, Samples):** Tags der Samples auf dem
+Author nachgetragen und Samples auf Publish veröffentlicht, mit Freigabe (`docs/DEV-samples-veroeffentlicht-20261124.md`).
+Baseline „Newsroom" danach neu erzeugt (Reihenfolge nach Veröffentlichungsdatum). Gesamtlauf über die Kommandozeile:
+210 grün (66 AEM-Tests, 144 Unit-Tests), 16 übersprungen (Capture-Läufe, LDAP nur TEST), 0 rot.
 **Stand TEST (24.11.2026):** wieder erreichbar, offenbar mit neuem Produktionsinhalt. Samples fehlen auf Author und
 Publish (404). Beide Replication-Agents (`publish_aem-publish1-test`, `flush_aem-publish1-dispatcher-test`) sind seit
 24.11.2026 09:08 MEZ blockiert (SMOKE-10 rot). Ursache laut Agent-Log: `aem-publish1-publisher-test.ws.fraunhofer.de`
@@ -606,8 +605,8 @@ Sprachversionen.
 - **Hintergrund**: Am 17.11.2026 war die Filterseite auf TEST leer, weil die
   Tags im Author fehlten (`docs/TEST-tags-wiederhergestellt-20261117.md`). Der
   Bildvergleich COMP-VIS-10 zeigt so etwas nur als Bildabweichung.
-- **Hinweis**: Auf DEV-Publish ist die Filterseite am 23.11.2026 nicht erreichbar (HTTP 404), weil die Samples dort
-  nicht veröffentlicht sind. Der Test ist deshalb rot, die Tags selbst sind auf dem Author wieder da (SMOKE-11 grün).
+- **Hinweis**: Auf DEV-Author fehlten die `cq:tags` der Samples-Seiten wie auf TEST. Am 24.11.2026 nachgetragen und
+  veröffentlicht (`docs/DEV-samples-veroeffentlicht-20261124.md`), seitdem 7 Treffer.
 - **Grenze**: Geprüft wird „mindestens 1", nicht die genaue Zahl, damit
   inhaltliche Änderungen an den Samples nicht stören. Die Gegenprobe mit
   leerer Filterseite ist nicht durchgeführt.
