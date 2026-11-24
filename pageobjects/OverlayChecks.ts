@@ -90,6 +90,19 @@ export class OverlayChecks {
       .inputValue({ timeout: 5_000 });
   }
 
+  /**
+   * Filtert den Asset-Finder per Suchbegriff (Feld „Filter") und liefert die Karte von `assetPath`.
+   * Vorbedingung: Seitenbedienfeld offen (openSidePanel). Diag DEV 24.11.2026.
+   */
+  async findAssetCard(term: string, assetPath: string): Promise<Locator> {
+    const filter = this.page.locator('#SidePanel input[name="2_fulltext"]:visible').first();
+    await filter.fill(term);
+    await filter.press('Enter');
+    const card = this.page.locator(`#SidePanel .editor-Card-asset[data-path="${assetPath}"]`);
+    await expect(card, `Asset ${assetPath} nicht im Asset-Finder.`).toBeVisible({ timeout: 30_000 });
+    return card;
+  }
+
   /** Entfernt das Asset über den Button Entfernen im Asset-Feld. */
   async clearAssetField(): Promise<void> {
     await this.assetField().getByRole('button', { name: 'Entfernen' }).click();

@@ -401,6 +401,12 @@ export class SitesConsolePage {
       .getByRole('button', { name: /Veröffentlichung rückgängig/i })
       .first()
       .click();
+    // Sind Unterseiten noch veröffentlicht, fragt AEM nach („… untergeordnetem/n Element(en) ebenfalls aufgehoben",
+    // TEST 24.11.2026). Die Unterseiten gehören zur eigenen Testseite (Guard oben).
+    const childConfirm = this.page.locator('coral-dialog[open]').filter({ hasText: /untergeordnet/ });
+    if (await childConfirm.waitFor({ state: 'visible', timeout: 3000 }).then(() => true, () => false)) {
+      await childConfirm.getByRole('button', { name: /^(Fortfahren|Continue)$/ }).click();
+    }
     await this.page.waitForTimeout(2000);
   }
 
@@ -708,8 +714,11 @@ export class SitesConsolePage {
     // In der Sites-Konsole existiert "Erstellen" mehrfach im DOM (u.a. eine
     // versteckte Variante für Mehrfachauswahl). `:visible` erzwingt den
     // tatsächlich sichtbaren Action-Bar-Button.
+    // Exakter Text: `has-text` matcht Teilstrings ohne Groß/Klein, der Breadcrumb-Button
+    // einer Seite "…wiederherstellen…" traf sonst zuerst (23.11.2026).
     const button = this.page
-      .locator('button:has-text("Erstellen"):visible, button:has-text("Create"):visible')
+      .locator('button:visible')
+      .filter({ hasText: /^\s*(Erstellen|Create)\s*$/ })
       .first();
     try {
       await button.click({ timeout });
@@ -733,9 +742,8 @@ export class SitesConsolePage {
 
   private async clickWizardCreate(): Promise<void> {
     await this.page
-      .locator(
-        '.cq-siteadmin-admin-createpage-wizard-create:visible, button:has-text("Erstellen"):visible, button:has-text("Create"):visible',
-      )
+      .locator('.cq-siteadmin-admin-createpage-wizard-create:visible')
+      .or(this.page.locator('button:visible').filter({ hasText: /^\s*(Erstellen|Create)\s*$/ }))
       .first()
       .click();
   }

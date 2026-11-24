@@ -8,7 +8,7 @@ import {
 /**
  * Publish-Seiten wie vorher: Navigation, Sprachverweise und Bilder gegen den Vorher-Stand
  * (`fixtures/references/<AEM_ENV>/`, erfasst mit `npm run capture-references` vor dem Upgrade).
- * Rein lesend auf Publish, ohne Login. Ersetzt die manuellen Tests MAN-09 (Links), MAN-17 (Hreflang, Bilder).
+ * Rein lesend auf Publish, ohne Login.
  */
 test.describe('Regression: Publish-Seiten wie vorher (Navigation, Sprachverweise, Bilder)', { tag: '@regression', annotation: describeEn('Regression: publish pages as before (navigation, language links, images)') }, () => {
   test.beforeEach(({ publishPage }) => {

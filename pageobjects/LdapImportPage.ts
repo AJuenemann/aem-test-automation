@@ -64,6 +64,12 @@ export class LdapImportPage {
     return rows;
   }
 
+  /** LDAP-Daten einer Trefferzeile (Spalten: Nr., Email, Firstname, Lastname, Institute; Diag TEST 24.11.2026). */
+  async rowData(row: Locator): Promise<{ email: string; firstname: string; lastname: string; institute: string }> {
+    const [, email, firstname, lastname, institute] = (await row.locator('.x-grid3-cell-inner').allInnerTexts()).map((c) => c.trim());
+    return { email, firstname, lastname, institute };
+  }
+
   /** Öffnet über das Plus-Icon den Import-Dialog der Zeile und liefert ihn. */
   async openImportDialog(row: Locator): Promise<Locator> {
     await row.locator('img.x-action-col-icon').click();

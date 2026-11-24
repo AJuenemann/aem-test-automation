@@ -89,15 +89,33 @@ in `tests/basics/`).
   zeigen sonst je nach Zeitpunkt andere Bilder (Flake im Test am 23.11.2026).
 - Regressionstest (bekannte Migrationsrisiken): Asset-Finder (Visitenkarten/Externe Links). Download-Asset-Feld:
   per Drag & Drop aus dem Asset-Finder setzen und ersetzen. Baum wiederherstellen:
-  Formular öffnen und abbrechen.
+  Formular öffnen und abbrechen; gelöschte Unterseite wiederherstellen (OVL-6, DEV 23.11.2026).
 
 Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und die Gesamtübersicht in
 `docs/TESTFAELLE.md`). Aktuell liegen keine Diag-Specs im Repo.
 
-Umfang: 64 AEM-Testfälle (13 Smoketest inkl. Login, 11 Basisfunktionen,
-24 Komponenten, 3 Integrationstest, 13 Regressionstest), dazu 11 Capture-Läufe, 3 Referenz-Erfassungen
+Umfang: 68 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
+24 Komponenten, 4 Integrationstest, 15 Regressionstest), dazu 11 Capture-Läufe, 3 Referenz-Erfassungen
 und 144 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
+
+## Offene Aufgaben (Stand 24.11.2026, nicht aus den Augen verlieren)
+
+1. **Vorher-Stand TEST** (vor dem TEST-Upgrade, Testplan Kapitel 12, Nr. 12 und 14). Voraussetzung: TEST läuft
+   wieder sauber (JET 24.11.2026: Produktionsinhalt wird eingespielt, Probleme beim Paket-Upload; bis dahin **nur DEV
+   testen**), Samples auf Author und Publish, Replication frei.
+   - Smoketest auf TEST, Warteschlange der Agents leer.
+   - TEST-Baselines (`npm run baseline:visual` mit `AEM_ENV=test`) gegen den neuen Inhalt prüfen und bei Bedarf neu
+     erzeugen. Die Baselines vom 17.11.2026 stammen vom alten Inhalt.
+   - TEST-Referenzen erstmals erfassen: `CAPTURE_REFERENCES=1 npm run capture-references` mit `AEM_ENV=test`
+     (Navigation, Hreflang-Paare, Bilder). Danach Gesamtlauf auf TEST.
+2. **Manuelle Tests weiter reduzieren** (Nummern nach der Neunummerierung vom 24.11.2026, MAN-01 bis MAN-14):
+   - Stufe 2: MAN-04 (zweiter Browser), MAN-08 (Suche), MAN-11 (RSS), MAN-13 (Event und Messe), MAN-14 (Kurs- und
+     Downloadsuche). Struktur und Referenzen aus dem Produktionsinhalt auf DEV, Vorher-Stand vor dem Upgrade.
+   - Stufe 3: MAN-03 (weitere Komponenten), MAN-01 (Optik echter Seiten), MAN-05 (Formular), MAN-06 und MAN-07
+     zusammenlegen (Mailversand, Double Opt-in).
+   - Ziel: manuell bleiben etwa MAN-02, MAN-12 (Social Media Wall) und ein Mailtest. MAN-09/MAN-10 (Asset-Version,
+     Asset wiederherstellen) warten auf die Klärung mit JET (Testplan Kapitel 12, Nr. 13).
 
 ## Cockpit: Aufbau und Fallback
 
@@ -260,10 +278,29 @@ Diese Eigenheiten haben viel Zeit gekostet; künftige Agenten sollen sie nicht n
 - **Baum wiederherstellen**: Timeline braucht eine SEITE (Ordner wie
   `/content/fhgtest` haben keine). chevronUp → `button.cq-siteadmin-admin-restoretree`
   → `form.cq-sites-restoretree-form` (Abbrechen/Wiederherstellen).
+  Ausführen (Diag DEV 23.11.2026): Feld `coral-datepicker[name="date"]`, Texteingabe im Format
+  „23. November 2026 16:03", nur Minuten (Sekunden bleiben vom Vorschlag). Hergestellt wird nur, was eine
+  Version hat: frische Testseiten vorher versionieren. Nach Erfolg leitet das Formular selbst in die Konsole
+  um (`POST /bin/wcmcommand`), kein Dialog. Erst danach navigieren, sonst `ERR_ABORTED`.
+- **„Erstellen"-Button exakt treffen**: `has-text` matcht Teilstrings ohne Groß/Klein. Der Breadcrumb-Button
+  einer Seite „…wiederherstellen…" traf deshalb vor dem echten Button (23.11.2026). `clickCreateMenu` filtert
+  auf den exakten Text.
 - **Timeline-chevronUp**: Nach der Selektion lädt die Rail neu, chevronUp ist kurz
   unsichtbar. Vor jedem Klick auf Sichtbarkeit warten (`openTimelineActionMenu`),
   sonst flaky im Suite-Lauf.
 - **LDAP-Import** (Tools, ExtJS): siehe „Diag-Specs → Verifiziert gegen TEST".
+- **Visitenkarte einsetzen** (TEST 24.11.2026): „Visitenkarten-Übersicht" enthält die Komponente „Visitenkarten".
+  Karte aus dem Asset-Finder („Visitenkarten") auf `.cq-Overlay-subdroptarget[data-asset-accept*="businesscard"]`
+  ziehen, nicht ins Pfadfeld des Dialogs (kein Drop-Ziel). Vorher ruhige Overlay-Position abwarten.
+- **Asset in einer Seite verwenden** (DEV 24.11.2026): Im Haupt-Parsys gibt es keine Komponente mit Asset-Feld.
+  „Bereich" → „Breites Bild", Dialog-Reiter „Bild", Karte auf das sichtbare `coral-fileupload`. Asset-Finder-Filter
+  `#SidePanel input[name="2_fulltext"]`. Verweise: `coral-card-property[title="Verweise"][data-references]`
+  (verzögert). Omnisearch: Lupe im Header. Gelöschte Assets sind über die UI nicht wiederherstellbar (keine
+  Versionen in der Ordner-Timeline).
+- **Navigation auf Publish**: Hauptmenü `ul.fhg-mainmenu` zeigt die Unterseiten mit Navigationstitel. Vor Publish
+  sitzt ein Apache (Dispatcher); NAV-2 prüft ohne Cache-Umgehung.
+- **Veröffentlichung zurücknehmen mit Unterseiten**: Rückfrage „… untergeordnetem/n Element(en) ebenfalls
+  aufgehoben" → „Fortfahren" (`deactivatePage`).
 - **Sprachversionen (Publish)**:
   - `zv` hat im Header direkte Links: `header` → Link „English"/„Deutsch"
     (exakter Name, nur der sichtbare; im Element `.lang`).

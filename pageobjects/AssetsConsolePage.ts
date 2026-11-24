@@ -124,6 +124,41 @@ export class AssetsConsolePage {
   }
 
   /**
+   * Verweis-Anzahl auf der Karte des Assets (Kartenansicht, Diag DEV 24.11.2026).
+   * AEM ermittelt sie per Suche, sie erscheint verzögert: daher bis zum Wert abfragen.
+   */
+  async expectReferenceCount(assetPath: string, count: number, timeoutMs = 120_000): Promise<void> {
+    const folder = assetPath.substring(0, assetPath.lastIndexOf('/'));
+    await expect
+      .poll(
+        async () => {
+          await this.open(folder);
+          await this.switchView('Kartenansicht');
+          return this.item(assetPath).first().locator('coral-card-property[title="Verweise"]').getAttribute('data-references').catch(() => null);
+        },
+        { message: `Verweise von ${assetPath} sind nicht ${count}.`, timeout: timeoutMs, intervals: [5000] },
+      )
+      .toBe(String(count));
+  }
+
+  /** Sucht über die Omnisearch der Konsole (Lupe im Header) und liefert, ob `assetPath` als Treffer erscheint. */
+  async searchFinds(term: string, assetPath: string): Promise<boolean> {
+    await this.open(getAemConfig().damPlaygroundPath);
+    await this.page.locator('coral-shell-header button[icon="search"], button.granite-omnisearch-action, [icon="search"]:visible').first().click();
+    const input = this.page
+      .locator('input.granite-omnisearch-typeahead-input:visible, .granite-omnisearch-overlay input[type="search"]:visible, .granite-omnisearch-overlay input:visible')
+      .first();
+    await input.fill(term);
+    await input.press('Enter');
+    await this.page.waitForLoadState('networkidle');
+    return this.page
+      .locator(`[data-foundation-collection-item-id="${assetPath}"]:visible`)
+      .first()
+      .waitFor({ state: 'visible', timeout: 30_000 })
+      .then(() => true, () => false);
+  }
+
+  /**
    * Löscht einen Eintrag (Ordner oder Asset) über die Spaltenansicht des
    * Elternordners. Bricht ab, wenn nicht genau dieser Eintrag ausgewählt ist.
    * Idempotent: fehlt der Eintrag, passiert nichts.

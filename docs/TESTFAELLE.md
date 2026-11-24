@@ -44,7 +44,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 
 ## Gesamtübersicht (Stand 23.11.2026)
 
-64 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
+68 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
 und 3 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 144 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
@@ -70,6 +70,7 @@ grünem Lauf.
 | VER-1 | Version erstellen und wiederherstellen | Basisfunktionen (L1) | `basics/versioning.spec.ts` | DEV, TEST |
 | REP-1 | Seite aktivieren und wieder deaktivieren | Basisfunktionen (L1) | `basics/replication.spec.ts` | DEV, TEST |
 | ASSET-1 | Bild in einen Testordner der DAM hochladen und verarbeiten lassen | Basisfunktionen (L1) | `basics/asset-upload.spec.ts` | DEV, TEST |
+| ASSET-2 | Bild in einer Seite verwenden, Verweise zählen und über die Suche finden | Basisfunktionen (L1) | `basics/asset-usage.spec.ts` | DEV, TEST (24.11.2026) |
 | COMP-DLG-1..11 | Dialog "<Komponente>": Reiter & Feldinhalte wie Referenz | Komponenten (L2) | `components/dialog.spec.ts` | DEV (23.11.2026), TEST |
 | COMP-AUTH-1 | FAQ mit Textblock befüllen, im Editor und auf Publish prüfen | Komponenten (L2) | `components/component-authoring.spec.ts` | DEV, TEST |
 | COMP-VIS-1..11 | Gerenderte Seite "<Komponente>" entspricht Baseline | Komponenten (L2) | `components/visual-publish.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
@@ -77,14 +78,17 @@ grünem Lauf.
 | ACL-1 | AC-Tool-Konsole ist erreichbar | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
 | ACL-2 | AC-Tool-Bundles sind aktiv | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
 | LDAP-1 | Import ist startbar: Kontakt suchen, in Spielwiese importieren, bereinigen | Integrationstest | `integration/ldap-import.spec.ts` | nur TEST |
+| LDAP-2 | Importierte Karte im Asset-Finder finden, in eine Seite einsetzen und Daten prüfen | Integrationstest | `integration/ldap-import.spec.ts` | nur TEST (24.11.2026) |
 | OVL-1/2 | Asset-Finder-Suche "Visitenkarten" / "Externe Links" liefert Treffer | Regressionstest | `regression/asset-finder.spec.ts` | DEV (23.11.2026), TEST |
 | OVL-3 | Asset setzen (leer) und ersetzen (vorhanden) | Regressionstest | `regression/download-fileupload.spec.ts` | DEV (23.11.2026), TEST |
 | OVL-4 | Formular über die Timeline erreichbar und abbrechbar | Regressionstest | `regression/tree-restore.spec.ts` | DEV, TEST |
+| OVL-6 | Gelöschte Unterseite wird zum Zeitpunkt davor wiederhergestellt | Regressionstest | `regression/tree-restore.spec.ts` | DEV (23.11.2026), TEST (24.11.2026) |
 | OVL-5 | Fehlerseite (404) entspricht Baseline | Regressionstest | `regression/error-pages.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
 | LANG-1/2 | Sprachwahl "English" / "Deutsch" öffnet die Gegenseite | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | LANG-3 | Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | TAG-1 | Filterseite liefert getaggte Treffer | Regressionstest | `regression/tags-filter.spec.ts` | TEST (DEV 23.11.2026: rot, Samples fehlen auf Publish) |
 | NAV-1 | Navigation: Links sind unverändert und erreichbar | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
+| NAV-2 | Geänderter Navigationstitel erscheint auf Publish im Hauptmenü | Regressionstest | `regression/navigation-change.spec.ts` | DEV (24.11.2026); TEST rot: Replication blockiert |
 | LANG-4 | Hreflang: weitere Seitenpaare verweisen gegenseitig aufeinander | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
 | IMG-1 | Bilder: laden in drei Fenstergrößen, scharf und unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
 | ERR-1 | Fehlerseiten zeigen auf Deutsch und Englisch das Fraunhofer-Design | Regressionstest | `regression/error-pages-lang.spec.ts` | DEV (23.11.2026) |
@@ -98,7 +102,16 @@ erreichbar. Läufe über die Kommandozeile stehen nicht in der Historie (z. B. a
 Gesamtlauf über die Kommandozeile: 46 Tests grün, 13 rot, 12 übersprungen (11 Dialog-Erfassungen, LDAP nur TEST).
 Rot sind COMP-VIS-1..11, OVL-5 und TAG-1. Alle brauchen die Samples auf **Publish**, dort fehlen sie
 (HTTP 404, nur auf dem Author eingespielt). Darauf weist SMOKE-12 hin. Sobald die Samples veröffentlicht sind,
-sind diese 13 Tests erneut zu laufen. DEV und TEST sind jetzt die Referenz für den Vorher-Stand (Hydra ist
+sind diese 13 Tests erneut zu laufen.
+**Stand TEST (24.11.2026):** wieder erreichbar, offenbar mit neuem Produktionsinhalt. Samples fehlen auf Author und
+Publish (404). Beide Replication-Agents (`publish_aem-publish1-test`, `flush_aem-publish1-dispatcher-test`) sind seit
+24.11.2026 09:08 MEZ blockiert (SMOKE-10 rot). Ursache laut Agent-Log: `aem-publish1-publisher-test.ws.fraunhofer.de`
+lehnt Verbindungen ab (`java.net.ConnectException: Connection refused`). Grund laut JET: Auf TEST-Publish wird
+der Inhalt der Produktion eingespielt (alte Software bleibt). Danach TEST-Baselines gegen den neuen Inhalt prüfen und
+bei Bedarf neu erfassen, TEST-Referenzen (`npm run capture-references`) erstmals erfassen, beides vor dem Upgrade. Die 50 wartenden Einträge stammen alle aus
+unseren Testläufen nach 09:08; sie werden nach der Behebung nachgeholt und enden jeweils mit dem Löschen. Deshalb sind REP-1 und NAV-2 auf TEST rot.
+Grün auf TEST: OVL-4, OVL-6, ASSET-2, CRUD-1/2, LDAP-1, LDAP-2 (3 Wiederholungen).
+DEV und TEST sind jetzt die Referenz für den Vorher-Stand (Hydra ist
 voraussichtlich nicht erreichbar); die Baselines und Dialog-Referenzen sind **vor dem Upgrade** zu sichern.
 
 Die am 18.11.2026 neuen Tests (PAGE-1 bis PAGE-4, ASSET-1, COMP-AUTH-1) sind seit
@@ -367,6 +380,21 @@ Basis: Komponenten-Beispielseiten unter `AEM_SAMPLES_ROOT`
 Stage), Presse, Event, Messe, Formular, Slider, Gallery, Businesscard, Filter,
 Newsroom. Rein lesend — der Schreib-Guard ist nicht berührt.
 
+
+### ASSET-2 — Asset verwenden und finden (`tests/basics/asset-usage.spec.ts`)
+- **Testname**: „Bild in einer Seite verwenden, Verweise zählen und über die Suche finden".
+- **Schritte**:
+  1. Eigenen Testordner anlegen, Testbild mit eindeutigem Namen hochladen. Karte zeigt „Verweise 0".
+  2. Testseite anlegen, „Bereich" und darin „Breites Bild" einfügen (im Haupt-Parsys gibt es keine Komponente mit
+     Asset-Feld). Asset-Finder öffnen, per Feld „Filter" das Testbild suchen, Dialog „Breites Bild" → Reiter „Bild",
+     Karte ins Bildfeld ziehen, „Fertig".
+  3. Assets-Konsole: Karte zeigt „Verweise 1" (`coral-card-property[title="Verweise"]`, erscheint verzögert).
+  4. Omnisearch (Lupe im Header) mit dem Namen: Testbild ist Treffer.
+  5. Testseite löschen, danach Testordner löschen.
+- **Erwartet**: Verweise 0 → 1, Suche findet das Asset, keine Rückstände.
+- **Nicht automatisiert**: „Vor dem Löschen entsteht eine Version" (manuell MAN-09, Testplan Kapitel 12, Nr. 13) ist über die UI nicht prüfbar. Nach dem Löschen
+  zeigt die Ordner-Timeline keine Versionen, auch nicht mit Filter „Versionen" (Diag DEV 24.11.2026).
+- DEV 24.11.2026: 3 Wiederholungen grün; TEST 24.11.2026 grün.
 ### COMP-DLG-1..11 — Konfig-Dialog je Komponente (`tests/components/dialog.spec.ts`)
 - **Vorbedingung**: angemeldet; Samples-Seite vorhanden; Referenz-Fixture je
   Komponente erzeugt (siehe Capture unten).
@@ -494,6 +522,19 @@ Newsroom. Rein lesend — der Schreib-Guard ist nicht berührt.
 Konkrete Fraunhofer-Overlays laut JET-Antwort zu 7, dazu Fehlerseite und
 Sprachversionen.
 
+
+### LDAP-2 — Importierte Karte einsetzen (`tests/integration/ldap-import.spec.ts`)
+- **Testname**: „Importierte Karte im Asset-Finder finden, in eine Seite einsetzen und Daten prüfen". **Nur TEST.**
+- **Schritte**: Wie LDAP-1 importieren, dabei Vorname, Nachname und Institut der Trefferzeile merken. Testseite anlegen,
+  „Visitenkarten-Übersicht" einfügen (enthält die Komponente „Visitenkarten"). Asset-Finder → „Visitenkarten": Die Karte
+  ist Treffer und zeigt den Namen. Karte auf das Drop-Ziel der Komponente „Visitenkarten" ziehen
+  (`.cq-Overlay-subdroptarget[data-asset-accept*="businesscard"]`), auf den Speicher-POST warten.
+- **Erwartet**: Die Seite zeigt (ohne Editor) Name und Institut aus LDAP und eine Telefonnummer.
+- **Hinweis**: Das Pfadfeld im Dialog ist kein Drop-Ziel. Vor dem Drop auf eine ruhige Overlay-Position warten, das
+  Seitenbedienfeld verschiebt die Overlays. Auf Testseiten der Spielwiese stehen neben den Werten Schlüssel wie
+  `phoneTitle`: Der Spielwiese fehlen die Texte der Sprachkonfiguration (`instlangconfig`), auf der Samples-Seite von
+  DEV steht korrekt „Telefon"/„Fax". Kein Fehler.
+- TEST 24.11.2026: 3 Wiederholungen grün.
 ### OVL-1/2 — Asset-Finder-Suchen (`tests/regression/asset-finder.spec.ts`)
 - **Schritte**: Samples-Seite im Editor öffnen, Seitenbedienfeld (Asset-Finder)
   aufklappen, in der Typauswahl „Visitenkarten" bzw. „Externe Links" wählen.
@@ -519,6 +560,17 @@ Sprachversionen.
 - **Erwartet**: Formular „Baum unter … wiederherstellen" mit Button
   „Wiederherstellen" erscheint und schließt nach „Abbrechen". **Nicht destruktiv**:
   Es wird keine Wiederherstellung ausgeführt.
+
+### OVL-6 — Baum wiederherstellen ausführen (`tests/regression/tree-restore.spec.ts`)
+- **Testname**: „Gelöschte Unterseite wird zum Zeitpunkt davor wiederhergestellt". Gelöschte Assets sind über die UI nicht wiederherstellbar (manuell MAN-10).
+- **Schritte**: Testseite mit Unterseite `kind` in der Spielwiese anlegen. Von der Unterseite über die Timeline
+  eine Version speichern (Redaktionsseiten haben Versionen aus dem Aktivieren, frische Testseiten nicht; ohne
+  Version stellt AEM nichts her). Bis nach der nächsten vollen Minute B warten, Unterseite löschen. An der
+  Testseite „Baum wiederherstellen" mit Zeitpunkt B (Feld „Datum", Format „23. November 2026 16:03") ausführen.
+- **Erwartet**: Antwort von `/bin/wcmcommand` ok, Umleitung in die Konsole, Unterseite erscheint wieder.
+- **Hinweis**: Das Datumsfeld kennt nur Minuten, die Sekunden bleiben vom Vorschlag (jetzt). Deshalb liegt das
+  Anlegen vor B und das Löschen nach B; Laufzeit etwa 4 Minuten. Cleanup löscht die Testseite samt Unterseite.
+  DEV 23.11.2026: 3 Wiederholungen grün.
 
 ### OVL-5 — Fehlerseite (Publish, visuell) (`tests/regression/error-pages.spec.ts`)
 - **Testname**: „Fehlerseite (404) entspricht Baseline".
@@ -575,16 +627,26 @@ Sprachversionen.
   interne Ziel einmal aufrufen.
 - **Erwartet**: Dieselben Links wie im Vorher-Stand (kein fehlender, kein neuer), jedes interne Ziel liefert HTTP 200.
   Die Meldung nennt bis zu 25 Abweichungen.
-- **Ersetzt**: MAN-09 Schritt 1 (Navigation durchklicken). Schritte 2 bis 4 (Navigationstitel ändern, veröffentlichen,
-  auf Publish prüfen) bleiben manuell.
+- **Ergänzt durch**: NAV-2 (Navigationstitel ändern, veröffentlichen, auf Publish prüfen).
 - **Grenze**: Prüft Ziel und Erreichbarkeit, nicht die Reihenfolge und nicht das Aussehen der Menüs.
+
+### NAV-2 — Navigation nach Änderung (`tests/regression/navigation-change.spec.ts`)
+- **Testname**: „Geänderter Navigationstitel erscheint auf Publish im Hauptmenü".
+- **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt, Replication frei.
+- **Schritte**: Testseite mit Unterseite `kind` anlegen. Navigationstitel der Unterseite in den Seiteneigenschaften
+  setzen, beide Seiten veröffentlichen. Auf Publish die Testseite öffnen, im Hauptmenü (`ul.fhg-mainmenu`) steht der
+  Titel. Titel ändern, nur die Unterseite neu veröffentlichen, Testseite erneut öffnen.
+- **Erwartet**: Das Hauptmenü zeigt den neuen Titel. Geprüft wird ohne Cache-Umgehung wie ein Besucher (vor Publish
+  sitzt ein Apache/Dispatcher), Wartezeit bis 180 s. Danach beide Seiten deaktivieren; der Teardown löscht sie.
+- **Hinweis**: `deactivatePage` bestätigt jetzt die Rückfrage „… untergeordnete Element(e) ebenfalls aufgehoben"
+  (eigene Unterseiten, TEST 24.11.2026). DEV 24.11.2026: 3 Wiederholungen grün.
 ### LANG-4 — Hreflang weiterer Seitenpaare (`tests/regression/publish-reference.spec.ts`)
 - **Vorbedingung**: wie NAV-1, Referenz `hreflang-pairs.json` (12 Seitenpaare, per Breitensuche ab der deutschen
   Startseite erfasst).
 - **Schritte**: Je Paar die deutsche Seite laden, `hreflang="en"` lesen, die englische Seite laden, `hreflang="de"` lesen.
 - **Erwartet**: Beide Seiten HTTP 200, die Verweise führen auf die erfassten Pfade (Vorher-Stand) und gegenseitig
   zurück, die englische Seite hat `lang="en"`. Verglichen wird nur der Pfad.
-- **Ersetzt**: MAN-17 (Hreflang an weiteren Seitenpaaren). Ergänzt LANG-3 (ein Paar mit Sprachwahl im Kopf).
+- **Ergänzt**: LANG-3 (ein Paar mit Sprachwahl im Kopf).
 ### IMG-1 — Bilder laden in drei Fenstergrößen, scharf und unverändert (`tests/regression/publish-reference.spec.ts`)
 - **Vorbedingung**: wie NAV-1, Referenz `images.json`.
 - **Schritte**: Die Seiten `/content/zv/de` und `/content/zv/de/fuer-kunden-und-partner` bei 375, 768 und 1280 px Breite
@@ -592,7 +654,7 @@ Sprachversionen.
 - **Erwartet**: Es gibt sichtbare Bilder, keines lädt nicht, keines ist schmaler als 90 % der Anzeigebreite (SVG
   ausgenommen). Die Menge der ausgelieferten Renditionen (`….img.<Rendition>.jpg` mit Breite, sonst Pfad mit Breite)
   entspricht dem Vorher-Stand.
-- **Ersetzt**: MAN-17 (Bilder in verschiedenen Fenstergrößen). Rotierende Slider ändern die einzelnen Bilder, nicht
+- **Hinweis**: Rotierende Slider ändern die einzelnen Bilder, nicht
   die Renditionen, deshalb wird auf Renditionen verglichen.
 - **Grenze**: Ob der Bildausschnitt oder das Motiv passt, wird nicht beurteilt.
 ### ERR-1 — Fehlerseiten Deutsch und Englisch (`tests/regression/error-pages-lang.spec.ts`)
@@ -601,8 +663,8 @@ Sprachversionen.
   Unterseite).
 - **Erwartet**: HTTP 404, Titel „Fehlerseite 404" (de) bzw. „Errorpage 404" (en), `lang` passend, Fraunhofer-Header,
   nicht die rohe Sling-Meldung.
-- **Ersetzt**: MAN-18 (Fehlerseiten Deutsch und Englisch). Ergänzt SMOKE-8 (nur Deutsch) und OVL-5 (Bildvergleich).
-- **Grenze**: Geschützte Seiten (403) sind nicht geprüft, dafür fehlt eine bekannte Seite (Testplan Kapitel 12, Nr. 14).
+- **Ergänzt**: SMOKE-8 (nur Deutsch) und OVL-5 (Bildvergleich).
+- **Grenze**: Geschützte Seiten (403) sind nicht geprüft, dafür fehlt eine bekannte Seite (Testplan Kapitel 12, Nr. 11).
 ### REF-CAP — Vorher-Stand der Publish-Seiten erfassen (`tests/regression/references-capture.spec.ts`)
 - **Zweck**: erfasst Navigation, Hreflang-Paare und Bilder als Referenz unter `fixtures/references/<AEM_ENV>/`.
 - **Ausführen**: `CAPTURE_REFERENCES=1 npm run capture-references`. Ohne die Variable überspringt sich der Lauf.
@@ -786,7 +848,7 @@ Sprachversionen.
   für das Cockpit (Sprache EN). Der Titel im Test bleibt deutsch (Quelle für `--grep`, Baselines,
   Berichte). Der englische Name steht als Annotation `_title-en` bzw. `_describe-en` am Test
   (`fixtures/titles.ts`); der Unterstrich blendet sie im Playwright-HTML-Report aus.
-- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 78 AEM-Tests
+- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 82 AEM-Tests
   (inkl. Login) `_title-en` und zu jeder Suite `_describe-en`, nichts ist leer oder unübersetzt.
   Der Katalog liefert zu jedem sichtbaren Test und jeder Datei den englischen Namen.
 - **Dazu erweitert**: `cockpit-catalog.spec.ts` (+1: liest `_title-en`/`_describe-en`, bei mehreren

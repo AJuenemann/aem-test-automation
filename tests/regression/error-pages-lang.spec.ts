@@ -4,7 +4,7 @@ import { titleEn, describeEn } from '../../fixtures/titles.js';
 /**
  * Fehlerseiten Deutsch und Englisch auf Publish (nur lesend, ohne Login): HTTP 404, Titel, Sprache und
  * Fraunhofer-Header statt der rohen Sling-Meldung. Ergänzt SMOKE-8 (nur Deutsch) und OVL-5 (Bildvergleich der
- * Samples-Fehlerseite). Ersetzt den manuellen Test MAN-18.
+ * Samples-Fehlerseite).
  */
 test.describe('Regression: Fehlerseiten Deutsch und Englisch (Publish)', { tag: '@regression', annotation: describeEn('Regression: error pages in German and English (publish)') }, () => {
   test.beforeEach(({ publishPage }) => {
