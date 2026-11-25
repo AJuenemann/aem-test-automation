@@ -87,14 +87,14 @@ grünem Lauf.
 | LANG-1/2 | Sprachwahl "English" / "Deutsch" öffnet die Gegenseite | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | LANG-3 | Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | TAG-1 | Filterseite liefert getaggte Treffer | Regressionstest | `regression/tags-filter.spec.ts` | DEV (24.11.2026), TEST |
-| NAV-1 | Navigation: Links sind unverändert und erreichbar | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
-| FEED-1 | RSS-Feeds: Aufbau und Einträge sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026) |
-| EVT-1 | Event und Messe: Listen und Detailseite sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026) |
-| SEARCH-1 | Globale Suche: Trefferzahl und Spitzentreffer wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | nur TEST (24.11.2026); auf DEV übersprungen |
+| NAV-1 | Navigation: Links sind unverändert und erreichbar | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026), TEST (25.11.2026) |
+| FEED-1 | RSS-Feeds: Aufbau und Einträge sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026), TEST (25.11.2026) |
+| EVT-1 | Event und Messe: Listen und Detailseite sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026), TEST (25.11.2026) |
+| SEARCH-1 | Globale Suche: Trefferzahl und Spitzentreffer wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | nur TEST (25.11.2026); auf DEV übersprungen |
 | NAV-2 | Geänderter Navigationstitel erscheint auf Publish im Hauptmenü | Regressionstest | `regression/navigation-change.spec.ts` | DEV (24.11.2026); TEST rot: Replication blockiert |
-| LANG-4 | Hreflang: weitere Seitenpaare verweisen gegenseitig aufeinander | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
-| IMG-1 | Bilder: laden in drei Fenstergrößen, scharf und unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
-| ERR-1 | Fehlerseiten zeigen auf Deutsch und Englisch das Fraunhofer-Design | Regressionstest | `regression/error-pages-lang.spec.ts` | DEV (23.11.2026) |
+| LANG-4 | Hreflang: weitere Seitenpaare verweisen gegenseitig aufeinander | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026), TEST (25.11.2026) |
+| IMG-1 | Bilder: laden in drei Fenstergrößen, scharf und unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026), TEST (25.11.2026) |
+| ERR-1 | Fehlerseiten zeigen auf Deutsch und Englisch das Fraunhofer-Design | Regressionstest | `regression/error-pages-lang.spec.ts` | DEV (23.11.2026), TEST (25.11.2026) |
 
 **Historie des Cockpits** (`cockpit/runs/`): beginnt am 19.11.2026. Letzter vollständiger Lauf auf TEST am
 19.11.2026 (18:04), alle 58 Tests grün (ohne Login). Auf DEV: Smoketest am 23.11.2026 08:45 mit 10 von 11 grün
@@ -711,8 +711,9 @@ Sprachversionen.
 - **Schutz**: Eine vorhandene Referenz wird nicht überschrieben (Fehlermeldung). Neu erzeugen nur bewusst mit
   `CAPTURE_REFERENCES=overwrite`, **nie nach dem Upgrade**: Die Dateien sind der Vorher-Stand.
 - **Stand**: DEV am 23.11.2026 erfasst (216 und 204 Navigationslinks, 12 Seitenpaare, 6 Bildlisten), am 24.11.2026
-  ergänzt um Feeds und Event-/Messelisten. TEST: nur die Suchtreffer (24.11.2026). Der Rest folgt, sobald TEST den
-  Produktionsinhalt hat und noch die alte Software läuft.
+  ergänzt um Feeds und Event-/Messelisten. TEST am 25.11.2026: alle sechs Referenzen (Suche nur dort). Auf TEST wurden
+  sie bei laufender Befüllung mit dem Produktionsinhalt erfasst, die Zahlen gleichen DEV (216/204 Navigationslinks,
+  12 Seitenpaare, 25 Feed-Einträge, 10 Veranstaltungen, 2 Messen). Tag `vorher-stand-test-20261125`.
 ---
 
 # Technische Prüfungen

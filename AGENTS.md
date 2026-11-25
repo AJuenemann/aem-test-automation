@@ -99,26 +99,29 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 ## Offene Aufgaben (Stand 25.11.2026, nicht aus den Augen verlieren)
 
-**Vorher-Stand DEV ist gesichert**: Git-Tag `vorher-stand-dev-20261125` (Baselines, Dialog-Referenzen, Publish-Referenzen
-inkl. Feeds und Event/Messe). JET aktualisiert DEV-Author per In-Place-Upgrade (angekündigt am 24.11.2026 für „morgen",
-DEV dann den Großteil des Tages offline). **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen diesen Tag
-vergleichen (`git diff vorher-stand-dev-20261125 -- tests/__snapshots__/dev fixtures`).
+**Vorher-Stand ist gesichert** (Stand 25.11.2026, DEV und TEST laufen AEM 6.5.25.0):
+- Git-Tag `vorher-stand-dev-20261125`: Baselines, Dialog-Referenzen, Publish-Referenzen inkl. Feeds und Event/Messe.
+- Git-Tag `vorher-stand-test-20261125`: Publish-Referenzen inkl. Suche. **Nicht dabei:** Baselines der Samples-Seiten
+  auf TEST (Samples fehlen dort auf Author und Publish, die Baselines vom 17.11.2026 stammen vom alten Inhalt).
+- Zeitplan laut JET (25.11.2026): DEV-Author wird am **26.11.2026** per In-Place-Upgrade aktualisiert (Ende des Tages,
+  sofern kein Rollback), DEV dann den Großteil des Tages offline. Der Publisher folgt hoffentlich gleichzeitig,
+  sonst am 27.11.2026. Der Termin für TEST ist offen.
+- **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen den Tag vergleichen
+  (`git diff vorher-stand-dev-20261125 -- tests/__snapshots__/dev fixtures`).
 
-1. **Vorher-Stand TEST** (vor dem TEST-Upgrade, Testplan Kapitel 12, Nr. 12 und 14). Voraussetzung: TEST läuft
-   wieder sauber (JET 24.11.2026: Produktionsinhalt wird eingespielt, Probleme beim Paket-Upload; bis dahin **nur DEV
-   testen**), Samples auf Author und Publish, Replication frei.
-   - Smoketest auf TEST, Warteschlange der Agents leer.
-   - TEST-Baselines (`npm run baseline:visual` mit `AEM_ENV=test`) gegen den neuen Inhalt prüfen und bei Bedarf neu
-     erzeugen. Die Baselines vom 17.11.2026 stammen vom alten Inhalt.
-   - TEST-Referenzen erstmals erfassen: `CAPTURE_REFERENCES=1 npm run capture-references` mit `AEM_ENV=test`
-     (Navigation, Hreflang-Paare, Bilder). Danach Gesamtlauf auf TEST.
-2. **Manuelle Tests weiter reduzieren** (Nummern nach der Neunummerierung vom 24.11.2026, MAN-01 bis MAN-14):
-   - Stufe 2: MAN-04 (zweiter Browser), MAN-08 (Suche), MAN-11 (RSS), MAN-13 (Event und Messe), MAN-14 (Kurs- und
-     Downloadsuche). Struktur und Referenzen aus dem Produktionsinhalt auf DEV, Vorher-Stand vor dem Upgrade.
+1. **TEST-Baselines der Samples-Seiten** (vor dem TEST-Upgrade, Testplan Kapitel 12, Nr. 12 und 14). Voraussetzung:
+   TEST läuft wieder sauber (Veröffentlichung auf Publish, Samples auf Author und Publish, Paket-Upload). Dann
+   Smoketest auf TEST, Baselines (`npm run baseline:visual` mit `AEM_ENV=test`) gegen den neuen Inhalt prüfen und bei
+   Bedarf neu erzeugen, danach Gesamtlauf auf TEST und einen weiteren Tag `vorher-stand-test-<Datum>` setzen.
+2. **Manuelle Tests weiter reduzieren** (MAN-01 bis MAN-13, Stand 25.11.2026):
+   - Stufe 2: MAN-04 (zweiter Browser), MAN-08 (Suche: Filter, Wartezeit, DEV), MAN-13 (Kurs- und Downloadsuche).
    - Stufe 3: MAN-03 (weitere Komponenten), MAN-01 (Optik echter Seiten), MAN-05 (Formular), MAN-06 und MAN-07
-     zusammenlegen (Mailversand, Double Opt-in).
-   - Ziel: manuell bleiben etwa MAN-02, MAN-12 (Social Media Wall) und ein Mailtest. MAN-09/MAN-10 (Asset-Version,
+     zusammenlegen (Mailversand, Double Opt-in), MAN-12 (Event/Messe Darstellung) als Bildvergleich.
+   - Ziel: manuell bleiben etwa MAN-02, MAN-11 (Social Media Wall) und ein Mailtest. MAN-09/MAN-10 (Asset-Version,
      Asset wiederherstellen) warten auf die Klärung mit JET (Testplan Kapitel 12, Nr. 13).
+3. **Such-Dienst auf DEV** (Testplan Kapitel 12, Nr. 16): `POST /bin/wcm/enterprisesearch/query` und
+   `GET /bin/wcm/enterprisesearch/suggest` antworten auf DEV-Publish und DEV-Author nicht (30 bis 100 s ohne Antwort),
+   auf TEST in unter 1 s. SEARCH-1 läuft deshalb nur auf TEST.
 
 ## Cockpit: Aufbau und Fallback
 
