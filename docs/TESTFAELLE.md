@@ -103,9 +103,12 @@ erreichbar. Läufe über die Kommandozeile stehen nicht in der Historie (z. B. a
 
 **Stand DEV (24.11.2026, alter Softwarestand AEM 6.5.25.0, Produktionsinhalt, Samples):** Tags der Samples auf dem
 Author nachgetragen und Samples auf Publish veröffentlicht, mit Freigabe (`docs/DEV-samples-veroeffentlicht-20261124.md`).
-Baseline „Newsroom" danach neu erzeugt (Reihenfolge nach Veröffentlichungsdatum). Gesamtlauf über die Kommandozeile:
-210 grün (66 AEM-Tests, 144 Unit-Tests), 16 übersprungen (Capture-Läufe, LDAP nur TEST), 0 rot.
-**Stand TEST (24.11.2026):** wieder erreichbar, offenbar mit neuem Produktionsinhalt. Samples fehlen auf Author und
+Baseline „Newsroom" danach neu erzeugt (Reihenfolge nach Veröffentlichungsdatum).
+**Gesamtlauf über das Cockpit am 25.11.2026 (Vorher-Stand, DEV und TEST laufen noch AEM 6.5.25.0):** 236 Tests, 216 grün,
+0 rot, 1 instabil (PAGE-4: `waitForURL` beim ersten Versuch im Timeout, beim zweiten grün), 20 übersprungen
+(Capture-Läufe, LDAP nur TEST, SEARCH-1 nur TEST). Lauf `5605f00e-698c-475e-96b0-b23900c56784` in `cockpit/runs/`
+(lokal, nicht im Repo). Dieser Stand ist als Git-Tag `vorher-stand-dev-20261125` gesichert.
+**Stand TEST (24.11.2026, 25.11.2026 unverändert: AEM 6.5.25.0):** wieder erreichbar, offenbar mit neuem Produktionsinhalt. Samples fehlen auf Author und
 Publish (404). Beide Replication-Agents (`publish_aem-publish1-test`, `flush_aem-publish1-dispatcher-test`) sind seit
 24.11.2026 09:08 MEZ blockiert (SMOKE-10 rot). Ursache laut Agent-Log: `aem-publish1-publisher-test.ws.fraunhofer.de`
 lehnt Verbindungen ab (`java.net.ConnectException: Connection refused`). Grund laut JET: Auf TEST-Publish wird

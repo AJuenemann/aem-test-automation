@@ -97,7 +97,12 @@ Umfang: 71 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
 und 149 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
-## Offene Aufgaben (Stand 24.11.2026, nicht aus den Augen verlieren)
+## Offene Aufgaben (Stand 25.11.2026, nicht aus den Augen verlieren)
+
+**Vorher-Stand DEV ist gesichert**: Git-Tag `vorher-stand-dev-20261125` (Baselines, Dialog-Referenzen, Publish-Referenzen
+inkl. Feeds und Event/Messe). JET aktualisiert DEV-Author per In-Place-Upgrade (angekündigt am 24.11.2026 für „morgen",
+DEV dann den Großteil des Tages offline). **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen diesen Tag
+vergleichen (`git diff vorher-stand-dev-20261125 -- tests/__snapshots__/dev fixtures`).
 
 1. **Vorher-Stand TEST** (vor dem TEST-Upgrade, Testplan Kapitel 12, Nr. 12 und 14). Voraussetzung: TEST läuft
    wieder sauber (JET 24.11.2026: Produktionsinhalt wird eingespielt, Probleme beim Paket-Upload; bis dahin **nur DEV
