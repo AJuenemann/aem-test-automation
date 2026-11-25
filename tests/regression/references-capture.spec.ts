@@ -3,7 +3,8 @@ import { titleEn, describeEn } from '../../fixtures/titles.js';
 import {
   CAPTURE_MODE, writeReference, collectNavLinks, findHreflangPairs, collectImages, imagePatterns,
   IMAGE_PAGES, IMAGE_WIDTHS, NAV_PAGES, FEEDS, collectFeed, EVENT_LISTS, collectEventList,
-  SEARCH_TERMS, collectSearch, type FeedState, type EventListState, type SearchState,
+  SEARCH_TERMS, collectSearch, COURSE_TERMS, collectCourseSearch, DOWNLOAD_TERMS, collectDownloadSearch,
+  type FeedState, type EventListState, type SearchState,
 } from '../../fixtures/publish-snapshots.js';
 import { getAemConfig } from '../../config/env.js';
 
@@ -65,6 +66,28 @@ test.describe('Regression: Referenzen erfassen (Vorher-Stand)', { tag: ['@toolin
       if (ref[term].total === 0 || ref[term].top.length < 10) throw new Error(`Suche "${term}": ${ref[term].total} Treffer, ${ref[term].top.length} auf der ersten Seite. Nicht als Vorher-Stand geeignet.`);
     }
     writeReference('search', ref);
+  });
+
+  test('Kurssuche erfassen', titleEn('Capture the course search'), async ({ page, publishPage }) => {
+    test.setTimeout(180_000);
+    const base = publishPage.config().url;
+    const ref: Record<string, SearchState> = {};
+    for (const term of COURSE_TERMS) {
+      ref[term] = await collectCourseSearch(page, base, term);
+      if (ref[term].total === 0 || !ref[term].top.length) throw new Error(`Kurssuche "${term}": ${ref[term].total} Treffer. Nicht als Vorher-Stand geeignet.`);
+    }
+    writeReference('course-search', ref);
+  });
+
+  test('Downloadsuche erfassen', titleEn('Capture the download search'), async ({ page, publishPage }) => {
+    test.setTimeout(180_000);
+    const base = publishPage.config().url;
+    const ref: Record<string, SearchState> = {};
+    for (const term of DOWNLOAD_TERMS) {
+      ref[term] = await collectDownloadSearch(page, base, term);
+      if (ref[term].total === 0 || !ref[term].top.length) throw new Error(`Downloadsuche "${term}": ${ref[term].total} Treffer. Nicht als Vorher-Stand geeignet.`);
+    }
+    writeReference('download-search', ref);
   });
 
   test('Bilder erfassen', titleEn('Capture the images'), async ({ page, publishPage }) => {

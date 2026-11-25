@@ -5,6 +5,7 @@ import {
   type NavLink, type HreflangPair, IMAGE_PAGES, IMAGE_WIDTHS, NAV_PAGES,
   FEEDS, collectFeed, diffFeed, type FeedState, EVENT_LISTS, collectEventList, diffEventList, type EventListState,
   SEARCH_TERMS, collectSearch, diffSearch, type SearchState,
+  COURSE_TERMS, collectCourseSearch, DOWNLOAD_TERMS, collectDownloadSearch,
 } from '../../fixtures/publish-snapshots.js';
 import { getAemConfig } from '../../config/env.js';
 
@@ -84,6 +85,26 @@ test.describe('Regression: Publish-Seiten wie vorher (Navigation, Sprachverweise
     const problems: string[] = [];
     for (const list of EVENT_LISTS) problems.push(...diffEventList(list, ref![list], await collectEventList(page, base, list)));
     expect(problems.slice(0, 25), `Abweichungen in den Listen (${problems.length}).`).toEqual([]);
+  });
+
+  test('Kurssuche: Trefferzahl und Spitzentreffer wie vorher', titleEn('Course search: hit count and top hits as before'), async ({ page, publishPage }) => {
+    test.setTimeout(180_000);
+    const base = publishPage.config().url;
+    const ref = readReference<Record<string, SearchState>>('course-search');
+    expect(ref, missingReferenceMessage('course-search')).not.toBeNull();
+    const problems: string[] = [];
+    for (const term of COURSE_TERMS) problems.push(...diffSearch(`Kurssuche: ${term || 'alle Kurse'}`, ref![term], await collectCourseSearch(page, base, term)));
+    expect(problems, `Abweichungen bei der Kurssuche (${problems.length}).`).toEqual([]);
+  });
+
+  test('Downloadsuche: Trefferzahl und Spitzentreffer wie vorher', titleEn('Download search: hit count and top hits as before'), async ({ page, publishPage }) => {
+    test.setTimeout(180_000);
+    const base = publishPage.config().url;
+    const ref = readReference<Record<string, SearchState>>('download-search');
+    expect(ref, missingReferenceMessage('download-search')).not.toBeNull();
+    const problems: string[] = [];
+    for (const term of DOWNLOAD_TERMS) problems.push(...diffSearch(`Downloadsuche: ${term}`, ref![term], await collectDownloadSearch(page, base, term)));
+    expect(problems, `Abweichungen bei der Downloadsuche (${problems.length}).`).toEqual([]);
   });
 
   // Der Such-Dienst antwortet auf DEV nicht (Anfrage bleibt auch nach 100 s ohne Antwort, 24.11.2026), daher nur TEST.

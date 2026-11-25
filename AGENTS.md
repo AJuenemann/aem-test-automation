@@ -92,25 +92,25 @@ in `tests/basics/`).
 Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und die Gesamtübersicht in
 `docs/TESTFAELLE.md`). Aktuell liegen keine Diag-Specs im Repo.
 
-Umfang: 80 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
-24 Komponenten, 4 Integrationstest, 27 Regressionstest), dazu 11 Capture-Läufe, 6 Referenz-Erfassungen
+Umfang: 82 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
+24 Komponenten, 4 Integrationstest, 29 Regressionstest), dazu 11 Capture-Läufe, 8 Referenz-Erfassungen
 und 149 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 ## Offene Aufgaben (Stand 25.11.2026, nicht aus den Augen verlieren)
 
 **Vorher-Stand ist gesichert** (Stand 25.11.2026, DEV und TEST laufen AEM 6.5.25.0):
-- Git-Tag **`vorher-stand-dev-20261125-2`** (maßgeblich): Baselines, Dialog-Referenzen, Publish-Referenzen inkl. Feeds und
-  Event/Messe, dazu die Bildvergleiche echter Seiten (REAL-1..9). Der ältere Tag `vorher-stand-dev-20261125` enthält
-  REAL-1..9 noch nicht.
-- Git-Tag **`vorher-stand-test-20261125-2`** (maßgeblich): Publish-Referenzen inkl. Suche, dazu REAL-1..9. Der ältere Tag
-  `vorher-stand-test-20261125` enthält REAL-1..9 noch nicht. **Nicht dabei:** Baselines der Samples-Seiten auf TEST
+- Git-Tag **`vorher-stand-dev-20261125-3`** (maßgeblich): Baselines, Dialog-Referenzen, Publish-Referenzen inkl. Feeds,
+  Event/Messe, Kurssuche und Downloadsuche, dazu die Bildvergleiche echter Seiten (REAL-1..9). Die älteren Tags
+  `vorher-stand-dev-20261125` und `…-2` enthalten Kurs- und Downloadsuche (und der erste auch REAL-1..9) noch nicht.
+- Git-Tag **`vorher-stand-test-20261125-3`** (maßgeblich): Publish-Referenzen inkl. Suche, Kurs- und Downloadsuche, dazu
+  REAL-1..9. Die älteren Tags `vorher-stand-test-20261125` und `…-2` sind unvollständig. **Nicht dabei:** Baselines der Samples-Seiten auf TEST
   (Samples fehlen dort auf Author und Publish, die Baselines vom 17.11.2026 stammen vom alten Inhalt).
 - Zeitplan laut JET (25.11.2026): DEV-Author wird am **26.11.2026** per In-Place-Upgrade aktualisiert (Ende des Tages,
   sofern kein Rollback), DEV dann den Großteil des Tages offline. Der Publisher folgt hoffentlich gleichzeitig,
   sonst am 27.11.2026. Der Termin für TEST ist offen.
 - **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen den Tag vergleichen
-  (`git diff vorher-stand-dev-20261125-2 -- tests/__snapshots__/dev fixtures`).
+  (`git diff vorher-stand-dev-20261125-3 -- tests/__snapshots__/dev fixtures`).
   **Erinnerung an den Nutzer am 26.11.2026 (Tag des DEV-Upgrades), bestellt am 25.11.2026:** Der Hook
   `.kiro/hooks/erinnerung-upgrade-dev-20261126.json` blendet sie bei der ersten Nachricht ab diesem Tag einmal ein
   (Marker `.kiro/hooks/erinnerung-20261126.done`). Fehlt der Hinweis, den Nutzer trotzdem daran erinnern.
@@ -121,25 +121,22 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
    TEST läuft wieder sauber (Veröffentlichung auf Publish, Samples auf Author und Publish, Paket-Upload). Dann
    Smoketest auf TEST, Baselines (`npm run baseline:visual` mit `AEM_ENV=test`) gegen den neuen Inhalt prüfen und bei
    Bedarf neu erzeugen, danach Gesamtlauf auf TEST und einen weiteren Tag `vorher-stand-test-<Datum>` setzen.
-2. **Manuelle Tests weiter reduzieren** (MAN-01 bis MAN-13, Stand 25.11.2026):
-   - **Zeitkritisch:** Tests mit „Vorher-Stand nötig = Ja" (MAN-01, 03, 04, 08, 11, 12, 13) brauchen den Stand vor dem
+2. **Manuelle Tests weiter reduzieren** (MAN-01 bis MAN-10, Stand 25.11.2026). Automatisiert sind inzwischen u. a. Optik
+   echter Seiten (REAL-1..9), Event und Messe (EVT-1, REAL-7..9), RSS (FEED-1), Navigation, Kurs- und Downloadsuche
+   (COURSE-1, DL-1), Hreflang, Bilder, Fehlerseiten, Visitenkartenimport, Asset verwenden, Baum wiederherstellen.
+   - **Zeitkritisch:** Tests mit „Vorher-Stand nötig = Ja" (MAN-02, 03, 07, 10; MAN-01 teilweise) brauchen den Stand vor dem
      Upgrade. Auf DEV ist er nur bis zum Upgrade am 26.11.2026 erfassbar, auf TEST bis zu dessen Upgrade (Termin offen).
      Vor jedem Ausbau prüfen, ob die Umgebung noch AEM 6.5.25.0 meldet (`/system/console/status-productinfo.json`).
    - **Eingaben von Fraunhofer und JET** (Testplan Kapitel 12): Nr. 3 (produktive Nutzung), 4 (Komponenten), 6 (Suchbegriffe),
-     7 (Browser), 9 (Seiten für die Optik), 10 (Event und Messe). Ohne Antwort mit eigenen Vorschlägen aus dem
-     Produktionsinhalt arbeiten und als Vorschlag kennzeichnen.
-   - Stufe 2: MAN-04 (zweiter Browser), MAN-08 (Suche: Filter, Wartezeit, DEV), MAN-13 (Kurs- und Downloadsuche).
-     MAN-13 Vorarbeit (25.11.2026): Kurssuche-Ergebnisseite `/content/academy/de/weiterbildung/suchergebnis`, Suchformular
-     `/content/academy/de/suche.html`, Dienst `GET /bin/wcm/coursesearch/query` (POST ergibt 405). Felder laut Formular:
-     `queryString`, `numberResults`, `offset`, `currentPage`, `sector`, `types`. Mit `queryString`, `numberResults`,
-     `offset`, `currentPage` antwortet der Dienst auf DEV und TEST mit 400: Aufruf per Browser-Diag (Netzwerk-Reiter) ermitteln,
-     nicht raten. Komponente `fraunhofer/components/course/coursesearch/search`, auf DEV und TEST gleich erreichbar.
-     Die Downloadsuche ist noch nicht gesucht. Für MAN-13 wurde am 25.11.2026 nichts erfasst (Aufrufparameter offen),
-     auf DEV ist das nur bis zum Upgrade möglich.
-   - Stufe 3: MAN-03 (weitere Komponenten), MAN-01 (Optik echter Seiten), MAN-05 (Formular), MAN-06 und MAN-07
-     zusammenlegen (Mailversand, Double Opt-in), MAN-12 (Event/Messe Darstellung) als Bildvergleich.
-   - Ziel: manuell bleiben etwa MAN-02, MAN-11 (Social Media Wall) und ein Mailtest. MAN-09/MAN-10 (Asset-Version,
-     Asset wiederherstellen) warten auf die Klärung mit JET (Testplan Kapitel 12, Nr. 13).
+     7 (Browser), 9 und 10 (vorgeschlagene Seiten für Optik, Event und Messe). Ohne Antwort mit eigenen Vorschlägen aus
+     dem Produktionsinhalt arbeiten und als Vorschlag kennzeichnen.
+   - Stufe 2: MAN-03 (zweiter Browser), MAN-07 (Suche: weitere Begriffe, Filter, Wartezeit, DEV).
+   - Stufe 3: MAN-02 (weitere Komponenten), MAN-04 (Formular), MAN-05 und MAN-06 zusammenlegen (Mailversand, Double
+     Opt-in).
+   - Ziel: manuell bleiben etwa MAN-01 (Redaktionsarbeit), MAN-10 (Social Media Wall) und ein Mailtest. MAN-08 und
+     MAN-09 (Asset-Version, Asset wiederherstellen) warten auf die Klärung mit JET (Testplan Kapitel 12, Nr. 13).
+   - Kurssuche: `GET /bin/wcm/coursesearch/query`, der Parameter `currentPage` ist der **Seitenpfad**, keine Zahl (sonst 400).
+     COURSE-1 prüft die Filter (Branche, Typ) nicht.
 3. **Such-Dienst auf DEV** (Testplan Kapitel 12, Nr. 16): `POST /bin/wcm/enterprisesearch/query` und
    `GET /bin/wcm/enterprisesearch/suggest` hängen auf DEV-Publish und DEV-Author. Gemessen am 25.11.2026: Verbindung und
    TLS stehen in 0,13 s, danach kommt 136 s lang nichts. Dann endet `query` mit **504 Gateway Timeout** (`application/json`,

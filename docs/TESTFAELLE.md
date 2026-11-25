@@ -44,8 +44,8 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 
 ## Gesamtübersicht (Stand 23.11.2026)
 
-80 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
-und 6 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 149 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+82 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
+und 8 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 149 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -91,6 +91,8 @@ grünem Lauf.
 | FEED-1 | RSS-Feeds: Aufbau und Einträge sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026), TEST (25.11.2026) |
 | EVT-1 | Event und Messe: Listen und Detailseite sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026), TEST (25.11.2026) |
 | SEARCH-1 | Globale Suche: Trefferzahl und Spitzentreffer wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | nur TEST (25.11.2026); auf DEV übersprungen |
+| COURSE-1 | Kurssuche: Trefferzahl und Spitzentreffer wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | DEV, TEST (25.11.2026) |
+| DL-1 | Downloadsuche: Trefferzahl und Spitzentreffer wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | DEV, TEST (25.11.2026) |
 | NAV-2 | Geänderter Navigationstitel erscheint auf Publish im Hauptmenü | Regressionstest | `regression/navigation-change.spec.ts` | DEV (24.11.2026); TEST rot: Replication blockiert |
 | LANG-4 | Hreflang: weitere Seitenpaare verweisen gegenseitig aufeinander | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026), TEST (25.11.2026) |
 | IMG-1 | Bilder: laden in drei Fenstergrößen, scharf und unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026), TEST (25.11.2026) |
@@ -722,14 +724,34 @@ Sprachversionen.
 - **Grenze**: Ein Bildvergleich zeigt Abweichungen, nicht ob sie gewollt sind. Nach dem Upgrade bewertet ein Mensch die
   Abweichungsbilder im Bericht.
 
+### COURSE-1 — Kurssuche (`tests/regression/publish-reference.spec.ts`)
+- **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt, Referenz `course-search.json`. Nur lesend, ohne Login.
+- **Schritte**: Die Ergebnisseite `/content/academy/de/weiterbildung/suchergebnis` laden (ohne Begriff zeigt sie alle Kurse).
+  Danach „Management" in das Suchfeld der Seite (`form[action="/bin/wcm/coursesearch/query"]`) tippen und Enter drücken.
+  Gelesen werden „Ergebnisse 1-10 von N" und die ersten 10 Treffer (Titel und Link, `.coursesearchresults--title a`).
+- **Erwartet**: Trefferzahl höchstens 10 % unter dem Vorher-Stand, mindestens 7 der 10 Spitzentreffer wieder dabei.
+- **Stand**: DEV und TEST am 25.11.2026: 48 Kurse, 12 Treffer für „Management".
+- **Grenze**: Die Filter (Branche, Typ) sind nicht geprüft. Der Dienst `GET /bin/wcm/coursesearch/query` verlangt in
+  `currentPage` den Seitenpfad, eine Zahl ergibt 400.
+
+### DL-1 — Downloadsuche (`tests/regression/publish-reference.spec.ts`)
+- **Vorbedingung**: wie COURSE-1, Referenz `download-search.json`.
+- **Schritte**: Auf `/content/iis-test/de/ff/amm/dltest` (durchsucht `/content/dam/iis/de/doc/ame`, auf DEV und TEST gleich)
+  „AME" und „Fraunhofer" in das Suchfeld tippen und Enter drücken (`POST …/jcr:content/downloadsearch.json`). Gelesen
+  werden die Trefferzahl und die ersten 10 Treffer (`ul.download-search-results > li a`).
+- **Erwartet**: Wie COURSE-1.
+- **Stand**: DEV und TEST am 25.11.2026: 3 Treffer für „AME", 71 für „Fraunhofer".
+- **Hinweis**: Die Samples-Seite `/content/samples/de/pages/download-search` gibt es auf TEST nicht, daher diese Seite.
+- **Grenze**: Dateiinhalt und Download sind nicht geprüft.
+
 ### REF-CAP — Vorher-Stand der Publish-Seiten erfassen (`tests/regression/references-capture.spec.ts`)
-- **Zweck**: erfasst Navigation, Hreflang-Paare, Bilder, RSS-Feeds, Event-/Messelisten und (nur TEST) Suchtreffer als
+- **Zweck**: erfasst Navigation, Hreflang-Paare, Bilder, RSS-Feeds, Event-/Messelisten, Kurs- und Downloadsuche und (nur TEST) Suchtreffer als
   Referenz unter `fixtures/references/<AEM_ENV>/`.
 - **Ausführen**: `CAPTURE_REFERENCES=1 npm run capture-references`. Ohne die Variable überspringt sich der Lauf.
 - **Schutz**: Eine vorhandene Referenz wird nicht überschrieben (Fehlermeldung). Neu erzeugen nur bewusst mit
   `CAPTURE_REFERENCES=overwrite`, **nie nach dem Upgrade**: Die Dateien sind der Vorher-Stand.
 - **Stand**: DEV am 23.11.2026 erfasst (216 und 204 Navigationslinks, 12 Seitenpaare, 6 Bildlisten), am 24.11.2026
-  ergänzt um Feeds und Event-/Messelisten. TEST am 25.11.2026: alle sechs Referenzen (Suche nur dort). Auf TEST wurden
+  ergänzt um Feeds und Event-/Messelisten. TEST am 25.11.2026: alle Referenzen (die der globalen Suche nur dort), Kurs- und Downloadsuche auf beiden am 25.11.2026. Auf TEST wurden
   sie bei laufender Befüllung mit dem Produktionsinhalt erfasst, die Zahlen gleichen DEV (216/204 Navigationslinks,
   12 Seitenpaare, 25 Feed-Einträge, 10 Veranstaltungen, 2 Messen). Tag `vorher-stand-test-20261125`.
 ---
@@ -908,7 +930,7 @@ Sprachversionen.
   für das Cockpit (Sprache EN). Der Titel im Test bleibt deutsch (Quelle für `--grep`, Baselines,
   Berichte). Der englische Name steht als Annotation `_title-en` bzw. `_describe-en` am Test
   (`fixtures/titles.ts`); der Unterstrich blendet sie im Playwright-HTML-Report aus.
-- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 97 AEM-Tests
+- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 101 AEM-Tests
   (inkl. Login) `_title-en` und zu jeder Suite `_describe-en`, nichts ist leer oder unübersetzt.
   Der Katalog liefert zu jedem sichtbaren Test und jeder Datei den englischen Namen.
 - **Dazu erweitert**: `cockpit-catalog.spec.ts` (+1: liest `_title-en`/`_describe-en`, bei mehreren

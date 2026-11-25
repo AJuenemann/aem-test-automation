@@ -1,0 +1,92 @@
+{
+  "": {
+    "total": 48,
+    "top": [
+      {
+        "href": "/content/academy/de/ueber-uns/train-the-trainer.html",
+        "title": "Train the Trainer Workshops"
+      },
+      {
+        "href": "/content/academy/de/ueber-uns/certified-scientific-trainer/foundation-level-cst.html",
+        "title": "Certified Scientific Trainer*in - Foundation Level"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/energiewende/Wasserstoff/fachwissen-wasserstoff.html",
+        "title": "Fachwissen Wasserstoff"
+      },
+      {
+        "href": "/content/academy/de/ueber-uns/certified-scientific-trainer/cst-advanced-level.html",
+        "title": "Certified Scientific Trainer*in - Advanced Level"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/energie-nachhaltigkeit/Wasserstoff/produktion-wasserstoffsysteme.html",
+        "title": "Produktion von Wasserstoffsystemen"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/energie-nachhaltigkeit/Wasserstoff/wasserstoff-anwendungen-in-der-mobilitaet.html",
+        "title": "Wasserstoff in der Mobilität"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/energie-nachhaltigkeit/Wasserstoff/H2-Fachwissen.html",
+        "title": "Wasserstoff für Fach und Führungskräfte"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/energie-nachhaltigkeit/Wasserstoff/wasserstoff-h2-erzeugungssysteme.html",
+        "title": "HySys-Lokale H2-Energiesysteme"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/energie-nachhaltigkeit/Wasserstoff/basiswissen-wasserstoff.html",
+        "title": "Fachwissen Wasserstoff"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/energie-nachhaltigkeit/Wasserstoff/praxiswissen-wasserstoffprojekte.html",
+        "title": "Praxiswissen für Wasserstoffprojekte"
+      }
+    ]
+  },
+  "Management": {
+    "total": 12,
+    "top": [
+      {
+        "href": "/content/academy/de/weiterbildung/innovationsmanagement/plm-professional.html",
+        "title": "PLM Professional | Zertifikatsprogramm"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/innovationsmanagement/chief-digital-officer.html",
+        "title": "Chief Digital Officer | Weiterbildung"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/logistik-scm/lean-logistics.html",
+        "title": "Lean Logistics | Schulungsreihe"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/bigdata-ki/generative-ki-firmenprozesse.html",
+        "title": "Generative KI in Firmenprozesse integrieren | Weiterbildung"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/logistik-scm/bachelor-logistik.html",
+        "title": "Logistikmanagement | Bachelor"
+      },
+      {
+        "href": "/content/academy/de/ueber-uns/train-the-trainer.html",
+        "title": "Train the Trainer Workshops"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/innovationsmanagement/innovation-prototyper.html",
+        "title": "Zertifizierter Innovation Prototyper"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/innovationsmanagement/mastering-digital-twins.html",
+        "title": "Mastering Digital Twins | E-Learning-Programm"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/software-und-systementwicklung/software-engineering.html",
+        "title": "Software Engineering for Embedded Systems | Master"
+      },
+      {
+        "href": "/content/academy/de/weiterbildung/innovationsmanagement/Design-Thinking-Professional.html",
+        "title": "Design Thinking Professional | Zertifikatskurs"
+      }
+    ]
+  }
+}

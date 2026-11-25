@@ -364,6 +364,55 @@ export function diffSearch(term: string, was: SearchState, now: SearchState): st
   return out;
 }
 
+// --- Kurs- und Downloadsuche ----------------------------------------------------------------
+
+/** Ergebnisseite der Kurssuche der Fraunhofer Academy. Ohne Suchbegriff zeigt sie alle Kurse. */
+export const COURSE_PAGE = '/content/academy/de/weiterbildung/suchergebnis';
+export const COURSE_TERMS = ['', 'Management'];
+/** Seite mit der Downloadsuche (Dokumente der Abteilung AME, `/content/dam/iis/de/doc/ame`), auf DEV und TEST gleich. */
+export const DOWNLOAD_PAGE = '/content/iis-test/de/ff/amm/dltest';
+export const DOWNLOAD_TERMS = ['AME', 'Fraunhofer'];
+
+const toPath = (href: string): string => new URL(href, 'http://x').pathname;
+
+/**
+ * Kurssuche über die Oberfläche: Ergebnisseite laden (zeigt ohne Begriff alle Kurse), sonst Begriff in das Suchfeld der
+ * Seite tippen und mit Enter absenden. Gelesen werden die Trefferzahl („Ergebnisse 1-10 von N") und die ersten Treffer.
+ */
+export async function collectCourseSearch(page: Page, base: string, term: string): Promise<SearchState> {
+  await page.goto(`${base}${COURSE_PAGE}.html`, { waitUntil: 'networkidle' });
+  const titles = page.locator('.coursesearchresults--title a');
+  await titles.first().waitFor({ state: 'visible', timeout: 30_000 });
+  if (term) {
+    const input = page.locator('form[action="/bin/wcm/coursesearch/query"] input[name="queryString"]');
+    const answer = page.waitForResponse((r) => r.url().includes('/bin/wcm/coursesearch/query') && r.url().includes(`queryString=${encodeURIComponent(term)}`), { timeout: 30_000 });
+    await input.fill(term);
+    await input.press('Enter');
+    await answer;
+    await page.waitForLoadState('networkidle');
+    await titles.first().waitFor({ state: 'visible', timeout: 30_000 });
+  }
+  const nav = await page.locator('.search-results .articles-nav').first().innerText();
+  const total = Number(/von\s+([\d.]+)/.exec(nav)?.[1]?.replace(/\./g, '') ?? 0);
+  const top = await titles.evaluateAll((l) => l.slice(0, 10).map((a) => ({ href: a.getAttribute('href') ?? '', title: ((a as HTMLElement).innerText || '').replace(/\s+/g, ' ').trim() })));
+  return { total, top: top.map((t) => ({ ...t, href: toPath(t.href) })) };
+}
+
+/** Downloadsuche über die Oberfläche: Begriff in das Suchfeld tippen, Enter. Gelesen werden Trefferzahl und die ersten Treffer. */
+export async function collectDownloadSearch(page: Page, base: string, term: string): Promise<SearchState> {
+  await page.goto(`${base}${DOWNLOAD_PAGE}.html`, { waitUntil: 'networkidle' });
+  const input = page.locator('.fhg-download-search input[name="queryString"]');
+  const answer = page.waitForResponse((r) => r.url().includes('/downloadsearch.json') && r.request().method() === 'POST', { timeout: 30_000 });
+  await input.fill(term);
+  await input.press('Enter');
+  await answer;
+  const items = page.locator('ul.download-search-results > li a');
+  await items.first().waitFor({ state: 'visible', timeout: 30_000 });
+  const total = Number(/(\d[\d.]*)\s*$/.exec((await page.locator('.search-results-caption').first().innerText()).trim())?.[1]?.replace(/\./g, '') ?? 0);
+  const top = await items.evaluateAll((l) => l.slice(0, 10).map((a) => ({ href: a.getAttribute('href') ?? '', title: ((a as HTMLElement).innerText || '').replace(/\s+/g, ' ').trim() })));
+  return { total, top: top.map((t) => ({ ...t, href: toPath(t.href) })) };
+}
+
 /** Seiten und Fensterbreiten der Bildprüfung. */
 export const IMAGE_PAGES = ['/content/zv/de', '/content/zv/de/fuer-kunden-und-partner'];
 export const IMAGE_WIDTHS = [375, 768, 1280];

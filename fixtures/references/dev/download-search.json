@@ -1,0 +1,64 @@
+{
+  "AME": {
+    "total": 3,
+    "top": [
+      {
+        "href": "/content/dam/iis/de/doc/ame/conference/AES-128-Convention_ANewParametricStereo-AndMultichannelExtension_AES8099.pdf",
+        "title": "AES-128-Convention_ANewParametricStereo-AndMultichannelExtension_AES8099.pdf [PDF 0.44MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/Misc/202401_AME_Display_A4_Test%20Listeners.pdf",
+        "title": "202401_AME_Display_A4_Test Listeners.pdf [PDF 0.05MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/Misc/202401_AME_Aufsteller_A4_Hoertester.pdf",
+        "title": "202401_AME_Aufsteller_A4_Hoertester.pdf [PDF 0.05MB]"
+      }
+    ]
+  },
+  "Fraunhofer": {
+    "total": 71,
+    "top": [
+      {
+        "href": "/content/dam/iis/de/doc/ame/FraunhoferIIS_Product-Sheet_EWF.pdf",
+        "title": "FraunhoferIIS_Product-Sheet_EWF.pdf [PDF 0.11MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/FraunhoferIIS_Product-Brochure_DABsurround-DABplus.pdf",
+        "title": "FraunhoferIIS_Product-Brochure_DABsurround-DABplus.pdf [PDF 0.36MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/FraunhoferIIS-Product-Brochure_upHear-Spatial-Microphone-Processing.pdf",
+        "title": "FraunhoferIIS-Product-Brochure_upHear-Spatial-Microphone-Processing.pdf [PDF 0.26MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/FraunhoferIIS_Product-Brochure_MPEG-H.pdf",
+        "title": "FraunhoferIIS_Product-Brochure_MPEG-H.pdf [PDF 2.59MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/FraunhoferIIS_Product-Sheet_DAB-DRM-ContentServer.pdf",
+        "title": "FraunhoferIIS_Product-Sheet_DAB-DRM-ContentServer.pdf [PDF 0.26MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/FraunhoferIIS_Product-Sheet_AAC-ELD-Family.pdf",
+        "title": "FraunhoferIIS_Product-Sheet_AAC-ELD-Family.pdf [PDF 0.24MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/bewegtbild/FraunhoferIIS_Product-Brochure_Realception.pdf",
+        "title": "FraunhoferIIS_Product-Brochure_Realception.pdf [PDF 0.31MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/bewegtbild/FraunhoferIIS_Product-Brochure_JPEG-XS.pdf",
+        "title": "FraunhoferIIS_Product-Brochure_JPEG-XS.pdf [PDF 0.18MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/bewegtbild/FraunhoferIIS_Product-Brochure_easyDCP.pdf",
+        "title": "FraunhoferIIS_Product-Brochure_easyDCP.pdf [PDF 0.16MB]"
+      },
+      {
+        "href": "/content/dam/iis/de/doc/ame/FraunhoferIIS_Audio+Multimedia_ExcellenceAudioEngineering.pdf",
+        "title": "FraunhoferIIS_Audio+Multimedia_ExcellenceAudioEngineering.pdf [PDF 0.32MB]"
+      }
+    ]
+  }
+}
