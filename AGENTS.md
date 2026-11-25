@@ -129,6 +129,12 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
      7 (Browser), 9 (Seiten für die Optik), 10 (Event und Messe). Ohne Antwort mit eigenen Vorschlägen aus dem
      Produktionsinhalt arbeiten und als Vorschlag kennzeichnen.
    - Stufe 2: MAN-04 (zweiter Browser), MAN-08 (Suche: Filter, Wartezeit, DEV), MAN-13 (Kurs- und Downloadsuche).
+     MAN-13 Vorarbeit (25.11.2026): Kurssuche-Ergebnisseite `/content/academy/de/weiterbildung/suchergebnis`, Suchformular
+     `/content/academy/de/suche.html`, Dienst `GET /bin/wcm/coursesearch/query` (POST ergibt 405). Felder laut Formular:
+     `queryString`, `numberResults`, `offset`, `currentPage`, `sector`, `types`. Mit `queryString`, `numberResults`,
+     `offset`, `currentPage` antwortet der Dienst auf DEV und TEST mit 400: Aufruf per Browser-Diag (Netzwerk-Reiter) ermitteln,
+     nicht raten. Komponente `fraunhofer/components/course/coursesearch/search`, auf DEV und TEST gleich erreichbar.
+     Die Downloadsuche ist noch nicht gesucht. Der Vorher-Stand für DEV war am 25.11.2026 nicht mehr zu erfassen.
    - Stufe 3: MAN-03 (weitere Komponenten), MAN-01 (Optik echter Seiten), MAN-05 (Formular), MAN-06 und MAN-07
      zusammenlegen (Mailversand, Double Opt-in), MAN-12 (Event/Messe Darstellung) als Bildvergleich.
    - Ziel: manuell bleiben etwa MAN-02, MAN-11 (Social Media Wall) und ein Mailtest. MAN-09/MAN-10 (Asset-Version,
