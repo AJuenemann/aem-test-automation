@@ -44,8 +44,8 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 
 ## Gesamtübersicht (Stand 23.11.2026)
 
-71 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
-und 5 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 149 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+80 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
+und 6 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 149 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -95,6 +95,7 @@ grünem Lauf.
 | LANG-4 | Hreflang: weitere Seitenpaare verweisen gegenseitig aufeinander | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026), TEST (25.11.2026) |
 | IMG-1 | Bilder: laden in drei Fenstergrößen, scharf und unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026), TEST (25.11.2026) |
 | ERR-1 | Fehlerseiten zeigen auf Deutsch und Englisch das Fraunhofer-Design | Regressionstest | `regression/error-pages-lang.spec.ts` | DEV (23.11.2026), TEST (25.11.2026) |
+| REAL-1..9 | Seite "<Name>" sieht aus wie vorher (Startseite, Institute, Presse, Artikel mit Bildern, Inhaltsseite, Formular, Messen-Liste, Messe- und Veranstaltungs-Detailseite) | Regressionstest | `regression/real-pages-visual.spec.ts` | DEV, TEST (25.11.2026) |
 
 **Historie des Cockpits** (`cockpit/runs/`): beginnt am 19.11.2026. Letzter vollständiger Lauf auf TEST am
 19.11.2026 (18:04), alle 58 Tests grün (ohne Login). Auf DEV: Smoketest am 23.11.2026 08:45 mit 10 von 11 grün
@@ -705,6 +706,22 @@ Sprachversionen.
   abgedeckt.
 - **Stand TEST 24.11.2026**: 23.484, 1.613 und 5.456 Treffer.
 
+### REAL-1..9 — Optik echter Seiten (`tests/regression/real-pages-visual.spec.ts`)
+- **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt, Baselines je Umgebung unter `tests/__snapshots__/<AEM_ENV>/regression/real-pages-visual.spec.ts/`
+  (Vorher-Stand, 25.11.2026). Nur lesend, ohne Login.
+- **Schritte**: Je Seite die gerenderte Seite auf Publish öffnen, bis zum Ende scrollen (Lazy-Bilder), ganze Seite
+  aufnehmen und mit der Baseline vergleichen. Toleranz wie bei VIS-1 (`maxDiffPixelRatio` 0,02).
+- **Seiten (Vorschlag aus dem Produktionsinhalt)**: Startseite, Institute und Einrichtungen, Presse / Newsroom, Artikel mit
+  Bildern (Humanoide Robotik), Inhaltsseite (Zahlen und Fakten), Seite mit Formular (Ausschreibungen, 18 Felder), Liste der
+  Messen, Messe-Detailseite (BAU 2027), Veranstaltungs-Detailseite (AI4Surfaces 2027). Die Liste steht als `REAL_PAGES` im Test.
+- **Erwartet**: Die Seite sieht aus wie im Vorher-Stand.
+- **Bewusst nicht dabei**: Die Liste der Veranstaltungen. Vergangene Termine fallen aus ihr, der Vergleich bräche ohne
+  Fehler der Website (Termine prüft EVT-1). Die Liste der Messen hat nur Termine ab Januar 2027.
+- **Stand**: DEV und TEST am 25.11.2026 erzeugt, je dreimal wiederholt grün (27 von 27). Mit einer vertauschten Baseline
+  wird der Test rot (Größe und 20 % Pixel abweichend), danach wieder grün.
+- **Grenze**: Ein Bildvergleich zeigt Abweichungen, nicht ob sie gewollt sind. Nach dem Upgrade bewertet ein Mensch die
+  Abweichungsbilder im Bericht.
+
 ### REF-CAP — Vorher-Stand der Publish-Seiten erfassen (`tests/regression/references-capture.spec.ts`)
 - **Zweck**: erfasst Navigation, Hreflang-Paare, Bilder, RSS-Feeds, Event-/Messelisten und (nur TEST) Suchtreffer als
   Referenz unter `fixtures/references/<AEM_ENV>/`.
@@ -891,7 +908,7 @@ Sprachversionen.
   für das Cockpit (Sprache EN). Der Titel im Test bleibt deutsch (Quelle für `--grep`, Baselines,
   Berichte). Der englische Name steht als Annotation `_title-en` bzw. `_describe-en` am Test
   (`fixtures/titles.ts`); der Unterstrich blendet sie im Playwright-HTML-Report aus.
-- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 85 AEM-Tests
+- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 97 AEM-Tests
   (inkl. Login) `_title-en` und zu jeder Suite `_describe-en`, nichts ist leer oder unübersetzt.
   Der Katalog liefert zu jedem sichtbaren Test und jeder Datei den englischen Namen.
 - **Dazu erweitert**: `cockpit-catalog.spec.ts` (+1: liest `_title-en`/`_describe-en`, bei mehreren

@@ -92,22 +92,25 @@ in `tests/basics/`).
 Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und die Gesamtübersicht in
 `docs/TESTFAELLE.md`). Aktuell liegen keine Diag-Specs im Repo.
 
-Umfang: 71 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
-24 Komponenten, 4 Integrationstest, 18 Regressionstest), dazu 11 Capture-Läufe, 5 Referenz-Erfassungen
+Umfang: 80 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
+24 Komponenten, 4 Integrationstest, 27 Regressionstest), dazu 11 Capture-Läufe, 6 Referenz-Erfassungen
 und 149 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 ## Offene Aufgaben (Stand 25.11.2026, nicht aus den Augen verlieren)
 
 **Vorher-Stand ist gesichert** (Stand 25.11.2026, DEV und TEST laufen AEM 6.5.25.0):
-- Git-Tag `vorher-stand-dev-20261125`: Baselines, Dialog-Referenzen, Publish-Referenzen inkl. Feeds und Event/Messe.
-- Git-Tag `vorher-stand-test-20261125`: Publish-Referenzen inkl. Suche. **Nicht dabei:** Baselines der Samples-Seiten
-  auf TEST (Samples fehlen dort auf Author und Publish, die Baselines vom 17.11.2026 stammen vom alten Inhalt).
+- Git-Tag **`vorher-stand-dev-20261125-2`** (maßgeblich): Baselines, Dialog-Referenzen, Publish-Referenzen inkl. Feeds und
+  Event/Messe, dazu die Bildvergleiche echter Seiten (REAL-1..9). Der ältere Tag `vorher-stand-dev-20261125` enthält
+  REAL-1..9 noch nicht.
+- Git-Tag **`vorher-stand-test-20261125-2`** (maßgeblich): Publish-Referenzen inkl. Suche, dazu REAL-1..9. Der ältere Tag
+  `vorher-stand-test-20261125` enthält REAL-1..9 noch nicht. **Nicht dabei:** Baselines der Samples-Seiten auf TEST
+  (Samples fehlen dort auf Author und Publish, die Baselines vom 17.11.2026 stammen vom alten Inhalt).
 - Zeitplan laut JET (25.11.2026): DEV-Author wird am **26.11.2026** per In-Place-Upgrade aktualisiert (Ende des Tages,
   sofern kein Rollback), DEV dann den Großteil des Tages offline. Der Publisher folgt hoffentlich gleichzeitig,
   sonst am 27.11.2026. Der Termin für TEST ist offen.
 - **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen den Tag vergleichen
-  (`git diff vorher-stand-dev-20261125 -- tests/__snapshots__/dev fixtures`).
+  (`git diff vorher-stand-dev-20261125-2 -- tests/__snapshots__/dev fixtures`).
   **Erinnerung an den Nutzer am 26.11.2026 (Tag des DEV-Upgrades), bestellt am 25.11.2026:** Der Hook
   `.kiro/hooks/erinnerung-upgrade-dev-20261126.json` blendet sie bei der ersten Nachricht ab diesem Tag einmal ein
   (Marker `.kiro/hooks/erinnerung-20261126.done`). Fehlt der Hinweis, den Nutzer trotzdem daran erinnern.
@@ -119,6 +122,12 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
    Smoketest auf TEST, Baselines (`npm run baseline:visual` mit `AEM_ENV=test`) gegen den neuen Inhalt prüfen und bei
    Bedarf neu erzeugen, danach Gesamtlauf auf TEST und einen weiteren Tag `vorher-stand-test-<Datum>` setzen.
 2. **Manuelle Tests weiter reduzieren** (MAN-01 bis MAN-13, Stand 25.11.2026):
+   - **Zeitkritisch:** Tests mit „Vorher-Stand nötig = Ja" (MAN-01, 03, 04, 08, 11, 12, 13) brauchen den Stand vor dem
+     Upgrade. Auf DEV ist er nur bis zum Upgrade am 26.11.2026 erfassbar, auf TEST bis zu dessen Upgrade (Termin offen).
+     Vor jedem Ausbau prüfen, ob die Umgebung noch AEM 6.5.25.0 meldet (`/system/console/status-productinfo.json`).
+   - **Eingaben von Fraunhofer und JET** (Testplan Kapitel 12): Nr. 3 (produktive Nutzung), 4 (Komponenten), 6 (Suchbegriffe),
+     7 (Browser), 9 (Seiten für die Optik), 10 (Event und Messe). Ohne Antwort mit eigenen Vorschlägen aus dem
+     Produktionsinhalt arbeiten und als Vorschlag kennzeichnen.
    - Stufe 2: MAN-04 (zweiter Browser), MAN-08 (Suche: Filter, Wartezeit, DEV), MAN-13 (Kurs- und Downloadsuche).
    - Stufe 3: MAN-03 (weitere Komponenten), MAN-01 (Optik echter Seiten), MAN-05 (Formular), MAN-06 und MAN-07
      zusammenlegen (Mailversand, Double Opt-in), MAN-12 (Event/Messe Darstellung) als Bildvergleich.
