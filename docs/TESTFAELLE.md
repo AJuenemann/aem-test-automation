@@ -44,8 +44,8 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 
 ## Gesamtübersicht (Stand 23.11.2026)
 
-68 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
-und 3 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 144 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+71 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
+und 5 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 149 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -88,6 +88,9 @@ grünem Lauf.
 | LANG-3 | Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | TAG-1 | Filterseite liefert getaggte Treffer | Regressionstest | `regression/tags-filter.spec.ts` | DEV (24.11.2026), TEST |
 | NAV-1 | Navigation: Links sind unverändert und erreichbar | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
+| FEED-1 | RSS-Feeds: Aufbau und Einträge sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026) |
+| EVT-1 | Event und Messe: Listen und Detailseite sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026) |
+| SEARCH-1 | Globale Suche: Trefferzahl und Spitzentreffer wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | nur TEST (24.11.2026); auf DEV übersprungen |
 | NAV-2 | Geänderter Navigationstitel erscheint auf Publish im Hauptmenü | Regressionstest | `regression/navigation-change.spec.ts` | DEV (24.11.2026); TEST rot: Replication blockiert |
 | LANG-4 | Hreflang: weitere Seitenpaare verweisen gegenseitig aufeinander | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
 | IMG-1 | Bilder: laden in drei Fenstergrößen, scharf und unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (23.11.2026) |
@@ -664,13 +667,49 @@ Sprachversionen.
   nicht die rohe Sling-Meldung.
 - **Ergänzt**: SMOKE-8 (nur Deutsch) und OVL-5 (Bildvergleich).
 - **Grenze**: Geschützte Seiten (403) sind nicht geprüft, dafür fehlt eine bekannte Seite (Testplan Kapitel 12, Nr. 11).
+### FEED-1 — RSS-Feeds (`tests/regression/publish-reference.spec.ts`)
+- **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt, Referenz `feeds.json`. Nur lesend, ohne Login.
+- **Schritte**: Die Feeds `/content/zv/de/rss/presse.rss` und `…/veranstaltungen.rss` auf Publish abrufen, mit dem Browser
+  als XML parsen und mit der Referenz vergleichen.
+- **Erwartet**: HTTP 200, XML wohlgeformt, gleicher Content-Type, gleiche Kanalfelder (Titel, Sprache, Kategorie,
+  Redaktionsadresse, ttl …), gleich viele Einträge, je Eintrag gleicher Titel, Link, GUID, Datum, Länge und Text der
+  Beschreibung (fängt geänderte HTML-Verarbeitung ab). Die Meldung nennt bis zu 25 Abweichungen.
+- **Stand DEV 24.11.2026**: Presse-Feed 25 Einträge, Veranstaltungs-Feed 0 Einträge (DEV hat keine künftigen Veranstaltungen
+  im Feed). Content-Type ist `text/html;charset=utf-8`, auch das gilt als Vorher-Stand.
+- **Grenze**: Prüft den Feed, nicht die Darstellung in einem Feed-Reader.
+
+### EVT-1 — Event und Messe (`tests/regression/publish-reference.spec.ts`)
+- **Vorbedingung**: wie FEED-1, Referenz `events.json`.
+- **Schritte**: Die Listen `…/veranstaltungen-messen/veranstaltungen` und `…/messen` laden (erste Seite,
+  `.filterpage-results--item` mit Ort, Datum, Titel, Link). Dazu die Detailseite des Eintrags mit dem spätesten Ende, der einen
+  Detailblock (`.fhg-event-details`) zeigt (manche Einträge leiten weiter, z. B. „e-world 2027").
+- **Erwartet**: Dieselben Einträge mit gleichem Titel, Ort und Datum wie im Vorher-Stand, gleicher Text des Detailblocks.
+  Einträge, deren Zeitraum inzwischen vorbei ist, dürfen aus der Liste fallen.
+- **Stand DEV 24.11.2026**: 10 Veranstaltungen und 2 Messen.
+
+### SEARCH-1 — Globale Suche (`tests/regression/publish-reference.spec.ts`, Tag `@env:test`)
+- **Vorbedingung**: nur TEST, Referenz `search.json`. Auf DEV bleibt die Antwort des Such-Dienstes
+  (`POST /bin/wcm/enterprisesearch/query`) aus, auch nach 100 s (24.11.2026): Der Test überspringt sich dort.
+- **Schritte**: Für „Energie", „Quantencomputer" und „Müller" die Ergebnisseite öffnen, wie sie das Suchformular aufruft
+  (`/content/zv/de/suche.html?queryString=…`). Die Treffer lädt die Seite per Skript nach: auf die Überschrift
+  „N Ergebnisse für …" und die Liste warten.
+- **Erwartet**: Trefferzahl höchstens 10 % unter dem Vorher-Stand, mindestens 7 der 10 vorherigen Spitzentreffer
+  (Links) wieder auf der ersten Seite. Der Index wird außerhalb von AEM gepflegt und wächst, daher die Toleranz.
+- **Hinweis**: Die Treffer stammen aus dem Such-Index der Produktion (Adressen `www.*.fraunhofer.de`). Der Test prüft,
+  dass der Such-Dienst von AEM wie vorher antwortet, nicht den Index selbst. Die Suche über Eingabefeld und Lupe der
+  Startseite ließ sich auf DEV nicht automatisieren (Absenden löste nichts aus, solange der Dienst hängt) und ist nicht
+  abgedeckt.
+- **Stand TEST 24.11.2026**: 23.484, 1.613 und 5.456 Treffer.
+
 ### REF-CAP — Vorher-Stand der Publish-Seiten erfassen (`tests/regression/references-capture.spec.ts`)
-- **Zweck**: erfasst Navigation, Hreflang-Paare und Bilder als Referenz unter `fixtures/references/<AEM_ENV>/`.
+- **Zweck**: erfasst Navigation, Hreflang-Paare, Bilder, RSS-Feeds, Event-/Messelisten und (nur TEST) Suchtreffer als
+  Referenz unter `fixtures/references/<AEM_ENV>/`.
 - **Ausführen**: `CAPTURE_REFERENCES=1 npm run capture-references`. Ohne die Variable überspringt sich der Lauf.
 - **Schutz**: Eine vorhandene Referenz wird nicht überschrieben (Fehlermeldung). Neu erzeugen nur bewusst mit
   `CAPTURE_REFERENCES=overwrite`, **nie nach dem Upgrade**: Die Dateien sind der Vorher-Stand.
-- **Stand**: DEV am 23.11.2026 erfasst (216 und 204 Navigationslinks, 12 Seitenpaare, 6 Bildlisten). TEST folgt,
-  sobald TEST den Produktionsinhalt hat und noch die alte Software läuft.
+- **Stand**: DEV am 23.11.2026 erfasst (216 und 204 Navigationslinks, 12 Seitenpaare, 6 Bildlisten), am 24.11.2026
+  ergänzt um Feeds und Event-/Messelisten. TEST: nur die Suchtreffer (24.11.2026). Der Rest folgt, sobald TEST den
+  Produktionsinhalt hat und noch die alte Software läuft.
 ---
 
 # Technische Prüfungen
@@ -847,7 +886,7 @@ Sprachversionen.
   für das Cockpit (Sprache EN). Der Titel im Test bleibt deutsch (Quelle für `--grep`, Baselines,
   Berichte). Der englische Name steht als Annotation `_title-en` bzw. `_describe-en` am Test
   (`fixtures/titles.ts`); der Unterstrich blendet sie im Playwright-HTML-Report aus.
-- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 82 AEM-Tests
+- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 85 AEM-Tests
   (inkl. Login) `_title-en` und zu jeder Suite `_describe-en`, nichts ist leer oder unübersetzt.
   Der Katalog liefert zu jedem sichtbaren Test und jeder Datei den englischen Namen.
 - **Dazu erweitert**: `cockpit-catalog.spec.ts` (+1: liest `_title-en`/`_describe-en`, bei mehreren

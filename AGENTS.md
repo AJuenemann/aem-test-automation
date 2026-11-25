@@ -92,9 +92,9 @@ in `tests/basics/`).
 Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und die Gesamtübersicht in
 `docs/TESTFAELLE.md`). Aktuell liegen keine Diag-Specs im Repo.
 
-Umfang: 68 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
-24 Komponenten, 4 Integrationstest, 15 Regressionstest), dazu 11 Capture-Läufe, 3 Referenz-Erfassungen
-und 144 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
+Umfang: 71 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
+24 Komponenten, 4 Integrationstest, 18 Regressionstest), dazu 11 Capture-Läufe, 5 Referenz-Erfassungen
+und 149 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 ## Offene Aufgaben (Stand 24.11.2026, nicht aus den Augen verlieren)

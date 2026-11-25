@@ -1,0 +1,235 @@
+{
+  "/content/zv/de/rss/presse.rss": {
+    "status": 200,
+    "contentType": "text/html;charset=utf-8",
+    "wellFormed": true,
+    "channel": {
+      "title": "Fraunhofer Presseinformationen",
+      "description": "Fraunhofer Presseinformationen",
+      "link": "https://www.fraunhofer.de",
+      "language": "de",
+      "category": "News",
+      "managingEditor": "presse@zv.fraunhofer.de",
+      "copyright": "Copyright Fraunhofer-Gesellschaft",
+      "ttl": "5"
+    },
+    "items": [
+      {
+        "title": "Neue Verfahren zum Upcycling Seltener Erden aus Magneten",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/neue-verfahren-zum-upcycling-seltener-erden-aus-magneten.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/neue-verfahren-zum-upcycling-seltener-erden-aus-magneten.html",
+        "pubDate": "02 Nov 2026 00:00:00 GMT",
+        "descLength": 786,
+        "descText": "Magnete braucht es für Elektrofahrzeuge, Windturbinen oder Elektronik. Seltene Erden wie Neodym, das zu etwa 90 Prozent "
+      },
+      {
+        "title": "Neue Technologie optimiert Enzyme für die Industrie",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/neue-technologie-optimiert-enzyme-fuer-die-industrie.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/neue-technologie-optimiert-enzyme-fuer-die-industrie.html",
+        "pubDate": "02 Nov 2026 00:00:00 GMT",
+        "descLength": 823,
+        "descText": "Enzyme bieten der Industrie großes Potenzial, Herstellungsverfahren effizient zu gestalten und neue Produktionswege zu e"
+      },
+      {
+        "title": "KI-gestützte Plattform soll Bevölkerung besser schützen",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/ki-gestuetzte-plattform-soll-bevoelkerung-besser-schuetzen.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/ki-gestuetzte-plattform-soll-bevoelkerung-besser-schuetzen.html",
+        "pubDate": "02 Nov 2026 00:00:00 GMT",
+        "descLength": 833,
+        "descText": "Extremwetterereignisse, Blackouts oder Großschadenslagen: Wenn jede Sekunde zählt, müssen Behörden und Kommunen schnell "
+      },
+      {
+        "title": "Mehr Lebensqualität bei Bauchspeicheldrüsenkrebs durch KI-basiertes Monitoring und Interventionsplanung",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/mehr-lebensqualitaet-bei-bauchspeicheldruesenkrebs.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/mehr-lebensqualitaet-bei-bauchspeicheldruesenkrebs.html",
+        "pubDate": "02 Nov 2026 00:00:00 GMT",
+        "descLength": 882,
+        "descText": "Das Pankreaskarzinom gehört zu den aggressivsten Krebsarten mit einer ungünstigen Prognose. Das Ziel der Partner im EU-P"
+      },
+      {
+        "title": "Bojen – Kommunikationsschnittstelle zwischen Unter- und Überwasserwelt",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/bojen-kommunikationsschnittstelle-zwischen-unter-und-ueberwasserwelt.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/november-2026/bojen-kommunikationsschnittstelle-zwischen-unter-und-ueberwasserwelt.html",
+        "pubDate": "01 Nov 2026 00:00:00 GMT",
+        "descLength": 737,
+        "descText": "Angesichts geopolitischer Verwerfungen gewinnt der Schutz kritischer maritimer Infrastrukturen massiv an Bedeutung. Das "
+      },
+      {
+        "title": "Bundesforschungsministerin Bär aktiviert Netz zur Quantenkommunikation zwischen Bayern, Thüringen und Berlin",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/abschluss-der-qunet-initiative.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/abschluss-der-qunet-initiative.html",
+        "pubDate": "28 Oct 2026 14:00:00 GMT",
+        "descLength": 695,
+        "descText": "Mit einer Live-Demonstration schloss die vom Bundesministerium für Forschung, Technologie und Raumfahrt (BMFTR) mit 125 "
+      },
+      {
+        "title": "Prof. Franziska Boenisch führt mit Prof. Georg Sigl das Fraunhofer AISEC",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/neues-leitungsduo-fuer-cybersicherheitsforschung.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/neues-leitungsduo-fuer-cybersicherheitsforschung.html",
+        "pubDate": "22 Oct 2026 00:00:00 GMT",
+        "descLength": 885,
+        "descText": "Mit Wirkung zum 1. Oktober 2026 ist Prof. Franziska Boenisch Institutsleiterin des Fraunhofer-Instituts für Angewandte u"
+      },
+      {
+        "title": "Prof. Michael Sedlmair leitet das Institut gemeinsam mit Dr. Matthias Unbescheiden",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/Fraunhofer-igd-erweitert-institutsleitung.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/Fraunhofer-igd-erweitert-institutsleitung.html",
+        "pubDate": "07 Oct 2026 00:00:00 GMT",
+        "descLength": 994,
+        "descText": "Seit 1. Oktober 2026 verstärkt Prof. Michael Sedlmair die Institutsleitung des Fraunhofer-Instituts für Graphische Daten"
+      },
+      {
+        "title": "Spatenstich: Neuer Fraunhofer-Standort in Cottbus stärkt Strukturwandel und Transfer",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/spatenstich-neuer-fraunhofer-standort-in-cottbus-staerkt-strukturwandel-und-transfer.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/spatenstich-neuer-fraunhofer-standort-in-cottbus-staerkt-strukturwandel-und-transfer.html",
+        "pubDate": "01 Oct 2026 00:00:00 GMT",
+        "descLength": 659,
+        "descText": "Fraunhofer wächst in Cottbus: Mit zwei Fraunhofer-Neubauten entstehen im Lausitz Science Park neue Innovationszentren fü"
+      },
+      {
+        "title": "Ungereinigtes Meerwasser im Elektrolyseur: Fraunhofer testet Materialien und Membranen",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/ungereinigtes-meerwasser-im-elektrolyseur-fraunhofer-testet-materialien-und-membranen.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/ungereinigtes-meerwasser-im-elektrolyseur-fraunhofer-testet-materialien-und-membranen.html",
+        "pubDate": "01 Oct 2026 00:00:00 GMT",
+        "descLength": 845,
+        "descText": "Meer- und Brackwasser könnten künftig als alternative Wasserressourcen für die Wasserstoffproduktion dienen. Die Herausf"
+      },
+      {
+        "title": "Innovative Pflaster lassen Wunden schneller heilen",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/innovative-pflaster-lassen-wunden-schneller-heilen.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/innovative-pflaster-lassen-wunden-schneller-heilen.html",
+        "pubDate": "01 Oct 2026 00:00:00 GMT",
+        "descLength": 588,
+        "descText": "Nicht jede Verletzung heilt problemlos ab. Besonders Menschen mit Vorerkrankungen wie Diabetes leiden häufig an chronisc"
+      },
+      {
+        "title": "Nachhaltige Drucktinten für die Herstellung von funktionellen Organen",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/nachhaltige-drucktinten-fuer-die-herstellung-von-funktionellen-organen.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/nachhaltige-drucktinten-fuer-die-herstellung-von-funktionellen-organen.html",
+        "pubDate": "01 Oct 2026 00:00:00 GMT",
+        "descLength": 831,
+        "descText": "Der 3D-Biodruck eröffnet neue Möglichkeiten für die Herstellung von Organen und Geweben, die beispielsweise in der Organ"
+      },
+      {
+        "title": "Osteoporose frühzeitig erkennen – automatisiert und zuverlässig",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/osteoporose-fruehzeitig-erkennen-automatisiert-und-zuverlaessig.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/osteoporose-fruehzeitig-erkennen-automatisiert-und-zuverlaessig.html",
+        "pubDate": "01 Oct 2026 00:00:00 GMT",
+        "descLength": 791,
+        "descText": "Osteoporose gehört zu den häufigsten Ursachen für Knochenbrüche im Alter. Dennoch bleibt der Knochenschwund oft unerkann"
+      },
+      {
+        "title": "Einbau von Wärmepumpen beschleunigen",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/einbau-von-waermepumpen-beschleunigen.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/einbau-von-waermepumpen-beschleunigen.html",
+        "pubDate": "01 Oct 2026 00:00:00 GMT",
+        "descLength": 823,
+        "descText": "Die Wärmepumpe ist eine effiziente und zukunftssichere Schlüsseltechnologie, um die Wärmewende umzusetzen und die Klimaz"
+      },
+      {
+        "title": "Nachhaltig sitzen und liegen",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/nachhaltig-sitzen-und-liegen.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/oktober-2026/nachhaltig-sitzen-und-liegen.html",
+        "pubDate": "01 Oct 2026 00:00:00 GMT",
+        "descLength": 531,
+        "descText": "Polster für Möbel, Matratzen und Fahrzeugsitze bestehen überwiegend aus Polyurethan-Schäumen, die auf Erdöl basieren. Fr"
+      },
+      {
+        "title": "Vom Forschungsergebnis zum Start-up",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/fraunhofer-auf-der-bits-and-pretzels-2026.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/fraunhofer-auf-der-bits-and-pretzels-2026.html",
+        "pubDate": "21 Sep 2026 00:00:00 GMT",
+        "descLength": 545,
+        "descText": "Deutschland investiert mit der Hightech-Agenda Milliarden in Schlüsseltechnologien. Aber die entscheidende Frage lautet:"
+      },
+      {
+        "title": "Sein Innovationsgeist ist bis heute Vorbild: Joseph von Fraunhofers historische Glashütte wiedereröffnet",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/sein-innovationsgeist-ist-bis-heute-vorbild-joseph-von-fraunhofers-historische-glashuette-wiedereroeffnet.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/sein-innovationsgeist-ist-bis-heute-vorbild-joseph-von-fraunhofers-historische-glashuette-wiedereroeffnet.html",
+        "pubDate": "18 Sep 2026 00:00:00 GMT",
+        "descLength": 901,
+        "descText": "Deutschland steht vor großen Herausforderungen: In der Forschung zählt das Land zur Weltspitze, doch viele Innovationen "
+      },
+      {
+        "title": "Chemikalien testen – ohne Tierversuche",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/chemikalien-testen-ohne-tierversuche.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/chemikalien-testen-ohne-tierversuche.html",
+        "pubDate": "01 Sep 2026 00:00:00 GMT",
+        "descLength": 876,
+        "descText": "Wie lassen sich Chemikalien künftig sicher bewerten – mit weniger Tierversuchen und zugleich starker wissenschaftlicher "
+      },
+      {
+        "title": "Nachhaltiges Flammschutzmittel aus Maisquellwasser",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/nachhaltiges-flammschutzmittel-aus-maisquellwasser.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/nachhaltiges-flammschutzmittel-aus-maisquellwasser.html",
+        "pubDate": "01 Sep 2026 00:00:00 GMT",
+        "descLength": 663,
+        "descText": "Halogenhaltige Flammschutzmittel sind ökologisch bedenklich und gelten als gesundheitsgefährdend. Daher wird seit vielen"
+      },
+      {
+        "title": "Exoskelett soll künftig Menschen mit Plexuslähmung den Alltag erleichtern",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/exoskelett-soll-kuenftig-menschen-mit-plexuslaehmung-den-alltag-erleichtern.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/exoskelett-soll-kuenftig-menschen-mit-plexuslaehmung-den-alltag-erleichtern.html",
+        "pubDate": "01 Sep 2026 00:00:00 GMT",
+        "descLength": 880,
+        "descText": "Der Plexus brachialis, auch Armnervengeflecht genannt, überträgt motorische und sensorische Signale zwischen dem Rückenm"
+      },
+      {
+        "title": "Mikrochips nachhaltiger produzieren",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/mikrochips-nachhaltiger-produzieren.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/september-2026/mikrochips-nachhaltiger-produzieren.html",
+        "pubDate": "01 Sep 2026 00:00:00 GMT",
+        "descLength": 541,
+        "descText": "Mit der steigenden Nachfrage nach Mikrochips wächst auch der ökologische Fußabdruck ihrer Herstellung. Im EU-Projekt GEN"
+      },
+      {
+        "title": "Innovationsfreiheit als Motor für die Industrie: Schnelle untergesetzliche Maßnahmen für den Technologietransfer gefordert",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/august-2026/gemeinsames-positionspapier-von-fraunhofer-gesellschaft-und-bdi.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/august-2026/gemeinsames-positionspapier-von-fraunhofer-gesellschaft-und-bdi.html",
+        "pubDate": "28 Aug 2026 00:00:00 GMT",
+        "descLength": 926,
+        "descText": "Deutschlands Forschungsstärke schafft nur dann dauerhaft Innovation, Wertschöpfung und technologische Souveränität, wenn"
+      },
+      {
+        "title": "Prof. Christoph Igel verstärkt Institutsleitung am Fraunhofer FKIE",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/august-2026/prof-christoph-igel-verstaerkt-institutsleitung-am-fraunhofer-fkie.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/august-2026/prof-christoph-igel-verstaerkt-institutsleitung-am-fraunhofer-fkie.html",
+        "pubDate": "17 Aug 2026 00:00:00 GMT",
+        "descLength": 827,
+        "descText": "Prof. Christoph Igel ist mit Wirkung zum 15. August 2026 zum Institutsleiter des Fraunhofer-Instituts für Kommunikation,"
+      },
+      {
+        "title": "Prof. Marc Eichhorn verstärkt die Institutsleitung des Fraunhofer IOSB",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/august-2026/prof-marc-eichhorn-verstaerkt-die-institutsleitung-des-fraunhofer-iosb.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/august-2026/prof-marc-eichhorn-verstaerkt-die-institutsleitung-des-fraunhofer-iosb.html",
+        "pubDate": "05 Aug 2026 00:00:00 GMT",
+        "descLength": 740,
+        "descText": "Das Fraunhofer-Institut für Optronik, Systemtechnik und Bildauswertung IOSB erweitert seine Institutsleitung. Prof. Marc"
+      },
+      {
+        "title": "Haarstyling-Produkte tierversuchsfrei testen",
+        "link": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/august-2026/haarstyling-produkte-tierversuchsfrei-testen.html",
+        "guid": "https://www.fraunhofer.de/content/zv/de/presse/presseinformationen/2026/august-2026/haarstyling-produkte-tierversuchsfrei-testen.html",
+        "pubDate": "03 Aug 2026 00:00:00 GMT",
+        "descLength": 1032,
+        "descText": "Haarprodukte in Friseursalons setzen Aerosole frei, die beim Einatmen zu Atemwegsreizungen führen können. Im Industrieau"
+      }
+    ]
+  },
+  "/content/zv/de/rss/veranstaltungen.rss": {
+    "status": 200,
+    "contentType": "text/html;charset=utf-8",
+    "wellFormed": true,
+    "channel": {
+      "title": "Fraunhofer-Veranstaltungen",
+      "description": "Veranstaltungen",
+      "link": "https://www.fraunhofer.de",
+      "language": "de",
+      "category": "events",
+      "managingEditor": "online-redaktion@zv.fraunhofer.de",
+      "copyright": "Copyright Fraunhofer-Gesellschaft",
+      "ttl": "5"
+    },
+    "items": []
+  }
+}

@@ -1,0 +1,59 @@
+import { test, expect } from '@playwright/test';
+import { parseFeed, diffFeed, endOf, diffEventList, diffSearch, type FeedState, type EventListState, type SearchState } from '../../fixtures/publish-snapshots.js';
+
+/** Reine Logik der Feed- und Listenvergleiche (ohne AEM). */
+test.describe('Publish-Referenzen: Feeds und Event-Listen (Logik)', { tag: '@unit' }, () => {
+  const xml = `<?xml version="1.0"?><rss><channel><title>Presse</title><language>de</language><ttl>5</ttl>
+    <image><title>Logo</title></image>
+    <item><title><![CDATA[Strom & Wärme]]></title><link>https://x/a</link><guid>g1</guid><description>&lt;p&gt;Text &amp;amp; mehr&lt;/p&gt;</description><pubDate>02 Nov 2026 00:00:00 GMT</pubDate></item>
+    <item><title>Zweiter</title><link>https://x/b</link><guid>g2</guid><description></description><pubDate>01 Nov 2026 00:00:00 GMT</pubDate></item></channel></rss>`;
+
+  test('Feed: Kanal und Einträge werden gelesen, CDATA und maskiertes HTML aufgelöst', () => {
+    const f = parseFeed(xml);
+    expect(f.channel.title).toBe('Presse'); // nicht der Titel im image-Block
+    expect(f.channel.ttl).toBe('5');
+    expect(f.items).toHaveLength(2);
+    expect(f.items[0].title).toBe('Strom & Wärme');
+    expect(f.items[0].descText).toBe('Text & mehr');
+  });
+
+  test('Feed: Abweichungen werden benannt, Gleichheit meldet nichts', () => {
+    const base: FeedState = { status: 200, contentType: 'text/xml', wellFormed: true, ...parseFeed(xml) };
+    expect(diffFeed('f', base, structuredClone(base))).toEqual([]);
+    const changed = structuredClone(base);
+    changed.items[1].title = 'Anders';
+    changed.items.pop();
+    changed.contentType = 'text/html';
+    const problems = diffFeed('f', base, changed).join('\n');
+    expect(problems).toContain('Content-Type');
+    expect(problems).toContain('1 Einträge, vorher 2');
+    expect(diffFeed('f', base, { ...base, status: 500 })).toEqual(['f: HTTP 500']);
+  });
+
+  test('Datum: Ende des Zeitraums, auch bei einem einzelnen Tag und ohne Datum', () => {
+    expect(endOf('24. November 2026 - 25. November 2026')?.getDate()).toBe(25);
+    expect(endOf('11. Januar 2027')?.getMonth()).toBe(0);
+    expect(endOf('März 2027')).toBeNull();
+  });
+
+  test('Suche: Toleranz bei Trefferzahl und Spitzentreffern', () => {
+    const hits = (n: number) => Array.from({ length: 10 }, (_, i) => ({ href: `/h${i + n}`, title: `T${i + n}` }));
+    const was: SearchState = { total: 1000, top: hits(0) };
+    expect(diffSearch('x', was, { total: 1500, top: hits(0) })).toEqual([]); // wächst: in Ordnung
+    expect(diffSearch('x', was, { total: 950, top: hits(3) })).toEqual([]); // 7 von 10 gleich
+    expect(diffSearch('x', was, { total: 850, top: hits(0) })[0]).toContain('850 Treffer, vorher 1000');
+    expect(diffSearch('x', was, { total: 1000, top: hits(4) })[0]).toContain('nur 6 der 10 Spitzentreffer');
+    expect(diffSearch('x', was, { total: 0, top: [] })[0]).toContain('keine Treffer');
+  });
+
+  test('Liste: vergangene Einträge dürfen fehlen, laufende nicht, neue und geänderte werden gemeldet', () => {
+    const item = (href: string, date: string) => ({ href, title: href, place: 'Ort', date });
+    const was: EventListState = { items: [item('/alt', '1. Januar 2020'), item('/laufend', '1. Januar 2099'), item('/gleich', '2. Januar 2099')], detail: { href: '/laufend', text: 'A' } };
+    const now: EventListState = { items: [item('/gleich', '2. Januar 2099'), item('/neu', '3. Januar 2099')], detail: { href: '/laufend', text: 'A' } };
+    const problems = diffEventList('l', was, now, new Date('2026-11-24')).join('\n');
+    expect(problems).toContain('Eintrag fehlt: /laufend');
+    expect(problems).not.toContain('/alt');
+    expect(problems).toContain('neuer Eintrag: /neu');
+    expect(diffEventList('l', was, { ...now, items: [] }, new Date('2026-11-24'))).toEqual(['l: Liste ist leer']);
+  });
+});

@@ -2,8 +2,10 @@ import { test } from '../../fixtures/test-fixtures.js';
 import { titleEn, describeEn } from '../../fixtures/titles.js';
 import {
   CAPTURE_MODE, writeReference, collectNavLinks, findHreflangPairs, collectImages, imagePatterns,
-  IMAGE_PAGES, IMAGE_WIDTHS, NAV_PAGES,
+  IMAGE_PAGES, IMAGE_WIDTHS, NAV_PAGES, FEEDS, collectFeed, EVENT_LISTS, collectEventList,
+  SEARCH_TERMS, collectSearch, type FeedState, type EventListState, type SearchState,
 } from '../../fixtures/publish-snapshots.js';
+import { getAemConfig } from '../../config/env.js';
 
 /**
  * Erfasst den Vorher-Stand der Publish-Seiten (Navigation, Hreflang-Paare, Bilder) als Referenz-Dateien unter
@@ -31,6 +33,38 @@ test.describe('Regression: Referenzen erfassen (Vorher-Stand)', { tag: ['@toolin
     const pairs = await findHreflangPairs(page.request, publishPage.config().url);
     if (pairs.length < 5) throw new Error(`Nur ${pairs.length} Seitenpaare gefunden. Inhalt der Umgebung prüfen.`);
     writeReference('hreflang-pairs', pairs);
+  });
+
+  test('RSS-Feeds erfassen', titleEn('Capture the RSS feeds'), async ({ page, publishPage }) => {
+    const base = publishPage.config().url;
+    const ref: Record<string, FeedState> = {};
+    for (const feed of FEEDS) {
+      ref[feed] = await collectFeed(page, base, feed);
+      if (ref[feed].status !== 200 || !ref[feed].wellFormed) throw new Error(`Feed ${feed}: HTTP ${ref[feed].status}, wohlgeformt ${ref[feed].wellFormed}. Nicht als Vorher-Stand geeignet.`);
+    }
+    writeReference('feeds', ref);
+  });
+
+  test('Event- und Messelisten erfassen', titleEn('Capture the event and trade fair lists'), async ({ page, publishPage }) => {
+    const base = publishPage.config().url;
+    const ref: Record<string, EventListState> = {};
+    for (const list of EVENT_LISTS) {
+      ref[list] = await collectEventList(page, base, list);
+      if (!ref[list].items.length || !ref[list].detail.text) throw new Error(`Liste ${list}: ${ref[list].items.length} Einträge, Detailtext ${ref[list].detail.text ? 'da' : 'leer'}. Nicht als Vorher-Stand geeignet.`);
+    }
+    writeReference('events', ref);
+  });
+
+  test('Suchtreffer erfassen', titleEn('Capture the search results'), async ({ page, publishPage }) => {
+    test.skip(getAemConfig().env !== 'test', 'Der Such-Dienst antwortet nur auf TEST (auf DEV bleibt die Antwort aus, Stand 24.11.2026).');
+    test.setTimeout(240_000);
+    const base = publishPage.config().url;
+    const ref: Record<string, SearchState> = {};
+    for (const term of SEARCH_TERMS) {
+      ref[term] = await collectSearch(page, base, term);
+      if (ref[term].total === 0 || ref[term].top.length < 10) throw new Error(`Suche "${term}": ${ref[term].total} Treffer, ${ref[term].top.length} auf der ersten Seite. Nicht als Vorher-Stand geeignet.`);
+    }
+    writeReference('search', ref);
   });
 
   test('Bilder erfassen', titleEn('Capture the images'), async ({ page, publishPage }) => {

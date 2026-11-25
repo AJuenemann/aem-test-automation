@@ -3,8 +3,8 @@
 Playwright-/TypeScript-Testautomatisierung für die Fraunhofer AEM 6.5 LTS Migration
 (Tickets FHGWCMS-2415 / FHGWCMS-2416). Die Suite prüft über echte Redakteurs-
 Gesten, ob die Fraunhofer-Website nach dem Update wie vorher funktioniert. Sie
-umfasst 68 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
-inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen, 3 Referenz-Erfassungen und 144 Unit-Tests
+umfasst 71 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
+inklusive Login, dazu 11 Capture-Läufe für die Dialog-Referenzen, 5 Referenz-Erfassungen und 149 Unit-Tests
 ohne AEM (Stand 23.11.2026). Die vollständige Liste mit Ablauf und Erwartung steht in
 [`docs/TESTFAELLE.md`](docs/TESTFAELLE.md).
 

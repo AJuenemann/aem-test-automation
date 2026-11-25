@@ -1,0 +1,137 @@
+{
+  "Energie": {
+    "total": 23484,
+    "top": [
+      {
+        "href": "https://www.umsicht.fraunhofer.de/content/dam/umsicht/de/dokumente/jahresberichte/2014-jahresbericht-fraunhofer-umsicht.pdf",
+        "title": "Jahresbericht 2014 | Fraunhofer UMSICHT"
+      },
+      {
+        "href": "https://www.bigdata.fraunhofer.de/de/geschaeftsfelder/energie_umwelt/ki-projekte-energie-umwelt.html",
+        "title": "KI-Projekte »Energie & Umwelt«"
+      },
+      {
+        "href": "https://www.umsicht.fraunhofer.de/content/dam/umsicht/de/dokumente/newsletter/2018/UMSICHT-Newsletter-01-2018.pdf",
+        "title": "UMSICHT-Newsletter1/2018"
+      },
+      {
+        "href": "https://www.bigdata.fraunhofer.de/de/geschaeftsfelder/energie_umwelt.html",
+        "title": "Energie & Umwelt"
+      },
+      {
+        "href": "https://www.ibp.fraunhofer.de/content/dam/ibp/ibp-neu/de/dokumente/ibpmitteilungen/551-600/580.pdf",
+        "title": "IBP-Mitteilung 580"
+      },
+      {
+        "href": "https://www.ise.fraunhofer.de/content/dam/ise/de/documents/presseinformationen/2021/13_21_Presseinfo_ENIQ-Einweihung_final.pdf",
+        "title": "Fraunhofer-Gesellschaft eröffnet Showroom »ENIQ« auf dem EUREF-Campus in Berlin"
+      },
+      {
+        "href": "https://www.itwm.fraunhofer.de/content/dam/itwm/de/documents/PressemitteilungenPDF/2022/20220609_E-World.pdf",
+        "title": "Mit Mathe Energie effizient nutzen"
+      },
+      {
+        "href": "https://www.ipms.fraunhofer.de/content/dam/ipms/common/documents/2022/2022_IPMS_Messe-aaa_Pressemitteilung.pdf",
+        "title": "Miniaturisierung spart Energie in der industriellen"
+      },
+      {
+        "href": "https://www.umsicht.fraunhofer.de/content/dam/umsicht/de/dokumente/kompetenz/prozesse/bioenergy-innovationscluster-broschuere.pdf",
+        "title": "Fraunhofer Innovationscluster »Bioenergy«"
+      },
+      {
+        "href": "https://www.ise.fraunhofer.de/content/dam/ise/de/documents/presseinformationen/2024/1624_Allianz_PI_Sprecherwahl.pdf",
+        "title": "Neue Doppelspitze führt die Fraunhofer-Allianz Ener-gie"
+      }
+    ]
+  },
+  "Quantencomputer": {
+    "total": 1613,
+    "top": [
+      {
+        "href": "https://www.ipms.fraunhofer.de/content/dam/ipms/common/documents/2026/2026_IPMS_Pressemitteilung-QSolid.pdf",
+        "title": "QSolid zeigt, was deutsche Quantentechnologie leisten kann"
+      },
+      {
+        "href": "https://www.ipms.fraunhofer.de/de/press-media/press/2021/solid-state-based-quantum-computer-development/jcr:content/fixedContent/pressArticleParsys/linklistcomponent/linklistParsys/downloadcomponent/file.res/2021_IPMS_MatQu_Pressemitteilung.pdf",
+        "title": "Europäisches Gemeinschaftsprojekt schafft Wertschöpfungskette für industriell fertigbare Quantencomputer"
+      },
+      {
+        "href": "https://www.ipms.fraunhofer.de/content/dam/ipms/common/documents/2022/2022_IPMS_PhoQuant_Pressemitteilung.pdf",
+        "title": "Photonischer Quantencomputer made in Germany"
+      },
+      {
+        "href": "https://www.bigdata.fraunhofer.de/de/big-data/kuenstliche-intelligenz-und-maschinelles-lernen/quantum-ml.html",
+        "title": "Quantum Machine Learning: Kompetenzen, Forschung, Anwendung"
+      },
+      {
+        "href": "https://www.ipms.fraunhofer.de/content/dam/ipms/common/documents/2025/2025_IPMS_Pressemeldung_QSolid.pdf",
+        "title": "Externe Nutzer erhalten erstmals Zugang zum QSolid-Quantencomputer"
+      },
+      {
+        "href": "https://www.isit.fraunhofer.de/de/anwendungen/quantentechnologie/ionenfallen-fuer-quantencomputer.html",
+        "title": "Ionenfallen für Quantencomputer"
+      },
+      {
+        "href": "https://www.ipms.fraunhofer.de/content/dam/ipms/common/documents/2021/2021-04_IPMS_QUASAR-Pressemitteilung.pdf",
+        "title": "Auf dem Weg zum Quantenprozessor made in Germany"
+      },
+      {
+        "href": "https://www.ipms.fraunhofer.de/content/dam/ipms/common/documents/2025/2025-02_IPMS_Neue_Kryostate_Pressemitteilung.pdf",
+        "title": "Neue Kryostat-Anlagen bringen Qubit-Forschung auf den neusten Stand"
+      },
+      {
+        "href": "https://www.ipms.fraunhofer.de/content/dam/ipms/common/documents/2023/2022-IPMS_Quant-ID_Pressemitteilung.pdf",
+        "title": "Quantensichere Identitäten für eine digitale Zukunft"
+      },
+      {
+        "href": "https://www.ipms.fraunhofer.de/content/dam/ipms/common/documents/2026/2026_IPMS_Pressemitteilung_ICICDT.pdf",
+        "title": "Fraunhofer IPMS bringt internationale Elite des IC-Designs nach Dresden"
+      }
+    ]
+  },
+  "Müller": {
+    "total": 5456,
+    "top": [
+      {
+        "href": "https://www.iis.fraunhofer.de/content/dam/iis/de/doc/PR/pm_2016/20160530_NOP_Eroeffnung.pdf",
+        "title": "20160530_NOP_Eroeffnung_presseinformation"
+      },
+      {
+        "href": "https://www.iese.fraunhofer.de/blog/author/christoph-mueller/",
+        "title": "Christoph Müller, Autor des Blogs vom Fraunhofer IESE"
+      },
+      {
+        "href": "https://www.iese.fraunhofer.de/blog/author/nina-mueller/",
+        "title": "Nina Müller, Autor des Blogs vom Fraunhofer IESE"
+      },
+      {
+        "href": "https://www.iese.fraunhofer.de/blog/author/zai-mueller-zhang/",
+        "title": "Zai Müller-Zhang, Autor des Blogs vom Fraunhofer IESE"
+      },
+      {
+        "href": "https://www.hhi.fraunhofer.de/news/nachrichten/2022/beyond-explainable-ai-wojciech-samek-und-klaus-robert-mueller-veroeffentlichen-neues-buch-ueber-erklaerbare-ki.html",
+        "title": "Beyond Explainable AI: Wojciech Samek und Klaus-Robert Müller veröffentlichen neues Buch über Erklärbare KI"
+      },
+      {
+        "href": "https://www.weiterbildung.ifam.fraunhofer.de/de/ueber-uns/team/michaela-mueller.html",
+        "title": "Michaela Müller"
+      },
+      {
+        "href": "https://qualitaetssicherung.ifam.fraunhofer.de/de/ueber-uns/frauke-mueller.html",
+        "title": "Frauke Müller"
+      },
+      {
+        "href": "https://www.ccpe.fraunhofer.de/de/ueber-fraunhofer-ccpe/ccpe-team/torsten-mueller.html",
+        "title": "Torsten Müller"
+      },
+      {
+        "href": "https://www.leistungszentrum-simulation-software.de/content/dam/itwm/leistungszentrum-simulation/de/PDF/2024_02_PM_Mueller_Zhang.pdf",
+        "title": "PM_Müller_Zhang"
+      },
+      {
+        "href": "https://www.fraunhofer.de/de/schnelleinstieg/alumni/news/Connecting-Alumni-2/Mueller.html",
+        "title": "Eduard Müller"
+      }
+    ]
+  }
+}

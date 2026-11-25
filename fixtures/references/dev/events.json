@@ -1,0 +1,90 @@
+{
+  "/content/zv/de/veranstaltungen-messen/veranstaltungen": {
+    "items": [
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/leipzig-immune-oncology--lion--.html",
+        "title": "Leipzig Immune ONcology (LION)",
+        "place": "Leipzig",
+        "date": "24. November 2026 - 25. November 2026"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/correlative_materials_characterization_workshop.html",
+        "title": "6th Correlative Materials Characterization Workshop",
+        "place": "B CUBE - Center for Molecular Bioengineering",
+        "date": "25. November 2026 - 26. November 2026"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/emv-workshop.html",
+        "title": "Effizient zum EMV-konformen Produkt: Praxisnahe Methoden für Fehleranalyse und Designoptimierung",
+        "place": "InnoZent OWL, Paderborn",
+        "date": "25. November 2026"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/seminar-oberflaecheninspektion.html",
+        "title": "Seminar mit Praktikum: Oberflächeninspektion",
+        "place": "Fraunhofer-Institut für Optronik, Systemtechnik und Bildauswertung IOSB",
+        "date": "02. Dezember 2026 - 03. Dezember 2026"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/gianteye.html",
+        "title": "GiantEye Kundenevent",
+        "place": "Fraunhofer IIS – Entwicklungszentrum Röntgentechnik",
+        "date": "03. Dezember 2026, 12:00 – 18:00"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/fraunhofer-symposium.html",
+        "title": "Towards Germany – Japan Semiconductor & Microsystems Innovation",
+        "place": "Tokyo International Forum",
+        "date": "07. Dezember 2026 - 08. Dezember 2026"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/airbag.html",
+        "title": "AIRBAG 2026 - 17. Internationales Symposium über Fahrzeugsicherheitssysteme",
+        "place": "Mannheim, Germany",
+        "date": "08. Dezember 2026 - 10. Dezember 2026"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/chemnitzer-seminar-one-health.html",
+        "title": "Smart Sensor Systems for One Health",
+        "place": "Fraunhofer ENAS, Chemnitz",
+        "date": "08. Dezember 2026 - 09. Dezember 2026"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/seminar-korrosion-2026.html",
+        "title": "Online-Seminar »Einstieg in die Korrosion«",
+        "place": "Online",
+        "date": "10. Dezember 2026 - 11. Dezember 2026, jeweils ab 08.30 Uhr"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/ai4surfaces-2027.html",
+        "title": "ai4surfaces 2027",
+        "place": "Fraunhofer IFAM Bremen",
+        "date": "03. Februar 2027"
+      }
+    ],
+    "detail": {
+      "href": "/content/zv/de/veranstaltungen-messen/veranstaltungen/ai4surfaces-2027.html",
+      "text": "Forum / 03. Februar 2027 ai4surfaces 2027 Fraunhofer IFAM-Forum zur KI in der Oberflächentechnik: Entwicklung, Produktion und Qualitätssicherung Oberflächentechnik im Wandel Künstliche Intelligenz verändert die Art, wie Oberflächen entwickelt, beschichtet und geprüft werden. Doch wo endet der Hype – und wo beginnt der messbare Nutzen für Ihr Unternehmen? Das eintägige Fraunhofer IFAM-Forum ai4surfaces 2027 gibt Ihnen einen praxisnahen Überblick: von den Grundlagen der KI bis zu konkreten Anwendungen entlang der gesamten Prozesskette – mit Beispielen aus Lacktechnik, Vorbehandlung, Galvanotechn"
+    }
+  },
+  "/content/zv/de/veranstaltungen-messen/messen": {
+    "items": [
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/messen/2027/bau-2027.html",
+        "title": "Fraunhofer auf der BAU",
+        "place": "Messe München",
+        "date": "11. Januar 2027 - 15. Januar 2027"
+      },
+      {
+        "href": "/content/zv/de/veranstaltungen-messen/messen/2027/e-world-2027.html",
+        "title": "Fraunhofer IOSB-AST auf der E-world 2027",
+        "place": "Essen",
+        "date": "16. Februar 2027 - 18. Februar 2027"
+      }
+    ],
+    "detail": {
+      "href": "/content/zv/de/veranstaltungen-messen/messen/2027/bau-2027.html",
+      "text": "Messe München / 11. Januar 2027 - 15. Januar 2027 Fraunhofer auf der BAU Weltleitmesse für Architektur, Materialien, Systeme Messe BAU Halle C3, Stand 109 Transformation BAU: sicher, bezahlbar, nachhaltig Wie können wir schneller, ressourcenschonender und widerstandsfähiger bauen? Auf der BAU 2027 präsentieren zehn Fraunhofer-Institute konkrete Technologien für die Transformation der Bauwirtschaft. Die Fachleute zeigen Materialien, Verfahren und digitale Werkzeuge, mit denen sich Gebäude nachhaltiger planen, effizienter errichten und langfristig sicher betreiben lassen. Am Gemeinschaftsstand k"
+    }
+  }
+}

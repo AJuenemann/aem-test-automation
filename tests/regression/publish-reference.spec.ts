@@ -3,7 +3,10 @@ import { titleEn, describeEn } from '../../fixtures/titles.js';
 import {
   readReference, missingReferenceMessage, collectNavLinks, hreflangOf, collectImages, imagePatterns,
   type NavLink, type HreflangPair, IMAGE_PAGES, IMAGE_WIDTHS, NAV_PAGES,
+  FEEDS, collectFeed, diffFeed, type FeedState, EVENT_LISTS, collectEventList, diffEventList, type EventListState,
+  SEARCH_TERMS, collectSearch, diffSearch, type SearchState,
 } from '../../fixtures/publish-snapshots.js';
+import { getAemConfig } from '../../config/env.js';
 
 /**
  * Publish-Seiten wie vorher: Navigation, Sprachverweise und Bilder gegen den Vorher-Stand
@@ -61,6 +64,38 @@ test.describe('Regression: Publish-Seiten wie vorher (Navigation, Sprachverweise
       if (!/<html[^>]*\blang="en/i.test(enHtml)) problems.push(`${en}: html lang ist nicht en`);
     }
     expect(problems, `Hreflang-Abweichungen bei ${pairs!.length} Seitenpaaren.`).toEqual([]);
+  });
+
+  test('RSS-Feeds: Aufbau und Einträge sind unverändert', titleEn('RSS feeds: structure and entries are unchanged'), async ({ page, publishPage }) => {
+    test.setTimeout(120_000);
+    const base = publishPage.config().url;
+    const ref = readReference<Record<string, FeedState>>('feeds');
+    expect(ref, missingReferenceMessage('feeds')).not.toBeNull();
+    const problems: string[] = [];
+    for (const feed of FEEDS) problems.push(...diffFeed(feed, ref![feed], await collectFeed(page, base, feed)));
+    expect(problems.slice(0, 25), `Abweichungen in den Feeds (${problems.length}).`).toEqual([]);
+  });
+
+  test('Event und Messe: Listen und Detailseite sind unverändert', titleEn('Events and trade fairs: lists and detail page are unchanged'), async ({ page, publishPage }) => {
+    test.setTimeout(180_000);
+    const base = publishPage.config().url;
+    const ref = readReference<Record<string, EventListState>>('events');
+    expect(ref, missingReferenceMessage('events')).not.toBeNull();
+    const problems: string[] = [];
+    for (const list of EVENT_LISTS) problems.push(...diffEventList(list, ref![list], await collectEventList(page, base, list)));
+    expect(problems.slice(0, 25), `Abweichungen in den Listen (${problems.length}).`).toEqual([]);
+  });
+
+  // Der Such-Dienst antwortet auf DEV nicht (Anfrage bleibt auch nach 100 s ohne Antwort, 24.11.2026), daher nur TEST.
+  test('Globale Suche: Trefferzahl und Spitzentreffer wie vorher', { tag: '@env:test', ...titleEn('Global search: hit count and top hits as before') }, async ({ page, publishPage }) => {
+    test.skip(getAemConfig().env !== 'test', 'Der Such-Dienst antwortet nur auf TEST.');
+    test.setTimeout(240_000);
+    const base = publishPage.config().url;
+    const ref = readReference<Record<string, SearchState>>('search');
+    expect(ref, missingReferenceMessage('search')).not.toBeNull();
+    const problems: string[] = [];
+    for (const term of SEARCH_TERMS) problems.push(...diffSearch(term, ref![term], await collectSearch(page, base, term)));
+    expect(problems, `Abweichungen bei der Suche (${problems.length}).`).toEqual([]);
   });
 
   test('Bilder: laden in drei Fenstergrößen, scharf und unverändert', titleEn('Images: load at three window sizes, sharp and unchanged'), async ({ page, publishPage }) => {
