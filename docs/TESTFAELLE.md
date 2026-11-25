@@ -694,9 +694,9 @@ Sprachversionen.
 - **Stand DEV 24.11.2026**: 10 Veranstaltungen und 2 Messen.
 
 ### SEARCH-1 — Globale Suche (`tests/regression/publish-reference.spec.ts`, Tag `@env:test`)
-- **Vorbedingung**: nur TEST, Referenz `search.json`. Auf DEV bleibt die Antwort des Such-Dienstes
-  (`POST /bin/wcm/enterprisesearch/query`) aus: Er endet erst nach etwa 136 s mit 504 Gateway Timeout (25.11.2026, in den
-  Chrome-Entwicklertools im Reiter „Network" sichtbar). Der Test überspringt sich dort.
+- **Vorbedingung**: nur TEST, Referenz `search.json`. Die Enterprise Search ist auf DEV laut JET nicht
+  eingerichtet (25.11.2026): `POST /bin/wcm/enterprisesearch/query` endet dort erst nach etwa 136 s mit 504 Gateway
+  Timeout (in den Chrome-Entwicklertools im Reiter „Network" sichtbar). Der Test überspringt sich dort.
 - **Schritte**: Für „Energie", „Quantencomputer" und „Müller" die Ergebnisseite öffnen, wie sie das Suchformular aufruft
   (`/content/zv/de/suche.html?queryString=…`). Die Treffer lädt die Seite per Skript nach: auf die Überschrift
   „N Ergebnisse für …" und die Liste warten.

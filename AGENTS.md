@@ -97,6 +97,9 @@ Umfang: 82 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
 und 149 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
+**Datum:** Vor jeder Datumsangabe in Dokumenten und Meldungen `date` ausführen. Das Datum im Gesprächskontext kann veraltet
+sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen").
+
 ## Offene Aufgaben (Stand 25.11.2026, nicht aus den Augen verlieren)
 
 **Vorher-Stand ist gesichert** (Stand 25.11.2026, DEV und TEST laufen AEM 6.5.25.0):
@@ -137,12 +140,10 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
      MAN-09 (Asset-Version, Asset wiederherstellen) warten auf die Klärung mit JET (Testplan Kapitel 12, Nr. 13).
    - Kurssuche: `GET /bin/wcm/coursesearch/query`, der Parameter `currentPage` ist der **Seitenpfad**, keine Zahl (sonst 400).
      COURSE-1 prüft die Filter (Branche, Typ) nicht.
-3. **Such-Dienst auf DEV** (Testplan Kapitel 12, Nr. 16): `POST /bin/wcm/enterprisesearch/query` und
-   `GET /bin/wcm/enterprisesearch/suggest` hängen auf DEV-Publish und DEV-Author. Gemessen am 25.11.2026: Verbindung und
-   TLS stehen in 0,13 s, danach kommt 136 s lang nichts. Dann endet `query` mit **504 Gateway Timeout** (`application/json`,
-   leerer Inhalt, Header `server: Apache`) und `suggest` im selben Moment mit 200. Beide warten offenbar auf dieselbe
-   Quelle, vermutlich den Such-Index, der von DEV aus nicht erreichbar ist (wie das LDAP). Auf TEST antworten beide in
-   unter 1 s. SEARCH-1 läuft deshalb nur auf TEST.
+3. **Enterprise Search auf DEV** ist laut JET (25.11.2026) dort nicht eingerichtet. `POST /bin/wcm/enterprisesearch/query` und
+   `GET /bin/wcm/enterprisesearch/suggest` hängen auf DEV-Publish und DEV-Author (Verbindung in 0,13 s, danach 136 s nichts,
+   dann `query` mit 504 Gateway Timeout und `suggest` mit 200). Auf TEST antworten beide in unter 1 s. SEARCH-1 läuft
+   deshalb nur auf TEST; die globale Suche wird auf DEV nicht geprüft.
 
 ## Cockpit: Aufbau und Fallback
 

@@ -57,7 +57,7 @@ test.describe('Regression: Referenzen erfassen (Vorher-Stand)', { tag: ['@toolin
   });
 
   test('Suchtreffer erfassen', titleEn('Capture the search results'), async ({ page, publishPage }) => {
-    test.skip(getAemConfig().env !== 'test', 'Der Such-Dienst antwortet nur auf TEST (auf DEV bleibt die Antwort aus, Stand 24.11.2026).');
+    test.skip(getAemConfig().env !== 'test', 'Die Enterprise Search ist nur auf TEST eingerichtet (auf DEV nicht, JET 25.11.2026).');
     test.setTimeout(240_000);
     const base = publishPage.config().url;
     const ref: Record<string, SearchState> = {};

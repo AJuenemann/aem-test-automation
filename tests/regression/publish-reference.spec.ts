@@ -107,9 +107,9 @@ test.describe('Regression: Publish-Seiten wie vorher (Navigation, Sprachverweise
     expect(problems, `Abweichungen bei der Downloadsuche (${problems.length}).`).toEqual([]);
   });
 
-  // Der Such-Dienst antwortet auf DEV nicht (Anfrage bleibt auch nach 100 s ohne Antwort, 24.11.2026), daher nur TEST.
+  // Die Enterprise Search ist auf DEV nicht eingerichtet (JET 25.11.2026; die Anfrage endet dort nach 136 s mit 504), daher nur TEST.
   test('Globale Suche: Trefferzahl und Spitzentreffer wie vorher', { tag: '@env:test', ...titleEn('Global search: hit count and top hits as before') }, async ({ page, publishPage }) => {
-    test.skip(getAemConfig().env !== 'test', 'Der Such-Dienst antwortet nur auf TEST.');
+    test.skip(getAemConfig().env !== 'test', 'Die Enterprise Search ist nur auf TEST eingerichtet.');
     test.setTimeout(240_000);
     const base = publishPage.config().url;
     const ref = readReference<Record<string, SearchState>>('search');
