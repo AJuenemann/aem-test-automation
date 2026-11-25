@@ -108,6 +108,11 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
   sonst am 27.11.2026. Der Termin für TEST ist offen.
 - **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen den Tag vergleichen
   (`git diff vorher-stand-dev-20261125 -- tests/__snapshots__/dev fixtures`).
+  **Erinnerung an den Nutzer am 26.11.2026 (Tag des DEV-Upgrades), bestellt am 25.11.2026:** Der Hook
+  `.kiro/hooks/erinnerung-upgrade-dev-20261126.json` blendet sie bei der ersten Nachricht ab diesem Tag einmal ein
+  (Marker `.kiro/hooks/erinnerung-20261126.done`). Fehlt der Hinweis, den Nutzer trotzdem daran erinnern.
+- Fehlen die Samples auf TEST beim Upgrade, gilt der Vergleich gegen die DEV-Baselines (Entscheidung des Nutzers
+  25.11.2026: unkritisch, mit Samples auf TEST aber sicherer).
 
 1. **TEST-Baselines der Samples-Seiten** (vor dem TEST-Upgrade, Testplan Kapitel 12, Nr. 12 und 14). Voraussetzung:
    TEST läuft wieder sauber (Veröffentlichung auf Publish, Samples auf Author und Publish, Paket-Upload). Dann
@@ -120,8 +125,11 @@ als Testfall des Smoketests (einheitlich mit dem Testplan).
    - Ziel: manuell bleiben etwa MAN-02, MAN-11 (Social Media Wall) und ein Mailtest. MAN-09/MAN-10 (Asset-Version,
      Asset wiederherstellen) warten auf die Klärung mit JET (Testplan Kapitel 12, Nr. 13).
 3. **Such-Dienst auf DEV** (Testplan Kapitel 12, Nr. 16): `POST /bin/wcm/enterprisesearch/query` und
-   `GET /bin/wcm/enterprisesearch/suggest` antworten auf DEV-Publish und DEV-Author nicht (30 bis 100 s ohne Antwort),
-   auf TEST in unter 1 s. SEARCH-1 läuft deshalb nur auf TEST.
+   `GET /bin/wcm/enterprisesearch/suggest` hängen auf DEV-Publish und DEV-Author. Gemessen am 25.11.2026: Verbindung und
+   TLS stehen in 0,13 s, danach kommt 136 s lang nichts. Dann endet `query` mit **504 Gateway Timeout** (`application/json`,
+   leerer Inhalt, Header `server: Apache`) und `suggest` im selben Moment mit 200. Beide warten offenbar auf dieselbe
+   Quelle, vermutlich den Such-Index, der von DEV aus nicht erreichbar ist (wie das LDAP). Auf TEST antworten beide in
+   unter 1 s. SEARCH-1 läuft deshalb nur auf TEST.
 
 ## Cockpit: Aufbau und Fallback
 
