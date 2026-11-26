@@ -298,19 +298,31 @@ export async function eventDetailText(page: Page, base: string, href: string): P
   return page.evaluate(() => ((document.querySelector('.fhg-event-details') as HTMLElement | null)?.innerText ?? '').replace(/\s+/g, ' ').trim().slice(0, 600));
 }
 
-/** Abweichungen einer Liste vom Vorher-Stand. Einträge, deren Zeitraum inzwischen vorbei ist, dürfen aus der Liste fallen. */
+/**
+ * Abweichungen einer Liste vom Vorher-Stand. Einträge, deren Zeitraum heute endet oder vorbei ist, dürfen aus der Liste
+ * fallen (die Website blendet sie schon am letzten Tag aus, 26.11.2026). Die Liste zeigt nur die erste Seite: Für jeden so
+ * ausgefallenen Eintrag darf ein späterer Termin nachrücken.
+ */
 export function diffEventList(name: string, was: EventListState, now: EventListState, today = new Date()): string[] {
   const out: string[] = [];
   if (!now.items.length) return [`${name}: Liste ist leer`];
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const byHref = new Map(now.items.map((i) => [i.href, i]));
+  let expired = 0;
   for (const w of was.items) {
     const n = byHref.get(w.href);
     const end = endOf(w.date);
-    if (!n) { if (!end || end >= today) out.push(`${name}: Eintrag fehlt: ${w.title} (${w.href})`); continue; }
+    const ended = end !== null && new Date(end.getFullYear(), end.getMonth(), end.getDate()) <= startOfToday;
+    if (!n) {
+      if (ended) expired++;
+      else out.push(`${name}: Eintrag fehlt: ${w.title} (${w.href})`);
+      continue;
+    }
     for (const k of ['title', 'place', 'date'] as const) if (n[k] !== w[k]) out.push(`${name}: ${w.href} ${k} ist "${n[k]}", vorher "${w[k]}"`);
   }
   const was2 = new Set(was.items.map((i) => i.href));
-  for (const n of now.items) if (!was2.has(n.href)) out.push(`${name}: neuer Eintrag: ${n.title} (${n.href})`);
+  const added = now.items.filter((n) => !was2.has(n.href));
+  for (const n of added.slice(expired)) out.push(`${name}: neuer Eintrag: ${n.title} (${n.href})`);
   if (now.detail.href === was.detail.href && now.detail.text !== was.detail.text) out.push(`${name}: Detailseite ${was.detail.href} zeigt anderen Text`);
   return out;
 }

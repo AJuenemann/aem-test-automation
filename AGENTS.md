@@ -141,7 +141,10 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
      MAN-09 (Asset-Version, Asset wiederherstellen) warten auf die Klärung mit JET (Testplan Kapitel 12, Nr. 13).
    - Kurssuche: `GET /bin/wcm/coursesearch/query`, der Parameter `currentPage` ist der **Seitenpfad**, keine Zahl (sonst 400).
      COURSE-1 prüft die Filter (Branche, Typ) nicht.
-3. **Enterprise Search auf DEV** ist laut JET (25.11.2026) dort nicht eingerichtet. `POST /bin/wcm/enterprisesearch/query` und
+3. **Befund OVL-6 auf DEV (26.11.2026, vor dem Upgrade):** „Baum wiederherstellen" ausführen ist auf DEV rot, auf TEST
+   grün. Details in `docs/TESTFAELLE.md` (OVL-6). Mit JET klären, bevor das Upgrade-Ergebnis bewertet wird: Ein Rot
+   nach dem Upgrade ist sonst keine Regression des Upgrades.
+4. **Enterprise Search auf DEV** ist laut JET (25.11.2026) dort nicht eingerichtet. `POST /bin/wcm/enterprisesearch/query` und
    `GET /bin/wcm/enterprisesearch/suggest` hängen auf DEV-Publish und DEV-Author (Verbindung in 0,13 s, danach 136 s nichts,
    dann `query` mit 504 Gateway Timeout und `suggest` mit 200). Auf TEST antworten beide in unter 1 s. SEARCH-1 läuft
    deshalb nur auf TEST; die globale Suche wird auf DEV nicht geprüft.

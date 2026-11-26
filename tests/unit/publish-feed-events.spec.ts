@@ -62,7 +62,13 @@ test.describe('Publish-Referenzen: Feeds und Event-Listen (Logik)', { tag: '@uni
     const problems = diffEventList('l', was, now, new Date('2026-11-24')).join('\n');
     expect(problems).toContain('Eintrag fehlt: /laufend');
     expect(problems).not.toContain('/alt');
-    expect(problems).toContain('neuer Eintrag: /neu');
+    // Ein Eintrag (/alt) ist abgelaufen, daher darf genau ein neuer nachrücken: /neu wird nicht gemeldet.
+    expect(problems).not.toContain('neuer Eintrag: /neu');
+    const two = { ...now, items: [...now.items, item('/neu2', '4. Januar 2099')] };
+    expect(diffEventList('l', was, two, new Date('2026-11-24')).join('\n')).toContain('neuer Eintrag: /neu2');
+    // Endet ein Eintrag heute, darf er schon fehlen.
+    const today: EventListState = { items: [item('/heute', '26. November 2026')], detail: { href: '', text: '' } };
+    expect(diffEventList('l', today, { items: [item('/x', '1. Januar 2099')], detail: { href: '', text: '' } }, new Date('2026-11-26T12:00:00'))).toEqual([]);
     expect(diffEventList('l', was, { ...now, items: [] }, new Date('2026-11-24'))).toEqual(['l: Liste ist leer']);
   });
 });

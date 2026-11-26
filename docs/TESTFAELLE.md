@@ -82,7 +82,7 @@ grünem Lauf.
 | OVL-1/2 | Asset-Finder-Suche "Visitenkarten" / "Externe Links" liefert Treffer | Regressionstest | `regression/asset-finder.spec.ts` | DEV (23.11.2026), TEST |
 | OVL-3 | Asset setzen (leer) und ersetzen (vorhanden) | Regressionstest | `regression/download-fileupload.spec.ts` | DEV (23.11.2026), TEST |
 | OVL-4 | Formular über die Timeline erreichbar und abbrechbar | Regressionstest | `regression/tree-restore.spec.ts` | DEV, TEST |
-| OVL-6 | Gelöschte Unterseite wird zum Zeitpunkt davor wiederhergestellt | Regressionstest | `regression/tree-restore.spec.ts` | DEV (23.11.2026), TEST (24.11.2026) |
+| OVL-6 | Gelöschte Unterseite wird zum Zeitpunkt davor wiederhergestellt | Regressionstest | `regression/tree-restore.spec.ts` | TEST (26.11.2026); DEV seit 26.11.2026 rot (Befund) |
 | OVL-5 | Fehlerseite (404) entspricht Baseline | Regressionstest | `regression/error-pages.spec.ts` | DEV (24.11.2026), TEST |
 | LANG-1/2 | Sprachwahl "English" / "Deutsch" öffnet die Gegenseite | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | LANG-3 | Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
@@ -590,6 +590,11 @@ Sprachversionen.
   Anlegen vor B und das Löschen nach B; Laufzeit etwa 4 Minuten. Cleanup löscht die Testseite samt Unterseite.
   DEV 23.11.2026: 3 Wiederholungen grün.
 
+- **Befund DEV 26.11.2026 (vor dem Upgrade, AEM 6.5.25.0)**: Auf DEV rot, auf TEST am selben Tag grün, Code seit 24.11.2026
+  unverändert (am 24.11. auf DEV dreimal grün). Das Formular öffnet (OVL-4 grün), die Vorschau zeigt „Keine
+  wiederherstellbaren Versionen", „Wiederherstellen" bleibt gesperrt, eine Ladeschicht (`foundation-ui-mask`) liegt
+  darüber. Die Unterseite hat ihre Version (Audit: `VersionCreated`), `/bin/wcm/versiontree.json` liefert sie für den
+  gewählten Zeitpunkt wie am 25.11.2026. Ursache offen; nicht weiter angepasst, um den Befund nicht zu verdecken.
 ### OVL-5 — Fehlerseite (Publish, visuell) (`tests/regression/error-pages.spec.ts`)
 - **Testname**: „Fehlerseite (404) entspricht Baseline".
 - **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt; Baseline erzeugt. Pfad via
@@ -700,7 +705,8 @@ Sprachversionen.
   `.filterpage-results--item` mit Ort, Datum, Titel, Link). Dazu die Detailseite des Eintrags mit dem spätesten Ende, der einen
   Detailblock (`.fhg-event-details`) zeigt (manche Einträge leiten weiter, z. B. „e-world 2027").
 - **Erwartet**: Dieselben Einträge mit gleichem Titel, Ort und Datum wie im Vorher-Stand, gleicher Text des Detailblocks.
-  Einträge, deren Zeitraum inzwischen vorbei ist, dürfen aus der Liste fallen.
+  Einträge, deren Zeitraum heute endet oder vorbei ist, dürfen aus der Liste fallen (die Website blendet sie schon am
+  letzten Tag aus). Für jeden so ausgefallenen Eintrag darf auf der ersten Seite ein späterer Termin nachrücken.
 - **Stand DEV 24.11.2026**: 10 Veranstaltungen und 2 Messen.
 
 ### SEARCH-1 — Globale Suche (`tests/regression/publish-reference.spec.ts`, Tag `@env:test`)
