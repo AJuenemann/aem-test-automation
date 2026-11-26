@@ -1,0 +1,182 @@
+{
+  "component": "Bild-Leiste",
+  "dialogTitle": "Bild-Leiste",
+  "tabs": [
+    "Bild 1",
+    "Bildeigenschaften",
+    "Bild 2",
+    "Bildeigenschaften",
+    "Bild 3",
+    "Bildeigenschaften"
+  ],
+  "fields": [
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Titel",
+      "name": "./imageComponent1/image/properties/title",
+      "value": "Bild 1 Titel",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bild Alternativ Text",
+      "name": "./imageComponent1/image/properties/alt",
+      "value": "Bild 1 Alternativ Text",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Beschreibung übernehmen",
+      "name": "./imageComponent1/image/properties/usedescription",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bildbeschreibung",
+      "name": "./imageComponent1/image/properties/caption",
+      "value": "Donec erat lectus, tempus at ultrices in, vulputate sit amet quam. Vestibulum convallis ac massa quis suscipit. Nam in leo vel elit blandit feugiat pulvinar auctor eros. Quisque scelerisque ut nisl id dapibus. Nullam lacus libero, venenatis eu elit sed, porta ornare velit. Curabitur pharetra malesuada ex a molestie. Praesent leo augue, tincidunt non erat et, rutrum ultricies ipsum.",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright übernehmen",
+      "name": "./imageComponent1/image/properties/usecopyright",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright Angabe",
+      "name": "./imageComponent1/image/properties/meta",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Lightbox verwenden",
+      "name": "./imageComponent1/image/properties/lightbox",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Download-Button ausblenden",
+      "name": "./imageComponent1/image/properties/denyDownload",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Titel",
+      "name": "./imageComponent1/image/properties/title",
+      "value": "Bild 1 Titel",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bild Alternativ Text",
+      "name": "./imageComponent1/image/properties/alt",
+      "value": "Bild 1 Alternativ Text",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Beschreibung übernehmen",
+      "name": "./imageComponent1/image/properties/usedescription",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bildbeschreibung",
+      "name": "./imageComponent1/image/properties/caption",
+      "value": "Donec erat lectus, tempus at ultrices in, vulputate sit amet quam. Vestibulum convallis ac massa quis suscipit. Nam in leo vel elit blandit feugiat pulvinar auctor eros. Quisque scelerisque ut nisl id dapibus. Nullam lacus libero, venenatis eu elit sed, porta ornare velit. Curabitur pharetra malesuada ex a molestie. Praesent leo augue, tincidunt non erat et, rutrum ultricies ipsum.",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright übernehmen",
+      "name": "./imageComponent1/image/properties/usecopyright",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright Angabe",
+      "name": "./imageComponent1/image/properties/meta",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Lightbox verwenden",
+      "name": "./imageComponent1/image/properties/lightbox",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Download-Button ausblenden",
+      "name": "./imageComponent1/image/properties/denyDownload",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Titel",
+      "name": "./imageComponent1/image/properties/title",
+      "value": "Bild 1 Titel",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bild Alternativ Text",
+      "name": "./imageComponent1/image/properties/alt",
+      "value": "Bild 1 Alternativ Text",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Beschreibung übernehmen",
+      "name": "./imageComponent1/image/properties/usedescription",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bildbeschreibung",
+      "name": "./imageComponent1/image/properties/caption",
+      "value": "Donec erat lectus, tempus at ultrices in, vulputate sit amet quam. Vestibulum convallis ac massa quis suscipit. Nam in leo vel elit blandit feugiat pulvinar auctor eros. Quisque scelerisque ut nisl id dapibus. Nullam lacus libero, venenatis eu elit sed, porta ornare velit. Curabitur pharetra malesuada ex a molestie. Praesent leo augue, tincidunt non erat et, rutrum ultricies ipsum.",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright übernehmen",
+      "name": "./imageComponent1/image/properties/usecopyright",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright Angabe",
+      "name": "./imageComponent1/image/properties/meta",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Lightbox verwenden",
+      "name": "./imageComponent1/image/properties/lightbox",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Download-Button ausblenden",
+      "name": "./imageComponent1/image/properties/denyDownload",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures/test-fixtures.js';
 import { titleEn, describeEn } from '../../fixtures/titles.js';
-import { SAMPLE_COMPONENTS, samplePagePath } from '../../fixtures/samples-components.js';
+import { ALL_COMPONENTS, samplePagePath } from '../../fixtures/samples-components.js';
 import {
   hasReference,
   readReference,
@@ -22,7 +22,7 @@ import {
  * Laeuft gegen Author (DEV oder TEST ueber AEM_BASE_URL / AEM_SAMPLES_ROOT).
  */
 test.describe('Komponenten: Konfig-Dialog (Author)', { tag: '@level2-components', annotation: describeEn('Components: config dialog (author)') }, () => {
-  for (const c of SAMPLE_COMPONENTS) {
+  for (const c of ALL_COMPONENTS) {
     test(`Dialog "${c.label}": Reiter & Feldinhalte wie Referenz`, titleEn(`Dialog "${c.label}": tabs & field values match the reference`), async ({ samplesComponent }) => {
       test.skip(
         !hasReference(c.key),
@@ -32,7 +32,7 @@ test.describe('Komponenten: Konfig-Dialog (Author)', { tag: '@level2-components'
       test.setTimeout(120_000);
 
       await samplesComponent.open(samplePagePath(c));
-      await samplesComponent.openConfigDialog(c.component);
+      await samplesComponent.openConfigDialog(c.component, c.dialogTitle);
 
       // Dialog ist offen -> Komponente laedt korrekt.
       await expect(samplesComponent.dialog()).toBeVisible();

@@ -56,7 +56,7 @@ Bereich Komponenten (Tag `@level2-components`, Datei bleibt wegen der Baselines
 in `tests/basics/`).
 
 **Erweiterung (JET-Antworten 04.11., verifiziert und grün):**
-- Level 2: Komponenten-Dialoge (Author) für 11 priorisierte Komponenten auf
+- Level 2: Komponenten-Dialoge (Author) für 27 Komponenten (11 priorisierte, 16 weitere, 26.11.2026) auf
   `/content/samples`. Der richtige Dialog öffnet (Titelprüfung), alle sichtbaren
   Reiter, Felder gegen die Referenz befüllt, leere Felder werden gemeldet.
   Referenz via `npm run capture-dialogs` (Vorher-Stand, aus DEV erfasst).
@@ -92,8 +92,8 @@ in `tests/basics/`).
 Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und die Gesamtübersicht in
 `docs/TESTFAELLE.md`). Aktuell liegen keine Diag-Specs im Repo.
 
-Umfang: 82 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
-24 Komponenten, 4 Integrationstest, 29 Regressionstest), dazu 11 Capture-Läufe, 8 Referenz-Erfassungen
+Umfang: 113 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
+54 Komponenten, 4 Integrationstest, 30 Regressionstest), dazu 27 Capture-Läufe, 9 Referenz-Erfassungen
 und 149 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
@@ -103,17 +103,18 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
 ## Offene Aufgaben (Stand 25.11.2026, nicht aus den Augen verlieren)
 
 **Vorher-Stand ist gesichert** (Stand 25.11.2026, DEV und TEST laufen AEM 6.5.25.0):
-- Git-Tag **`vorher-stand-dev-20261125-3`** (maßgeblich): Baselines, Dialog-Referenzen, Publish-Referenzen inkl. Feeds,
-  Event/Messe, Kurssuche und Downloadsuche, dazu die Bildvergleiche echter Seiten (REAL-1..9). Die älteren Tags
-  `vorher-stand-dev-20261125` und `…-2` enthalten Kurs- und Downloadsuche (und der erste auch REAL-1..9) noch nicht.
-- Git-Tag **`vorher-stand-test-20261125-3`** (maßgeblich): Publish-Referenzen inkl. Suche, Kurs- und Downloadsuche, dazu
-  REAL-1..9. Die älteren Tags `vorher-stand-test-20261125` und `…-2` sind unvollständig. **Nicht dabei:** Baselines der Samples-Seiten auf TEST
+- Git-Tag **`vorher-stand-dev-20261126`** (maßgeblich): Baselines (inkl. 14 weitere Komponentenseiten), Dialog-Referenzen
+  (27 Komponenten), Publish-Referenzen inkl. Feeds, Event/Messe, Social Media Wall, Kurs- und Downloadsuche, dazu die
+  Bildvergleiche echter Seiten (REAL-1..9). Die Tags `vorher-stand-dev-20261125`, `…-2` und `…-3` sind unvollständig.
+- Git-Tag **`vorher-stand-test-20261126`** (maßgeblich): Publish-Referenzen inkl. Suche, Social Media Wall, Kurs- und
+  Downloadsuche, dazu REAL-1..9. Die Dialog-Referenzen gelten für beide Umgebungen. Die Tags `vorher-stand-test-20261125`,
+  `…-2` und `…-3` sind unvollständig. **Nicht dabei:** Baselines der Samples-Seiten auf TEST
   (Samples fehlen dort auf Author und Publish, die Baselines vom 17.11.2026 stammen vom alten Inhalt).
 - Zeitplan laut JET (25.11.2026): DEV-Author wird am **26.11.2026** per In-Place-Upgrade aktualisiert (Ende des Tages,
   sofern kein Rollback), DEV dann den Großteil des Tages offline. Der Publisher folgt hoffentlich gleichzeitig,
   sonst am 27.11.2026. Der Termin für TEST ist offen.
 - **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen den Tag vergleichen
-  (`git diff vorher-stand-dev-20261125-3 -- tests/__snapshots__/dev fixtures`).
+  (`git diff vorher-stand-dev-20261126 -- tests/__snapshots__/dev fixtures`).
   **Erinnerung an den Nutzer am 26.11.2026 (Tag des DEV-Upgrades), bestellt am 25.11.2026:** Der Hook
   `.kiro/hooks/erinnerung-upgrade-dev-20261126.json` blendet sie bei der ersten Nachricht ab diesem Tag einmal ein
   (Marker `.kiro/hooks/erinnerung-20261126.done`). Fehlt der Hinweis, den Nutzer trotzdem daran erinnern.

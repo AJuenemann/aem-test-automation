@@ -1,0 +1,14 @@
+{
+  "component": "FAQ Eintrag",
+  "dialogTitle": "FAQ Eintrag",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Frage *",
+      "name": "./question",
+      "value": "Warum gibt es Lorem ipsum?",
+      "empty": false
+    }
+  ]
+}

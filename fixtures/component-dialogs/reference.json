@@ -1,0 +1,14 @@
+{
+  "component": "Verweis",
+  "dialogTitle": "Referenzkomponente",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Absatz wählen",
+      "name": "./path",
+      "value": "/content/samples/de/components/gallery/mixed/jcr:content/contentPar/gallery2",
+      "empty": false
+    }
+  ]
+}

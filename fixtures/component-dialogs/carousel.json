@@ -1,0 +1,42 @@
+{
+  "component": "Karussell",
+  "dialogTitle": "Karussell",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Überschrift *",
+      "name": "./heading",
+      "value": "Test Karussell",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Unterüberschrift",
+      "name": "./subheading",
+      "value": "Abspielgeschindigkeit: 6000, Übergangszeit: 1000",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Abspielgeschwindigkeit",
+      "name": "./playSpeed",
+      "value": "6000",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Übergangszeit",
+      "name": "./transTime",
+      "value": "1000",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Trenner entfernen",
+      "name": "./removeSeperator",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

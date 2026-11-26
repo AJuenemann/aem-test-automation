@@ -1,0 +1,28 @@
+{
+  "component": "Herunterladen",
+  "dialogTitle": "Herunterladen",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Linktext",
+      "name": "./downloadText",
+      "value": "Space X",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "In neuem Fenster öffnen",
+      "name": "./downloadTarget",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Vorschau aktivieren",
+      "name": "./previewEnabled",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

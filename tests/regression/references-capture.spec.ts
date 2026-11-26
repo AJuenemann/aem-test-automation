@@ -4,7 +4,7 @@ import {
   CAPTURE_MODE, writeReference, collectNavLinks, findHreflangPairs, collectImages, imagePatterns,
   IMAGE_PAGES, IMAGE_WIDTHS, NAV_PAGES, FEEDS, collectFeed, EVENT_LISTS, collectEventList,
   SEARCH_TERMS, collectSearch, COURSE_TERMS, collectCourseSearch, DOWNLOAD_TERMS, collectDownloadSearch,
-  type FeedState, type EventListState, type SearchState,
+  WALL_PAGES, collectWall, type FeedState, type EventListState, type SearchState, type WallState,
 } from '../../fixtures/publish-snapshots.js';
 import { getAemConfig } from '../../config/env.js';
 
@@ -66,6 +66,16 @@ test.describe('Regression: Referenzen erfassen (Vorher-Stand)', { tag: ['@toolin
       if (ref[term].total === 0 || ref[term].top.length < 10) throw new Error(`Suche "${term}": ${ref[term].total} Treffer, ${ref[term].top.length} auf der ersten Seite. Nicht als Vorher-Stand geeignet.`);
     }
     writeReference('search', ref);
+  });
+
+  test('Social Media Wall erfassen', titleEn('Capture the social media wall'), async ({ page, publishPage }) => {
+    const base = publishPage.config().url;
+    const ref: Record<string, WallState> = {};
+    for (const p of WALL_PAGES) {
+      ref[p] = await collectWall(page.request, base, p);
+      if (!ref[p].pageHasWall) throw new Error(`Seite ${p} zeigt keine Wall. Nicht als Vorher-Stand geeignet.`);
+    }
+    writeReference('walls', ref);
   });
 
   test('Kurssuche erfassen', titleEn('Capture the course search'), async ({ page, publishPage }) => {

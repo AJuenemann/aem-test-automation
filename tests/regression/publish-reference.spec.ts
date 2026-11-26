@@ -6,6 +6,7 @@ import {
   FEEDS, collectFeed, diffFeed, type FeedState, EVENT_LISTS, collectEventList, diffEventList, type EventListState,
   SEARCH_TERMS, collectSearch, diffSearch, type SearchState,
   COURSE_TERMS, collectCourseSearch, DOWNLOAD_TERMS, collectDownloadSearch,
+  WALL_PAGES, collectWall, diffWall, type WallState,
 } from '../../fixtures/publish-snapshots.js';
 import { getAemConfig } from '../../config/env.js';
 
@@ -85,6 +86,16 @@ test.describe('Regression: Publish-Seiten wie vorher (Navigation, Sprachverweise
     const problems: string[] = [];
     for (const list of EVENT_LISTS) problems.push(...diffEventList(list, ref![list], await collectEventList(page, base, list)));
     expect(problems.slice(0, 25), `Abweichungen in den Listen (${problems.length}).`).toEqual([]);
+  });
+
+  test('Social Media Wall: Seiten und Dienst antworten wie vorher', titleEn('Social media wall: pages and service respond as before'), async ({ page, publishPage }) => {
+    test.setTimeout(120_000);
+    const base = publishPage.config().url;
+    const ref = readReference<Record<string, WallState>>('walls');
+    expect(ref, missingReferenceMessage('walls')).not.toBeNull();
+    const problems: string[] = [];
+    for (const p of WALL_PAGES) problems.push(...diffWall(p, ref![p], await collectWall(page.request, base, p)));
+    expect(problems, `Abweichungen bei der Social Media Wall (${problems.length}).`).toEqual([]);
   });
 
   test('Kurssuche: Trefferzahl und Spitzentreffer wie vorher', titleEn('Course search: hit count and top hits as before'), async ({ page, publishPage }) => {

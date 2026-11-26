@@ -1,0 +1,59 @@
+{
+  "component": "Newsticker",
+  "dialogTitle": "Newsticker",
+  "tabs": [
+    "Darstellung",
+    "'Alle' Verknüpfung"
+  ],
+  "fields": [
+    {
+      "tab": "Darstellung",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Newsbox (heading)",
+      "empty": false
+    },
+    {
+      "tab": "Darstellung",
+      "label": "RSS-Feed-URL *",
+      "name": "./rsslink",
+      "value": "https://www.fraunhofer.de/de/rss/presse.rss",
+      "empty": false
+    },
+    {
+      "tab": "Darstellung",
+      "label": "Höhe Newsbox",
+      "name": "./blocksize",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "'Alle' Verknüpfung",
+      "label": "Ziel-URL",
+      "name": "./link/path",
+      "value": "http://www.fraunhofer.de",
+      "empty": false
+    },
+    {
+      "tab": "'Alle' Verknüpfung",
+      "label": "Linktext",
+      "name": "./link/linkText",
+      "value": "Fraunhofer Gesellschaft",
+      "empty": false
+    },
+    {
+      "tab": "'Alle' Verknüpfung",
+      "label": "Hilfetext für Link",
+      "name": "./link/linkHelpText",
+      "value": "Fraunhofer Gesellschaft (Mouce-Over)",
+      "empty": false
+    },
+    {
+      "tab": "'Alle' Verknüpfung",
+      "label": "Link Title",
+      "name": "./link/linkTitle",
+      "value": "Fraunhofer Gesellschaft (Title)",
+      "empty": false
+    }
+  ]
+}

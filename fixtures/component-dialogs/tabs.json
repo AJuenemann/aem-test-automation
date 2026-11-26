@@ -1,0 +1,28 @@
+{
+  "component": "Reiternavigation",
+  "dialogTitle": "Reiternavigation",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Trenner entfernen",
+      "name": "./removeSeparator",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Titel",
+      "name": "./headline",
+      "value": "Lorel ipsum (Titel)",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Untertitel",
+      "name": "./description",
+      "value": "Donec at turpis id lectus scelerisque rhoncus nec ac eros",
+      "empty": false
+    }
+  ]
+}

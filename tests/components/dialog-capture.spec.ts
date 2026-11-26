@@ -1,6 +1,6 @@
 import { test } from '../../fixtures/test-fixtures.js';
 import { titleEn, describeEn } from '../../fixtures/titles.js';
-import { SAMPLE_COMPONENTS, samplePagePath } from '../../fixtures/samples-components.js';
+import { ALL_COMPONENTS, samplePagePath } from '../../fixtures/samples-components.js';
 import { writeReference, emptyFields } from '../../fixtures/dialog-reference.js';
 
 /**
@@ -29,11 +29,11 @@ const CAPTURE = process.env.CAPTURE_DIALOGS === '1';
 test.describe('Komponenten: Dialog-Capture (Referenz)', { tag: ['@tooling', '@level2-components'], annotation: describeEn('Components: dialog capture (reference)') }, () => {
   test.skip(!CAPTURE, 'Capture nur mit CAPTURE_DIALOGS=1 (erzeugt Referenz-Fixtures).');
 
-  for (const c of SAMPLE_COMPONENTS) {
+  for (const c of ALL_COMPONENTS) {
     test(`Dialog von "${c.label}" auslesen`, titleEn(`Read the dialog of "${c.label}"`), async ({ samplesComponent }) => {
       test.setTimeout(120_000);
       await samplesComponent.open(samplePagePath(c));
-      await samplesComponent.openConfigDialog(c.component);
+      await samplesComponent.openConfigDialog(c.component, c.dialogTitle);
       const snapshot = await samplesComponent.readSnapshot(c.component);
       await samplesComponent.closeDialog();
 

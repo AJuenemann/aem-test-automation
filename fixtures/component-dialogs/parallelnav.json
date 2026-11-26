@@ -1,0 +1,70 @@
+{
+  "component": "Parallelnavigation",
+  "dialogTitle": "Parallelnavigation",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Navigationsthema",
+      "name": "./navigationTopic",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Ziel-URL",
+      "name": "./navigationLinks/item0/./path",
+      "value": "/content/samples/de/components/navigations/content-navigation",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Linktext",
+      "name": "./navigationLinks/item0/./linkText",
+      "value": "Content navigation custom title",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Ziel-URL",
+      "name": "./navigationLinks/item1/./path",
+      "value": "/content/samples/de/components/navigations/content-navigation",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Linktext",
+      "name": "./navigationLinks/item1/./linkText",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Ziel-URL",
+      "name": "./navigationLinks/item2/./path",
+      "value": "/content/externallinklib/samples/de/FraunhoferIPK",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Linktext",
+      "name": "./navigationLinks/item2/./linkText",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Ziel-URL",
+      "name": "./navigationLinks/item3/./path",
+      "value": "/content/externallinklib/samples/de/FraunhoferIPT",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Linktext",
+      "name": "./navigationLinks/item3/./linkText",
+      "value": "FraunhoferIPT Custom Title",
+      "empty": false
+    }
+  ]
+}

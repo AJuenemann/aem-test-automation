@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { parseFeed, diffFeed, endOf, diffEventList, diffSearch, type FeedState, type EventListState, type SearchState } from '../../fixtures/publish-snapshots.js';
+import { parseFeed, diffFeed, endOf, diffEventList, diffSearch, diffWall, type FeedState, type EventListState, type SearchState } from '../../fixtures/publish-snapshots.js';
 
 /** Reine Logik der Feed- und Listenvergleiche (ohne AEM). */
 test.describe('Publish-Referenzen: Feeds und Event-Listen (Logik)', { tag: '@unit' }, () => {
@@ -34,6 +34,15 @@ test.describe('Publish-Referenzen: Feeds und Event-Listen (Logik)', { tag: '@uni
     expect(endOf('24. November 2026 - 25. November 2026')?.getDate()).toBe(25);
     expect(endOf('11. Januar 2027')?.getMonth()).toBe(0);
     expect(endOf('März 2027')).toBeNull();
+  });
+
+  test('Wall: Abweichung bei Status, Länge und Seite wird benannt', () => {
+    const was = { pageHasWall: true, status: 200, length: 0 };
+    expect(diffWall('w', was, { ...was })).toEqual([]);
+    const problems = diffWall('w', was, { pageHasWall: false, status: 500, length: 1200 }).join('\n');
+    expect(problems).toContain('zeigt nicht mehr die Wall');
+    expect(problems).toContain('HTTP 500, vorher 200');
+    expect(problems).toContain('1200 Byte, vorher 0');
   });
 
   test('Suche: Toleranz bei Trefferzahl und Spitzentreffern', () => {

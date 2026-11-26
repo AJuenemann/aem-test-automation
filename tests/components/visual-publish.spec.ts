@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { test, expect } from '../../fixtures/test-fixtures.js';
 import { titleEn, describeEn } from '../../fixtures/titles.js';
-import { SAMPLE_COMPONENTS, samplePagePath } from '../../fixtures/samples-components.js';
+import { ALL_COMPONENTS, samplePagePath } from '../../fixtures/samples-components.js';
 
 /**
  * Visuelle Regression der gerenderten Komponenten-Beispielseiten auf der
@@ -23,7 +23,7 @@ import { SAMPLE_COMPONENTS, samplePagePath } from '../../fixtures/samples-compon
 const stylePath = path.join(import.meta.dirname, '..', 'basics', 'screenshot.css');
 
 test.describe('Komponenten: Visuelle Regression (Publish)', { tag: ['@level2-components', '@visual'], annotation: describeEn('Components: visual regression (publish)') }, () => {
-  for (const c of SAMPLE_COMPONENTS) {
+  for (const c of ALL_COMPONENTS.filter((x) => x.visual !== false)) {
     test(`Gerenderte Seite "${c.label}" entspricht Baseline`, titleEn(`Rendered page "${c.label}" matches baseline`), async ({ publishPage }) => {
       const skipReason = publishPage.unavailableReason();
       test.skip(skipReason !== null, skipReason ?? '');

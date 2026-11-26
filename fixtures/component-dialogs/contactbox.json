@@ -1,0 +1,116 @@
+{
+  "component": "Kontaktbox",
+  "dialogTitle": "Kontaktbox",
+  "tabs": [
+    "Darstellung",
+    "Kontakte",
+    "Linkliste"
+  ],
+  "fields": [
+    {
+      "tab": "Darstellung",
+      "label": "Überschrift *",
+      "name": "./headline",
+      "value": "Contact Box (Heading)",
+      "empty": false
+    },
+    {
+      "tab": "Kontakte",
+      "label": "Kontakt Name",
+      "name": "./contactName",
+      "value": "Contact name",
+      "empty": false
+    },
+    {
+      "tab": "Kontakte",
+      "label": "E-mail",
+      "name": "./email",
+      "value": "email",
+      "empty": false
+    },
+    {
+      "tab": "Kontakte",
+      "label": "Telefon",
+      "name": "./phone",
+      "value": "123",
+      "empty": false
+    },
+    {
+      "tab": "Kontakte",
+      "label": "Fax",
+      "name": "./fax",
+      "value": "456",
+      "empty": false
+    },
+    {
+      "tab": "Kontakte",
+      "label": "Straße und Hausnummer",
+      "name": "./address/street",
+      "value": "Street address",
+      "empty": false
+    },
+    {
+      "tab": "Kontakte",
+      "label": "Stadt",
+      "name": "./address/locality",
+      "value": "Town/City",
+      "empty": false
+    },
+    {
+      "tab": "Kontakte",
+      "label": "PLZ",
+      "name": "./address/code",
+      "value": "Postcode",
+      "empty": false
+    },
+    {
+      "tab": "Kontakte",
+      "label": "Land",
+      "name": "./address/country",
+      "value": "Country",
+      "empty": false
+    },
+    {
+      "tab": "Linkliste",
+      "label": "Ziel-URL",
+      "name": "./contacts/item0/./path",
+      "value": "/content/externallinklib/samples/de/FraunhoferIKTS",
+      "empty": false
+    },
+    {
+      "tab": "Linkliste",
+      "label": "Linktext",
+      "name": "./contacts/item0/./linkText",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Linkliste",
+      "label": "Ziel-URL",
+      "name": "./contacts/item1/./path",
+      "value": "/content/externallinklib/samples/de/FraunhoferIPK",
+      "empty": false
+    },
+    {
+      "tab": "Linkliste",
+      "label": "Linktext",
+      "name": "./contacts/item1/./linkText",
+      "value": "FraunhoferIPK Custom Text",
+      "empty": false
+    },
+    {
+      "tab": "Linkliste",
+      "label": "Ziel-URL",
+      "name": "./contacts/item2/./path",
+      "value": "/content/samples/de/pages/standard-page",
+      "empty": false
+    },
+    {
+      "tab": "Linkliste",
+      "label": "Linktext",
+      "name": "./contacts/item2/./linkText",
+      "value": "",
+      "empty": true
+    }
+  ]
+}

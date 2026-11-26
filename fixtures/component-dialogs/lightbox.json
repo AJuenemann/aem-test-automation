@@ -1,0 +1,31 @@
+{
+  "component": "Lightbox",
+  "dialogTitle": "Lightbox",
+  "tabs": [
+    "Fließtext",
+    "Lightbox-Inhalt"
+  ],
+  "fields": [
+    {
+      "tab": "Fließtext",
+      "label": "Lightbox Code ID",
+      "name": "./richtext",
+      "value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ut est eu eros consequat laoreet. Donec urna erat, finibus iaculis hendrerit eget, pulvinar ac diam. Proin gravida arcu ac odio pharetra auctor. Donec consequat vehicula quam, nec maximus orci tristique eu. Praesent eu quam neque. Sed in eleifend sem, maximus eleifend velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis at fringilla nisi. Donec venenatis, tellus nec pulvinar cursus, arcu leo bibendum sapien, ac elementum lectus tortor ac nunc Lightbox aufmachen",
+      "empty": false
+    },
+    {
+      "tab": "Lightbox-Inhalt",
+      "label": "Tooltipp Text für Lightbox-Link",
+      "name": "./lightboxtitle",
+      "value": "Tooltipp Text für Lightbox-Link",
+      "empty": false
+    },
+    {
+      "tab": "Lightbox-Inhalt",
+      "label": "Lightbox-Inhalt",
+      "name": "./richtext2",
+      "value": "Aenean non erat molestie, ornare risus sed, semper ex. Fusce vestibulum neque nec augue semper, sit amet cursus turpis tincidunt. Etiam blandit rutrum erat. Sed tristique ultrices condimentum. Mauris vitae tempus magna. Donec quis dapibus nunc. Aliquam aliquam luctus lorem id tincidunt. Phasellus aliquam posuere sapien, a rhoncus dolor suscipit sed. Duis facilisis nec nulla a rutrum. Mauris consequat in metus eu ornare.",
+      "empty": false
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "component": "Slider klein",
+  "dialogTitle": "Slider klein",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Titel *",
+      "name": "./heading",
+      "value": "Sldier small",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Unterüberschrift",
+      "name": "./description",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Trenner entfernen",
+      "name": "./removeSeperator",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

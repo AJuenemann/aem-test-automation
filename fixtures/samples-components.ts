@@ -28,6 +28,10 @@ export interface SampleComponent {
    * Editor (Overlay-title). Beim Diag-Lauf verifizieren/nachschärfen.
    */
   component: string;
+  /** Titel des Konfig-Dialogs, wenn er vom Overlay-Titel `component` abweicht. */
+  dialogTitle?: string;
+  /** Bildvergleich auf Publish (Default: ja). `false` für Seiten mit wechselndem Inhalt. */
+  visual?: boolean;
 }
 
 /** Relativ zu AEM_SAMPLES_ROOT. */
@@ -49,6 +53,35 @@ export const SAMPLE_COMPONENTS: SampleComponent[] = [
   { key: 'filter', label: 'Filter', pagePath: '/filterpage/filterpage_v2', component: 'Filter 2.0' },
   { key: 'newsroom', label: 'Newsroom', pagePath: '/newsroom', component: 'Filter Newsroom' },
 ];
+
+/**
+ * Weitere Komponenten (nicht von JET priorisiert), Vorschlag aus den Beispielseiten unter /content/samples
+ * (Overlay-Titel per Diag gegen DEV am 26.11.2026 gelesen).
+ * Nicht dabei: "Text mit Asset". Sein Dialog blendet je nach Auswahl (Bild oder Video) andere Reiter ein, die Reiterliste
+ * ist daher nicht stabil lesbar. Fraunhofer kann die Auswahl ändern
+ * (Testplan Kapitel 12, Nr. 4): Eintrag ergänzen und Referenz erfassen (nur vor dem Upgrade).
+ */
+export const EXTRA_COMPONENTS: SampleComponent[] = [
+  { key: 'faq', label: 'FAQ Eintrag', pagePath: '/faq', component: 'FAQ Eintrag' },
+  { key: 'tabs', label: 'Reiternavigation', pagePath: '/tab', component: 'Reiternavigation' },
+  { key: 'textblock', label: 'Textblock extern', pagePath: '/textblock', component: 'Textblock extern', visual: false }, // Seitenhöhe wechselt (2381 bis 2447 px)
+  { key: 'socialwall', label: 'Social Media Wall', pagePath: '/social-media-wall', component: 'Social Media Wall' },
+  { key: 'carousel', label: 'Karussell', pagePath: '/carouselverbose', component: 'Karussell', visual: false }, // wechselnder Inhalt
+  { key: 'bcoverview', label: 'Visitenkarten-Übersicht', pagePath: '/businesscards-overview', component: 'Visitenkarten-Übersicht' },
+  { key: 'projectproducts', label: 'Projekte - Produkte', pagePath: '/project-products', component: 'Projekte - Produkte' },
+  { key: 'reference', label: 'Verweis', pagePath: '/reference', component: 'Verweis', dialogTitle: 'Referenzkomponente' },
+  { key: 'lightbox', label: 'Lightbox', pagePath: '/section/lightbox', component: 'Lightbox' },
+  { key: 'slidersmall', label: 'Slider klein', pagePath: '/sliders/slider-small', component: 'Slider klein' },
+  { key: 'contactbox', label: 'Kontaktbox', pagePath: '/teasers/teaser-contactbox', component: 'Kontaktbox' },
+  { key: 'newsbox', label: 'Newsticker', pagePath: '/teasers/teaser-newsbox', component: 'Newsticker' },
+  { key: 'teaserexternal', label: 'Externer Teaser', pagePath: '/teasers/teaser-external', component: 'Externer Teaser' },
+  { key: 'download', label: 'Herunterladen', pagePath: '/section/download-component', component: 'Herunterladen' },
+  { key: 'imagerow', label: 'Bild-Leiste', pagePath: '/section/image-row', component: 'Bild-Leiste' },
+  { key: 'parallelnav', label: 'Parallelnavigation', pagePath: '/navigations/parallel-navigation', component: 'Parallelnavigation' },
+];
+
+/** Alle Komponenten der Dialog- und Darstellungstests. */
+export const ALL_COMPONENTS: SampleComponent[] = [...SAMPLE_COMPONENTS, ...EXTRA_COMPONENTS];
 
 /** Absoluter Inhaltspfad einer Beispielseite (samplesRoot + pagePath). */
 export function samplePagePath(c: SampleComponent): string {

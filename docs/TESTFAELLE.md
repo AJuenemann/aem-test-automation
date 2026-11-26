@@ -44,8 +44,8 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 
 ## Gesamtübersicht (Stand 23.11.2026)
 
-82 AEM-Testfälle inklusive Login (LOGIN-1), dazu 11 Capture-Läufe (COMP-CAP)
-und 8 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 149 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+113 AEM-Testfälle inklusive Login (LOGIN-1), dazu 27 Capture-Läufe (COMP-CAP)
+und 9 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 149 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -71,9 +71,9 @@ grünem Lauf.
 | REP-1 | Seite aktivieren und wieder deaktivieren | Basisfunktionen (L1) | `basics/replication.spec.ts` | DEV, TEST |
 | ASSET-1 | Bild in einen Testordner der DAM hochladen und verarbeiten lassen | Basisfunktionen (L1) | `basics/asset-upload.spec.ts` | DEV, TEST |
 | ASSET-2 | Bild in einer Seite verwenden, Verweise zählen und über die Suche finden | Basisfunktionen (L1) | `basics/asset-usage.spec.ts` | DEV, TEST (24.11.2026) |
-| COMP-DLG-1..11 | Dialog "<Komponente>": Reiter & Feldinhalte wie Referenz | Komponenten (L2) | `components/dialog.spec.ts` | DEV (23.11.2026), TEST |
+| COMP-DLG-1..27 | Dialog "<Komponente>": Reiter & Feldinhalte wie Referenz | Komponenten (L2) | `components/dialog.spec.ts` | DEV (23.11.2026), TEST |
 | COMP-AUTH-1 | FAQ mit Textblock befüllen, im Editor und auf Publish prüfen | Komponenten (L2) | `components/component-authoring.spec.ts` | DEV, TEST |
-| COMP-VIS-1..11 | Gerenderte Seite "<Komponente>" entspricht Baseline | Komponenten (L2) | `components/visual-publish.spec.ts` | DEV (24.11.2026), TEST |
+| COMP-VIS-1..25 | Gerenderte Seite "<Komponente>" entspricht Baseline | Komponenten (L2) | `components/visual-publish.spec.ts` | DEV (24.11.2026), TEST |
 | VIS-1 | Gerenderte Seite entspricht Baseline (Testseite) | Komponenten (L2) | `basics/visual-regression.spec.ts` | DEV, TEST |
 | ACL-1 | AC-Tool-Konsole ist erreichbar | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
 | ACL-2 | AC-Tool-Bundles sind aktiv | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
@@ -91,6 +91,7 @@ grünem Lauf.
 | FEED-1 | RSS-Feeds: Aufbau und Einträge sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026), TEST (25.11.2026) |
 | EVT-1 | Event und Messe: Listen und Detailseite sind unverändert | Regressionstest | `regression/publish-reference.spec.ts` | DEV (24.11.2026), TEST (25.11.2026) |
 | SEARCH-1 | Globale Suche: Trefferzahl und Spitzentreffer wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | nur TEST (25.11.2026); auf DEV übersprungen |
+| WALL-1 | Social Media Wall: Seiten und Dienst antworten wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | DEV, TEST (26.11.2026) |
 | COURSE-1 | Kurssuche: Trefferzahl und Spitzentreffer wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | DEV, TEST (25.11.2026) |
 | DL-1 | Downloadsuche: Trefferzahl und Spitzentreffer wie vorher | Regressionstest | `regression/publish-reference.spec.ts` | DEV, TEST (25.11.2026) |
 | NAV-2 | Geänderter Navigationstitel erscheint auf Publish im Hauptmenü | Regressionstest | `regression/navigation-change.spec.ts` | DEV (24.11.2026); TEST rot: Replication blockiert |
@@ -403,7 +404,7 @@ Newsroom. Rein lesend — der Schreib-Guard ist nicht berührt.
 - **Nicht automatisiert**: „Vor dem Löschen entsteht eine Version" (manuell MAN-09, Testplan Kapitel 12, Nr. 13) ist über die UI nicht prüfbar. Nach dem Löschen
   zeigt die Ordner-Timeline keine Versionen, auch nicht mit Filter „Versionen" (Diag DEV 24.11.2026).
 - DEV 24.11.2026: 3 Wiederholungen grün; TEST 24.11.2026 grün.
-### COMP-DLG-1..11 — Konfig-Dialog je Komponente (`tests/components/dialog.spec.ts`)
+### COMP-DLG-1..27 — Konfig-Dialog je Komponente (`tests/components/dialog.spec.ts`)
 - **Vorbedingung**: angemeldet; Samples-Seite vorhanden; Referenz-Fixture je
   Komponente erzeugt (siehe Capture unten).
 - **Schritte**:
@@ -418,6 +419,12 @@ Newsroom. Rein lesend — der Schreib-Guard ist nicht berührt.
   Die angebotene Optionsliste zählt nicht.
 - **Stand**: grün auf DEV und TEST (16.11.2026). Die Referenzen sind aus DEV
   erfasst und gelten für beide Umgebungen.
+- **Weitere Komponenten (26.11.2026)**: Zu den 11 priorisierten kommen 16 Vorschläge aus den Beispielseiten
+  (`EXTRA_COMPONENTS` in `fixtures/samples-components.ts`): FAQ Eintrag, Reiternavigation, Textblock extern, Social Media
+  Wall, Karussell, Visitenkarten-Übersicht, Projekte - Produkte, Verweis (Dialog heißt „Referenzkomponente"), Lightbox,
+  Slider klein, Kontaktbox, Newsticker, Externer Teaser, Herunterladen, Bild-Leiste, Parallelnavigation. Referenz aus DEV
+  am 26.11.2026, zweimal hintereinander grün (55 von 55). Nicht dabei: „Text mit Asset": Sein Dialog blendet je nach
+  Auswahl (Bild oder Video) andere Reiter ein, die Reiterliste ist nicht stabil lesbar.
 - **Befund**: Leere Felder werden als Warnung ausgegeben (fachlicher
   Nachbesserungs-Befund — Samples-Inhalt fehlt), nicht stillschweigend geschluckt.
 - **Grenze**: Soll-Werte stammen aus dem aktuellen Stand (vor Migration). Fehlt
@@ -431,13 +438,16 @@ Newsroom. Rein lesend — der Schreib-Guard ist nicht berührt.
 - **Erwartet**: pro Komponente eine JSON mit Reitern/Feldern/Werten; leere Felder
   werden auf der Konsole gemeldet und sind vor dem Festschreiben zu klären.
 
-### COMP-VIS-1..11 — Visuelle Regression (Publish) (`tests/components/visual-publish.spec.ts`)
+### COMP-VIS-1..25 — Visuelle Regression (Publish) (`tests/components/visual-publish.spec.ts`)
 - **Testname**: „Gerenderte Seite "<Komponente>" entspricht Baseline".
 - **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt (bzw. aus `AEM_BASE_URL`
   ableitbar); Baseline erzeugt.
 - **Schritte**: gerenderte Komponenten-Beispielseite auf der Publish-Instanz
   aufnehmen und mit der Baseline vergleichen.
 - **Erwartet**: Screenshot stimmt innerhalb der Toleranz mit der Baseline überein.
+- **Weitere Komponenten (26.11.2026)**: 14 der 16 weiteren Seiten haben einen Bildvergleich, jeweils dreimal grün.
+  „Textblock extern" (Seitenhöhe wechselt zwischen 2381 und 2447 px) und „Karussell" (wechselnder Inhalt) sind nur über
+  ihren Dialog geprüft (`visual: false`). Baselines für DEV, auf TEST fehlen die Samples.
 - **Grenze**: nur Publish (JET-Vorgabe). Ohne Publish-URL überspringt sich der
   Test sauber. Baselines pro `AEM_ENV` getrennt (Vorher-/Nachher). Bekannte
   Unterschiede zwischen TEST und DEV (z.B. Tags, Newsroom-Sortierung) stehen in
@@ -724,6 +734,16 @@ Sprachversionen.
 - **Grenze**: Ein Bildvergleich zeigt Abweichungen, nicht ob sie gewollt sind. Nach dem Upgrade bewertet ein Mensch die
   Abweichungsbilder im Bericht.
 
+### WALL-1 — Social Media Wall (`tests/regression/publish-reference.spec.ts`)
+- **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt, Referenz `walls.json`. Nur lesend, ohne Login.
+- **Schritte**: Für fünf produktive Seiten mit Wall (IWS, IMTE, ENAS, UMSICHT-Suro, FEP, Vorschlag) die Seite laden
+  (enthält das Modul `social-media-wall`) und den Wall-Dienst `<Komponente>.items.html?offset=0` abrufen.
+- **Erwartet**: Seite und Dienst antworten wie im Vorher-Stand (HTTP-Status und Länge).
+- **Befund 26.11.2026**: Der Dienst antwortet auf DEV und TEST bei allen fünf Seiten mit HTTP 200 und **leerem Inhalt**
+  (0 Byte): Es werden keine Beiträge geliefert (Quelle laut Konfiguration u. a. Twitter, vermutlich ohne Zugang aus den
+  Test-Umgebungen). Der Vorher-Stand ist also „leer". Der Test erkennt, wenn der Dienst nach dem Upgrade ausfällt
+  (404, 500) oder plötzlich Inhalt liefert. Ob und wie Beiträge dargestellt werden, ist damit **nicht** geprüft.
+
 ### COURSE-1 — Kurssuche (`tests/regression/publish-reference.spec.ts`)
 - **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt, Referenz `course-search.json`. Nur lesend, ohne Login.
 - **Schritte**: Die Ergebnisseite `/content/academy/de/weiterbildung/suchergebnis` laden (ohne Begriff zeigt sie alle Kurse).
@@ -745,7 +765,7 @@ Sprachversionen.
 - **Grenze**: Dateiinhalt und Download sind nicht geprüft.
 
 ### REF-CAP — Vorher-Stand der Publish-Seiten erfassen (`tests/regression/references-capture.spec.ts`)
-- **Zweck**: erfasst Navigation, Hreflang-Paare, Bilder, RSS-Feeds, Event-/Messelisten, Kurs- und Downloadsuche und (nur TEST) Suchtreffer als
+- **Zweck**: erfasst Navigation, Hreflang-Paare, Bilder, RSS-Feeds, Event-/Messelisten, Social Media Wall, Kurs- und Downloadsuche und (nur TEST) Suchtreffer als
   Referenz unter `fixtures/references/<AEM_ENV>/`.
 - **Ausführen**: `CAPTURE_REFERENCES=1 npm run capture-references`. Ohne die Variable überspringt sich der Lauf.
 - **Schutz**: Eine vorhandene Referenz wird nicht überschrieben (Fehlermeldung). Neu erzeugen nur bewusst mit
@@ -930,7 +950,7 @@ Sprachversionen.
   für das Cockpit (Sprache EN). Der Titel im Test bleibt deutsch (Quelle für `--grep`, Baselines,
   Berichte). Der englische Name steht als Annotation `_title-en` bzw. `_describe-en` am Test
   (`fixtures/titles.ts`); der Unterstrich blendet sie im Playwright-HTML-Report aus.
-- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 101 AEM-Tests
+- **Fälle** (2): Die echte Testliste (`playwright test --list`) enthält zu jedem der 149 AEM-Tests
   (inkl. Login) `_title-en` und zu jeder Suite `_describe-en`, nichts ist leer oder unübersetzt.
   Der Katalog liefert zu jedem sichtbaren Test und jeder Datei den englischen Namen.
 - **Dazu erweitert**: `cockpit-catalog.spec.ts` (+1: liest `_title-en`/`_describe-en`, bei mehreren

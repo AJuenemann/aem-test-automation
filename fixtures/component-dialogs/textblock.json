@@ -1,0 +1,59 @@
+{
+  "component": "Textblock extern",
+  "dialogTitle": "Textblock extern",
+  "tabs": [
+    "Allgemein",
+    "HTML-Code"
+  ],
+  "fields": [
+    {
+      "tab": "Allgemein",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Externe Url mit vollständigen HTML-Dokument",
+      "empty": false
+    },
+    {
+      "tab": "Allgemein",
+      "label": "Zusammenfassung",
+      "name": "./summary",
+      "value": "Source: https://www.youtube.com/embed/GD0jVxhT2rc",
+      "empty": false
+    },
+    {
+      "tab": "Allgemein",
+      "label": "Please check to display the text on the whole available content width",
+      "name": "./useFullWidth",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Allgemein",
+      "label": "Text",
+      "name": "./richtext",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "HTML-Code",
+      "label": "HTML-Code-URI",
+      "name": "./code_uri",
+      "value": "https://www.youtube.com/embed/GD0jVxhT2rc",
+      "empty": false
+    },
+    {
+      "tab": "HTML-Code",
+      "label": "HTML-Codeeingabe",
+      "name": "./code",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "HTML-Code",
+      "label": "Basis Inhaltsstyles deaktivieren",
+      "name": "./disableContentStyles",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "component": "Externer Teaser",
+  "dialogTitle": "Externer Teaser",
+  "tabs": [
+    "Allgemein",
+    "HTML-Code"
+  ],
+  "fields": [
+    {
+      "tab": "Allgemein",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Externen Teaser mit HTML aus Url",
+      "empty": false
+    },
+    {
+      "tab": "Allgemein",
+      "label": "Zusammenfassung",
+      "name": "./summary",
+      "value": "Warum wird dieser Text erfasst, wenn der nicht angezeigt wird. (Summary)",
+      "empty": false
+    },
+    {
+      "tab": "Allgemein",
+      "label": "Please check to display the text on the whole available content width",
+      "name": "./useFullWidth",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Allgemein",
+      "label": "Text",
+      "name": "./richtext",
+      "value": "Der Text drunter kommt von: http://publish:4503/content/samples/de/components/section/text-with-asset/jcr:content/contentPar/sectioncomponent/sectionParsys/textwithasset/textComponent.html?wcmmode=disabled",
+      "empty": false
+    },
+    {
+      "tab": "HTML-Code",
+      "label": "HTML-Code-URI",
+      "name": "./code_uri",
+      "value": "https://aem-publish1-test.ws.fraunhofer.de/content/projekt-geofit/de/sitzungen-des-pa/jcr:content/contentPar/sectioncomponent/sectionParsys/textwithasset/textComponent.html",
+      "empty": false
+    },
+    {
+      "tab": "HTML-Code",
+      "label": "HTML-Codeeingabe",
+      "name": "./code",
+      "value": "ds asdsadsad sada",
+      "empty": false
+    },
+    {
+      "tab": "HTML-Code",
+      "label": "Basis Inhaltsstyles deaktivieren",
+      "name": "./disableContentStyles",
+      "value": "checked",
+      "empty": false
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "component": "Social Media Wall",
+  "dialogTitle": "Social Media Wall",
+  "tabs": [
+    "Allgemein",
+    "Einstellungen",
+    "Twitter"
+  ],
+  "fields": [
+    {
+      "tab": "Allgemein",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Social Media Inhalte aus allen Netzwerke",
+      "empty": false
+    },
+    {
+      "tab": "Einstellungen",
+      "label": "Unendliches Nachladen aktivieren",
+      "name": "./enableInfiniteScroll",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Einstellungen",
+      "label": "Anzahl der Items pro Stück",
+      "name": "./itemsPerChunk",
+      "value": "20",
+      "empty": false
+    },
+    {
+      "tab": "Einstellungen",
+      "label": "Tags Schwellenwert",
+      "name": "./filterbarTagsThreshold",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Einstellungen",
+      "label": "Filterbar deaktivieren",
+      "name": "./deactivateFilterbar",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Einstellungen",
+      "label": "Twitter deaktivieren",
+      "name": "./deactivateTwitter",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Twitter",
+      "label": "Twitter Nutzer",
+      "name": "./twitter/fromUsers",
+      "value": "MontanaBlack",
+      "empty": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "component": "Visitenkarten-Übersicht",
+  "dialogTitle": "Visitenkarten-Übersicht",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Überschrift *",
+      "name": "./headline",
+      "value": "Businesscard overview (Headline)",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Text",
+      "name": "./text",
+      "value": "Donec finibus suscipit elit vitae facilisis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sit amet condimentum leo, at imperdiet orci. Quisque ac enim consequat, imperdiet ipsum et, viverra diam. Donec ut eleifend odio. Integer malesuada vestibulum dictum. Pellentesque porta nisl ut lorem tincidunt, id ultrices ante convallis. Ut ullamcorper dolor eget pellentesque condimentum. Sed sed odio ac neque pulvinar ultricies nec tristique augue. (Text) 1 2 3",
+      "empty": false
+    }
+  ]
+}

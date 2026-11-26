@@ -78,12 +78,13 @@ export class SamplesComponentPage {
    * Konfigurations-Dialog über die Editable-Toolbar (Stift/Configure).
    * `component` ist der Overlay-title (Komponentenname).
    */
-  async openConfigDialog(component: string): Promise<void> {
+  async openConfigDialog(component: string, dialogTitle?: string): Promise<void> {
     const overlay = this.page.locator(`.cq-Overlay--component[title="${component}"]`).first();
     const toolbar = this.page.locator('#EditableToolbar');
     const configure = toolbar.locator('button[data-action="CONFIGURE"]').first();
     // Dialogtitel = Overlay-Titel ohne "[Stamm]" (gegen DEV verifiziert).
-    const expectedTitle = component.replace(/\s*\[Stamm\]\s*$/, '');
+    // Weicht der Dialogtitel vom Overlay-Titel ab (z. B. „Verweis" öffnet „Referenzkomponente"), steht er in `dialogTitle`.
+    const expectedTitle = dialogTitle ?? component.replace(/\s*\[Stamm\]\s*$/, '');
 
     // Klickpunkte in Reihenfolge. Die Ecke trifft Container (in deren Mitte
     // liegt ein Kind-Overlay obenauf: "Bereich" öffnete sonst "Tabelle"); die

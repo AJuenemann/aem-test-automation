@@ -364,6 +364,47 @@ export function diffSearch(term: string, was: SearchState, now: SearchState): st
   return out;
 }
 
+// --- Social Media Wall ----------------------------------------------------------------------
+
+/** Produktive Seiten mit Social Media Wall (Vorschlag aus dem Produktionsinhalt), Wall-Komponente je Seite. */
+export const WALL_PAGES = [
+  '/content/iws/de/newsundmedien/social-media-wall',
+  '/content/imte/en/press-media',
+  '/content/enas/de/geschaeftsfelder/micro_and_nanoelectronics',
+  '/content/umsicht-suro/en/press-and-media',
+  '/content/fep/en/press_media',
+];
+const WALL_COMPONENT = '/jcr:content/contentPar/social_media_wall';
+
+export interface WallState {
+  /** Die Seite liefert HTTP 200 und enthält das Modul `social-media-wall`. */
+  pageHasWall: boolean;
+  /** Antwort des Wall-Dienstes (`<Komponente>.items.html?offset=0`): Status und Länge in Byte. */
+  status: number;
+  length: number;
+}
+
+/**
+ * Die Beiträge lädt die Seite per Skript vom Wall-Dienst nach (AEM-Servlet, Quelle Twitter u. a.). Auf DEV und TEST
+ * antwortet er vor dem Upgrade mit HTTP 200 und leerem Inhalt, weil keine Beiträge geliefert werden (Stand 26.11.2026).
+ * Das ist der Vorher-Stand: Der Test erkennt, wenn der Dienst nach dem Upgrade nicht mehr antwortet (404 oder 500) oder
+ * plötzlich andere Beiträge liefert.
+ */
+export async function collectWall(request: APIRequestContext, base: string, pagePath: string): Promise<WallState> {
+  const page = await request.get(`${base}${pagePath}.html`, { failOnStatusCode: false });
+  const pageHasWall = page.status() === 200 && (await page.text()).includes('data-module="social-media-wall"');
+  const items = await request.get(`${base}${pagePath}${WALL_COMPONENT}.items.html?offset=0`, { failOnStatusCode: false });
+  return { pageHasWall, status: items.status(), length: (await items.body()).length };
+}
+
+export function diffWall(name: string, was: WallState, now: WallState): string[] {
+  const out: string[] = [];
+  if (now.pageHasWall !== was.pageHasWall) out.push(`${name}: Seite ${now.pageHasWall ? 'zeigt jetzt' : 'zeigt nicht mehr'} die Wall`);
+  if (now.status !== was.status) out.push(`${name}: Wall-Dienst antwortet mit HTTP ${now.status}, vorher ${was.status}`);
+  if (now.length !== was.length) out.push(`${name}: Wall-Dienst liefert ${now.length} Byte, vorher ${was.length}`);
+  return out;
+}
+
 // --- Kurs- und Downloadsuche ----------------------------------------------------------------
 
 /** Ergebnisseite der Kurssuche der Fraunhofer Academy. Ohne Suchbegriff zeigt sie alle Kurse. */

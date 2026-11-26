@@ -1,0 +1,27 @@
+{
+  "/content/iws/de/newsundmedien/social-media-wall": {
+    "pageHasWall": true,
+    "status": 200,
+    "length": 0
+  },
+  "/content/imte/en/press-media": {
+    "pageHasWall": true,
+    "status": 200,
+    "length": 0
+  },
+  "/content/enas/de/geschaeftsfelder/micro_and_nanoelectronics": {
+    "pageHasWall": true,
+    "status": 200,
+    "length": 0
+  },
+  "/content/umsicht-suro/en/press-and-media": {
+    "pageHasWall": true,
+    "status": 200,
+    "length": 0
+  },
+  "/content/fep/en/press_media": {
+    "pageHasWall": true,
+    "status": 200,
+    "length": 0
+  }
+}
