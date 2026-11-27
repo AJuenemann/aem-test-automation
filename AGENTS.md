@@ -115,12 +115,20 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
   sonst am 27.11.2026. Der Termin für TEST ist offen.
   **Verschoben (JET, 27.11.2026):** Die Pre-Upgrade-Tasks dauerten am 26.11. sehr lange (Repository 2,7 TB, allein der
   Revision Cleanup mehrere Stunden). JET fährt DEV-Author am 27.11.2026 vormittags herunter, das Upgrade läuft ab dann.
-  Um 09:00 meldeten DEV und TEST noch AEM 6.5.25.0.
+  Um 09:00 meldeten DEV und TEST noch AEM 6.5.25.0. **DEV-Author seit 27.11.2026 ~09:10 down** (HTTP 503), danach
+  Offline Compaction, laut JET evtl. erst nach dem 27.11. fertig. DEV-Publish antwortete um 09:14 noch (200).
+- **Versionsnummer nach dem Upgrade:** 6.5 LTS zählt die Service Packs neu (LTS GA, SP1, SP2, SP3 …), intern heißt es
+  AEM 6.6 (UberJar `6.6.0`). Die Nummer ist also nicht zwingend „höher als 6.5.25.0". Upgrade erkennen an: Version
+  ungleich 6.5.25.0, Kennung LTS oder 6.6 (`/system/console/status-productinfo.json`). Java-Version in der
+  Systeminfo der Konsole ablesen, nicht voraussetzen: FHGWCMS-2415 nennt Java 11, Adobe nennt für 6.5 LTS nur
+  Java 17/21 als Laufzeit (Klärung mit JET offen, 27.11.2026). Den genauen Text nach dem Upgrade hier eintragen.
 - **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen den Tag vergleichen
   (`git diff vorher-stand-dev-20261126 -- tests/__snapshots__/dev fixtures`).
-  **Erinnerung an den Nutzer am 26.11.2026 (Tag des DEV-Upgrades), bestellt am 25.11.2026:** Der Hook
-  `.kiro/hooks/erinnerung-upgrade-dev-20261126.json` blendet sie bei der ersten Nachricht ab diesem Tag einmal ein
-  (Marker `.kiro/hooks/erinnerung-20261126.done`). Fehlt der Hinweis, den Nutzer trotzdem daran erinnern.
+- **TEST-Replication (JET, 27.11.2026):** Blockiert, weil für den Publisher eine falsche URL konfiguriert ist (Publish
+  selbst läuft). Vermutlich von Fraunhofer bewusst geändert, JET gibt es an Fraunhofer weiter. Stand 27.11.2026 09:30:
+  `publish_aem-publish1-test` → `http://aem-publish1-publisher-test.ws.fraunhofer.de/bin/receive…`,
+  `flush_aem-publish1-dispatcher-test` → `http://aem-publish1-dispatcher-flush-test.ws.fraunhofer.de/`, beide blockiert
+  (je 50 Einträge). Nicht selbst ändern (außerhalb der Spielwiesen, Fraunhofer-Konfiguration).
 - Fehlen die Samples auf TEST beim Upgrade, gilt der Vergleich gegen die DEV-Baselines (Entscheidung des Nutzers
   25.11.2026: unkritisch, mit Samples auf TEST aber sicherer).
 
