@@ -16,6 +16,7 @@
     "capture-references": "CAPTURE_REFERENCES=1 playwright test tests/regression/references-capture.spec.ts",
     "update-snapshots": "playwright test --update-snapshots=all",
     "baseline:visual": "playwright test tests/basics/visual-regression.spec.ts tests/components/visual-publish.spec.ts tests/regression/error-pages.spec.ts --update-snapshots=all",
+    "baseline:firefox": "FIREFOX_BASELINES=1 SMOKE_GATE=0 playwright test --project=setup --project=firefox --update-snapshots=missing",
     "report": "playwright show-report",
     "cockpit": "tsx cockpit/server.ts",
     "typecheck": "tsc --noEmit",

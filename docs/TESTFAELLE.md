@@ -44,8 +44,9 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 
 ## Gesamtübersicht (Stand 23.11.2026)
 
-113 AEM-Testfälle inklusive Login (LOGIN-1), dazu 27 Capture-Läufe (COMP-CAP)
-und 9 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 151 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+139 AEM-Testfälle inklusive Login (LOGIN-1), dazu 43 Capture-Läufe (COMP-CAP)
+und 9 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 151 Unit-Tests. Zusätzlich laufen Smoketest und
+Bildvergleiche in Firefox (FF-1, FF-2). „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -71,9 +72,11 @@ grünem Lauf.
 | REP-1 | Seite aktivieren und wieder deaktivieren | Basisfunktionen (L1) | `basics/replication.spec.ts` | DEV, TEST |
 | ASSET-1 | Bild in einen Testordner der DAM hochladen und verarbeiten lassen | Basisfunktionen (L1) | `basics/asset-upload.spec.ts` | DEV, TEST |
 | ASSET-2 | Bild in einer Seite verwenden, Verweise zählen und über die Suche finden | Basisfunktionen (L1) | `basics/asset-usage.spec.ts` | DEV, TEST (24.11.2026) |
-| COMP-DLG-1..27 | Dialog "<Komponente>": Reiter & Feldinhalte wie Referenz | Komponenten (L2) | `components/dialog.spec.ts` | DEV (23.11.2026), TEST |
+| COMP-DLG-1..43 | Dialog "<Komponente>": Reiter & Feldinhalte wie Referenz | Komponenten (L2) | `components/dialog.spec.ts` | DEV (23.11.2026), TEST; Nr. 28..43 nur TEST (27.11.2026) |
 | COMP-AUTH-1 | FAQ mit Textblock befüllen, im Editor und auf Publish prüfen | Komponenten (L2) | `components/component-authoring.spec.ts` | DEV, TEST |
-| COMP-VIS-1..25 | Gerenderte Seite "<Komponente>" entspricht Baseline | Komponenten (L2) | `components/visual-publish.spec.ts` | DEV (24.11.2026), TEST |
+| COMP-VIS-1..35 | Gerenderte Seite "<Komponente>" entspricht Baseline | Komponenten (L2) | `components/visual-publish.spec.ts` | DEV (24.11.2026), TEST; Nr. 26..35 nur TEST (27.11.2026) |
+| FF-1 | Smoketest in Firefox (Redaktionsoberfläche und Publish laden) | Smoketest | `smoke.spec.ts` (Projekt `firefox`) | offen: Firefox startet nicht aus Kiro, im eigenen Terminal ausführen |
+| FF-2 | Bildvergleiche in Firefox (Komponentenseiten, echte Seiten, Fehlerseite) | Komponenten (L2), Regressionstest | Projekt `firefox` | offen: Baselines nur auf TEST, `npm run baseline:firefox` |
 | VIS-1 | Gerenderte Seite entspricht Baseline (Testseite) | Komponenten (L2) | `basics/visual-regression.spec.ts` | DEV, TEST |
 | ACL-1 | AC-Tool-Konsole ist erreichbar | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
 | ACL-2 | AC-Tool-Bundles sind aktiv | Integrationstest | `integration/acl-tool.spec.ts` | DEV, TEST |
@@ -428,6 +431,10 @@ Newsroom. Rein lesend — der Schreib-Guard ist nicht berührt.
   Slider klein, Kontaktbox, Newsticker, Externer Teaser, Herunterladen, Bild-Leiste, Parallelnavigation. Referenz aus DEV
   am 26.11.2026, zweimal hintereinander grün (55 von 55). Nicht dabei: „Text mit Asset": Sein Dialog blendet je nach
   Auswahl (Bild oder Video) andere Reiter ein, die Reiterliste ist nicht stabil lesbar.
+- **Weitere Komponenten (27.11.2026, MAN-02, nur TEST)**: Text mit Inline-Bildern, Link (in der Linkliste), Breites Bild, Teaser-Übersicht, Teaser gemischt, Slider groß (Bild-Slide), Filmstrecke, Bühne, Bühne Bild, Bühne Video, Contentnavigation und die Formularfelder Texteingabe, Dropdown-Feld, Datumsfeld, Kontrollkästchen-Gruppe und Datei-Upload. Overlay-Titel per Diag gegen TEST, Referenz aus TEST
+  (DEV war im Upgrade), zweimal grün. Die Liste selbst („Linkliste Bereich") ist per Klick nicht erreichbar, ihre Links
+  füllen die ganze Fläche. Auf DEV fehlt für diese 16 der Vorher-Stand: Abweichungen dort zuerst gegen TEST einordnen
+  (z. B. Auswahllisten, die auf DEV anders befüllt sind).
 - **Befund**: Leere Felder werden als Warnung ausgegeben (fachlicher
   Nachbesserungs-Befund — Samples-Inhalt fehlt), nicht stillschweigend geschluckt.
 - **Grenze**: Soll-Werte stammen aus dem aktuellen Stand (vor Migration). Fehlt
@@ -450,7 +457,9 @@ Newsroom. Rein lesend — der Schreib-Guard ist nicht berührt.
 - **Erwartet**: Screenshot stimmt innerhalb der Toleranz mit der Baseline überein.
 - **Weitere Komponenten (26.11.2026)**: 14 der 16 weiteren Seiten haben einen Bildvergleich, jeweils dreimal grün.
   „Textblock extern" (Seitenhöhe wechselt zwischen 2381 und 2447 px) und „Karussell" (wechselnder Inhalt) sind nur über
-  ihren Dialog geprüft (`visual: false`). Baselines für DEV, auf TEST fehlen die Samples.
+  ihren Dialog geprüft (`visual: false`). Baselines für DEV und TEST (TEST seit 27.11.2026).
+- **Weitere Seiten (27.11.2026, nur TEST)**: 10 Bildvergleiche (eine Seite je Komponentenseite; Bühne Bild/Video und
+  die übrigen Formularfelder liegen auf derselben Seite, `visual: false`), dreimal grün. Auf DEV ohne Baseline.
 - **Grenze**: nur Publish (JET-Vorgabe). Ohne Publish-URL überspringt sich der
   Test sauber. Baselines pro `AEM_ENV` getrennt (Vorher-/Nachher). Bekannte
   Unterschiede zwischen TEST und DEV (z.B. Tags, Newsroom-Sortierung) stehen in
@@ -724,17 +733,38 @@ Sprachversionen.
 - **Vorbedingung**: nur TEST, Referenz `search.json`. Die Enterprise Search ist auf DEV laut JET nicht
   eingerichtet (25.11.2026): `POST /bin/wcm/enterprisesearch/query` endet dort erst nach etwa 136 s mit 504 Gateway
   Timeout (in den Chrome-Entwicklertools im Reiter „Network" sichtbar). Der Test überspringt sich dort.
-- **Schritte**: Für „Energie", „Quantencomputer" und „Müller" die Ergebnisseite öffnen, wie sie das Suchformular aufruft
+- **Schritte**: Für jeden Suchfall (`SEARCH_CASES`) die Ergebnisseite öffnen, wie sie das Suchformular aufruft
   (`/content/zv/de/suche.html?queryString=…`). Die Treffer lädt die Seite per Skript nach: auf die Überschrift
-  „N Ergebnisse für …" und die Liste warten.
+  „N Ergebnisse für …" und die Liste warten. Bei Fällen mit Filter wie ein Nutzer „Erweiterte Suche" öffnen, Filter
+  setzen, „Suchen" klicken und auf die neue Liste warten. Als Query-Parameter wirken die Filter nicht (TEST 27.11.2026).
+- **Suchfälle** (Vorschlag, MAN-07): „Energie", „Quantencomputer", „Müller" (25.11.2026); „Wasserstoff",
+  „Jahresbericht", „Datenschutz"; „Künstliche Intelligenz" mit genauer Wortgruppe und mit mindestens einem Wort;
+  „Energie" nur PDF, in allen Sprachen und ohne „Solar"; „hydrogen" nur Englisch (27.11.2026). Neue Fälle ergänzt die
+  Erfassung, vorhandene bleiben unverändert (`extendReference`).
 - **Erwartet**: Trefferzahl höchstens 10 % unter dem Vorher-Stand, mindestens 7 der 10 vorherigen Spitzentreffer
   (Links) wieder auf der ersten Seite. Der Index wird außerhalb von AEM gepflegt und wächst, daher die Toleranz.
+  Wartezeit bis zur Trefferliste höchstens doppelt so lang und höchstens 5 s länger (nur für Fälle ab 27.11.2026, die
+  älteren haben keine Messung).
 - **Hinweis**: Die Treffer stammen aus dem Such-Index der Produktion (Adressen `www.*.fraunhofer.de`). Der Test prüft,
   dass der Such-Dienst von AEM wie vorher antwortet, nicht den Index selbst. Die Suche über Eingabefeld und Lupe der
   Startseite ließ sich auf DEV nicht automatisieren (Absenden löste nichts aus, solange der Dienst hängt) und ist nicht
   abgedeckt.
-- **Stand TEST 24.11.2026**: 23.484, 1.613 und 5.456 Treffer.
+- **Stand TEST 24.11.2026**: 23.484, 1.613 und 5.456 Treffer. **27.11.2026**: 12 Fälle, zweimal grün. Filter wirken
+  (z. B. „Energie" 23.592 Treffer, nur PDF 6.919, alle Sprachen 27.845, ohne „Solar" 19.694), Wartezeit 0,3 bis 1,6 s.
 
+### FF-1, FF-2 — Zweiter Browser: Firefox (Projekt `firefox`, MAN-03, ab 27.11.2026)
+- **Zweck**: Firefox hat eine eigene Engine (Gecko), Edge nutzt dieselbe wie Chrome. Marktanteil Desktop Deutschland
+  10/2026: Chrome rund 42 %, Edge rund 19 %, Firefox rund 17 % (Statista).
+- **FF-1**: der Smoketest (12 lesende Prüfungen, Redaktionsoberfläche und Publish) in Firefox.
+- **FF-2**: die Bildvergleiche der Komponentenseiten (COMP-VIS), der echten Seiten (REAL-1..9) und der Fehlerseite
+  (OVL-5) in Firefox. Eigene Baselines unter `tests/__snapshots__/<env>/firefox/`, die Chrome-Baselines bleiben
+  unberührt. FF-2 läuft nur, wenn für die Umgebung Firefox-Baselines existieren.
+- **Vorher-Stand**: nur auf TEST möglich (DEV im Upgrade). Erzeugen vor dem TEST-Upgrade, im eigenen Terminal:
+  `AEM_ENV=test AEM_BASE_URL=https://aem-author-test.ws.fraunhofer.de AEM_PUBLISH_URL=https://aem-publish1-test.ws.fraunhofer.de npm run baseline:firefox`
+  (`--update-snapshots=missing`, überschreibt nichts).
+- **Stand 27.11.2026**: Firefox startet aus Kiro heraus nicht („Could not find profile folder", auch direkt und mit
+  leerer Umgebung; Chromium läuft). Vermutlich erbt Firefox als Unterprozess von Kiro dessen macOS-Einschränkungen.
+  Lauf im eigenen Terminal steht aus.
 ### REAL-1..9 — Optik echter Seiten (`tests/regression/real-pages-visual.spec.ts`)
 - **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt, Baselines je Umgebung unter `tests/__snapshots__/<AEM_ENV>/regression/real-pages-visual.spec.ts/`
   (Vorher-Stand, 25.11.2026). Nur lesend, ohne Login.

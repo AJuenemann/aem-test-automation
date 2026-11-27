@@ -3,8 +3,8 @@
 Playwright-/TypeScript-Testautomatisierung für die Fraunhofer AEM 6.5 LTS Migration
 (Tickets FHGWCMS-2415 / FHGWCMS-2416). Die Suite prüft über echte Redakteurs-
 Gesten, ob die Fraunhofer-Website nach dem Update wie vorher funktioniert. Sie
-umfasst 113 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
-inklusive Login, dazu 27 Capture-Läufe für die Dialog-Referenzen, 9 Referenz-Erfassungen und 151 Unit-Tests
+umfasst 139 AEM-Testfälle in fünf Bereichen (siehe „Gliederung der Tests"),
+inklusive Login, dazu Smoketest und Bildvergleiche in Firefox, 43 Capture-Läufe für die Dialog-Referenzen, 9 Referenz-Erfassungen und 151 Unit-Tests
 ohne AEM (Stand 23.11.2026). Die vollständige Liste mit Ablauf und Erwartung steht in
 [`docs/TESTFAELLE.md`](docs/TESTFAELLE.md).
 
@@ -68,7 +68,7 @@ API-/DOM-Umgehungen):
   hochladen, Verarbeitung abwarten, Ordner löschen
 
 Komponentenfelder befüllt der Bereich Komponenten (FAQ mit Textblock bis
-Publish), die 27 Komponenten (11 priorisierte und 16 weitere) prüft er über ihre Dialoge. Die
+Publish), die 43 Komponenten (11 priorisierte und 32 weitere) prüft er über ihre Dialoge. Die
 visuelle Prüfung der Testseite (VIS-1) gehört ebenfalls dorthin und nutzt
 vorerst die leere Seite (siehe `shortcut:`-Notiz im Spec).
 
@@ -77,7 +77,7 @@ vorerst die leere Seite (siehe `shortcut:`-Notiz im Spec).
 Aufbauend auf den Basisfunktionen sind folgende Bereiche automatisiert (Details
 in [`docs/TESTFAELLE.md`](docs/TESTFAELLE.md)):
 
-- **Komponenten-Dialoge (Author)** für 27 Komponenten (11 priorisierte, 16 weitere Vorschläge) auf
+- **Komponenten-Dialoge (Author)** für 43 Komponenten (11 priorisierte, 32 weitere Vorschläge) auf
   Basis von `/content/samples`: Dialog öffnet, alle Reiter, Felder vorhanden und
   gegen eine Referenz (Vorher-Stand) befüllt; leere Felder werden gemeldet.
 - **Komponente befüllen (FAQ mit Textblock)**: in einer Testseite einfügen,
@@ -155,6 +155,7 @@ npx playwright test --project=unit   # Unit-Tests (ohne AEM/Login)
 npx playwright test --project=smoke  # nur Smoketest (Login + Vorstufe)
 npm run capture-dialogs       # Referenz-Fixtures der Komponenten-Dialoge erzeugen (Vorher-Stand)
 npm run baseline:visual       # ALLE visuellen Baselines erzeugen (Publish-URL/Env setzen)
+npm run baseline:firefox      # Firefox: nur FEHLENDE Baselines erzeugen (vor dem Upgrade, eigenes Terminal)
 npm run update-snapshots      # visuelle Baselines neu erzeugen (ganze Suite)
 npm run report                # HTML-Report öffnen
 npm run typecheck && npm run lint
@@ -175,7 +176,7 @@ pageobjects/
   LdapImportPage.ts        LDAP-Visitenkartenimport (Tools)
 fixtures/
   test-fixtures.ts         Page Objects, eindeutige Testnamen, Auto-Cleanup
-  samples-components.ts    Die 27 Komponenten (Seite, Overlay-Titel)
+  samples-components.ts    Die 43 Komponenten (Seite, Overlay-Titel)
   dialog-reference.ts      Lesen/Schreiben der Dialog-Referenzen
   component-dialogs/       Referenz je Komponente (Vorher-Stand)
   assets/qa-upload.png     Testbild für den Asset-Upload (32 x 32)

@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, devices } from '@playwright/test';
 
 // Die Konfiguration selbst validiert die Env NICHT hart: so laufen
@@ -22,6 +25,11 @@ const slowMo = Math.max(0, Number(process.env.PWA_SLOWMO) || 0);
 // Login. Abhängigkeiten laufen in Playwright sonst immer vollständig mit,
 // auch bei Datei-/Grep-Filter. Das Cockpit setzt den Wert über ihren Schalter.
 const smokeGate = process.env.SMOKE_GATE !== '0';
+
+// Firefox-Bildvergleiche nur mit vorhandenem Vorher-Stand dieser Umgebung (sonst „snapshot doesn't exist").
+// FIREFOX_BASELINES=1 erzwingt sie zum erstmaligen Erfassen (nur vor dem Upgrade, mit --update-snapshots=missing).
+const firefoxBaselines =
+  process.env.FIREFOX_BASELINES === '1' || fs.existsSync(path.join(path.dirname(fileURLToPath(import.meta.url)), 'tests', '__snapshots__', envName, 'firefox'));
 
 export default defineConfig({
   testDir: './tests',
@@ -109,6 +117,25 @@ export default defineConfig({
       dependencies: smokeGate ? ['smoke'] : ['setup'],
       // Weder Setup, Smoke noch Unit-Tests hier erneut ausführen.
       testIgnore: [/.*\.setup\.ts/, /tests\/unit\//, /[\\/]tests[\\/]smoke\.spec\.ts$/],
+    },
+    // 4) Zweiter Browser (MAN-03, 27.11.2026): Firefox hat eine eigene Engine (Gecko). Nur lesende Prüfungen:
+    //    Smoketest (Redaktionsoberfläche lädt) und Bildvergleiche auf Publish. Eigene Baselines unter
+    //    __snapshots__/<env>/firefox/, die Chrome-Baselines bleiben unberührt. Die Bildvergleiche laufen nur, wenn
+    //    für die Umgebung Firefox-Baselines existieren (Vorher-Stand nur auf TEST, DEV war beim Erfassen im Upgrade).
+    {
+      name: 'firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: smokeGate ? ['smoke'] : ['setup'],
+      snapshotPathTemplate: '{testDir}/__snapshots__/' + envName + '/firefox/{testFilePath}/{arg}{ext}',
+      testMatch: [
+        /[\\/]tests[\\/]smoke\.spec\.ts$/,
+        ...(firefoxBaselines
+          ? [/components[\\/]visual-publish\.spec\.ts$/, /regression[\\/]real-pages-visual\.spec\.ts$/, /regression[\\/]error-pages\.spec\.ts$/]
+          : []),
+      ],
     },
   ],
 });

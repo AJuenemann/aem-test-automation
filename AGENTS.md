@@ -56,7 +56,8 @@ Bereich Komponenten (Tag `@level2-components`, Datei bleibt wegen der Baselines
 in `tests/basics/`).
 
 **Erweiterung (JET-Antworten 04.11., verifiziert und grün):**
-- Level 2: Komponenten-Dialoge (Author) für 27 Komponenten (11 priorisierte, 16 weitere, 26.11.2026) auf
+- Level 2: Komponenten-Dialoge (Author) für 43 Komponenten (11 priorisierte, 16 weitere vom 26.11.2026, 16 weitere vom
+  27.11.2026 nur mit Vorher-Stand auf TEST) auf
   `/content/samples`. Der richtige Dialog öffnet (Titelprüfung), alle sichtbaren
   Reiter, Felder gegen die Referenz befüllt, leere Felder werden gemeldet.
   Referenz via `npm run capture-dialogs` (Vorher-Stand, aus DEV erfasst).
@@ -92,8 +93,8 @@ in `tests/basics/`).
 Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und die Gesamtübersicht in
 `docs/TESTFAELLE.md`). Aktuell liegen keine Diag-Specs im Repo.
 
-Umfang: 113 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
-54 Komponenten, 4 Integrationstest, 30 Regressionstest), dazu 27 Capture-Läufe, 9 Referenz-Erfassungen
+Umfang: 139 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
+80 Komponenten, 4 Integrationstest, 30 Regressionstest), dazu Firefox (FF-1, FF-2), 43 Capture-Läufe, 9 Referenz-Erfassungen
 und 151 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
@@ -152,8 +153,11 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
    - **Eingaben von Fraunhofer und JET** (Testplan Kapitel 12): Nr. 3 (produktive Nutzung), 4 (Komponenten), 6 (Suchbegriffe),
      7 (Browser), 9 und 10 (vorgeschlagene Seiten für Optik, Event und Messe). Ohne Antwort mit eigenen Vorschlägen aus
      dem Produktionsinhalt arbeiten und als Vorschlag kennzeichnen.
-   - Stufe 2: MAN-03 (zweiter Browser), MAN-07 (Suche: weitere Begriffe, Filter, Wartezeit, DEV).
-   - Stufe 3: MAN-02 (weitere Komponenten), MAN-04 (Formular), MAN-05 und MAN-06 zusammenlegen (Mailversand, Double
+   - **27.11.2026 umgesetzt (Vorschläge, nur TEST):** MAN-02 (16 weitere Komponenten, Dialog und Bildvergleich),
+     MAN-07 (12 Suchfälle mit Filtern und Wartezeit, SEARCH-1), MAN-03 (Projekt `firefox`: FF-1, FF-2).
+     **Offen MAN-03:** Firefox startet nicht aus Kiro („Could not find profile folder"). Baselines im eigenen Terminal:
+     `npm run baseline:firefox` mit TEST-Variablen (siehe `docs/TESTFAELLE.md`, FF-1/FF-2), vor dem TEST-Upgrade.
+   - Stufe 3: MAN-04 (Formular), MAN-05 und MAN-06 zusammenlegen (Mailversand, Double
      Opt-in).
    - Ziel: manuell bleiben etwa MAN-01 (Redaktionsarbeit) und ein Mailtest. Social Media Wall: kein manueller Test (Entscheidung
      mit JET 26.11.2026, der Dienst liefert auch in der Produktion keine Beiträge, Quelle nur Twitter/X; WALL-1 genügt). MAN-08 und
