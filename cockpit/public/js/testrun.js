@@ -400,6 +400,8 @@ function renderSteps() {
   const nGroups = new Set(allCatalogTests()
     .filter(({ test }) => state.selectedKeys.has(testKey(test.file, test.line, test.title)))
     .map(({ group }) => groupKey(group))).size;
+  $('#count-1').hidden = !tests.length;
+  $('#count-1').textContent = tn('sb.selected', tests.length);
   $('#sum-1').textContent = tests.length
     ? t('sum.tests', { tests: tn('count.tests', tests.length), areas: tn('count.areasIn', nGroups) })
     : t('sum.none');

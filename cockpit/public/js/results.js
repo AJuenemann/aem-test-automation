@@ -22,6 +22,10 @@ const view = {
   /** Blocker-Hinweis: { text, info } (info = maschinenlesbar vom Server, text = deutscher Fallback). */
   blocker: null,
 };
+/** Der laufende Lauf, unabhängig davon, welcher Lauf gerade angezeigt wird. */
+const active = { id: null, startedAt: null, envLabel: '', settings: null };
+/** true: die Ansicht zeigt den laufenden Lauf. */
+const viewingActive = () => !!active.id && view.runId === active.id;
 let es = null;
 let ticker = null;
 let lastLogAt = 0;
@@ -56,22 +60,33 @@ export async function resumeActiveRun() {
 }
 
 function beginView(id, { envLabel = '', startedAt = null, settings = null } = {}) {
-  view.runId = id;
-  view.status = 'running';
-  view.startedAt = startedAt ? new Date(startedAt).getTime() : Date.now();
-  view.envLabel = envLabel;
-  view.report = null;
-  view.filter = 'all';
-  view.live = true;
-  view.noticeKey = '';
-  view.blocker = null;
-  view.settings = settings
+  active.id = id;
+  active.startedAt = startedAt ? new Date(startedAt).getTime() : Date.now();
+  active.envLabel = envLabel;
+  active.settings = settings
     ? { headed: !!settings.headed, slowMo: settings.slowMo, repeatEach: settings.repeatEach, smokeGate: !!settings.smokeGate, updateSnapshots: !!settings.updateSnapshots }
     : null;
   state.activeRunId = id;
   $('#log').textContent = '';
   $('#res-log').open = true;
+  showActive();
+  emit('run-started', { id });
+}
+
+/** Zeigt den laufenden Lauf (Log bleibt erhalten). */
+function showActive() {
+  view.runId = active.id;
+  view.status = 'running';
+  view.startedAt = active.startedAt;
+  view.envLabel = active.envLabel;
+  view.settings = active.settings;
+  view.report = null;
+  view.filter = 'all';
+  view.live = true;
+  view.noticeKey = '';
+  view.blocker = null;
   render();
+  emit('run-view', { id: active.id });
 }
 
 function stream(id) {
@@ -90,14 +105,26 @@ function stream(id) {
     es.close();
     es = null;
     stopTicker();
-    view.status = info.status === 'passed' ? 'passed' : info.status === 'cancelled' ? 'cancelled' : 'failed';
+    const status = info.status === 'passed' ? 'passed' : info.status === 'cancelled' ? 'cancelled' : 'failed';
+    const shown = viewingActive();
+    active.id = null;
     state.activeRunId = null;
-    const rep = await loadReport(id);
-    if (info.blocker) showBlocker(info.blocker, info.blockerInfo);
-    else if (rep?.blocker) showBlocker(rep.blocker, rep.blockerInfo);
-    if (rep) $('#res-log').open = false;
-    render();
-    emit('run-done', { id, status: view.status });
+    if (shown) {
+      view.status = status;
+      const rep = await loadReport(id);
+      if (view.runId === id) {
+        if (info.blocker) showBlocker(info.blocker, info.blockerInfo);
+        else if (rep?.blocker) showBlocker(rep.blocker, rep.blockerInfo);
+        if (rep) $('#res-log').open = false;
+        render();
+      }
+    } else {
+      // Angezeigt wird ein früherer Lauf: die Ansicht bleibt, nur Kopfzeile und Historie wechseln.
+      render();
+      emit('run-state', { running: false, status, elapsed: '' });
+      toast(t('res.toast.runDone'), 'info');
+    }
+    emit('run-done', { id, status });
   });
   es.onerror = () => {
     // Nach 'done' ist es normaler Verbindungsschluss: keine Meldung.
@@ -105,10 +132,17 @@ function stream(id) {
     es.close();
     es = null;
     stopTicker();
-    view.status = 'failed';
-    view.noticeKey = 'res.notice.lost';
+    const shown = viewingActive();
+    active.id = null;
     state.activeRunId = null;
+    if (shown) {
+      view.status = 'failed';
+      view.noticeKey = 'res.notice.lost';
+    } else {
+      toast(t('res.notice.lost'), 'error');
+    }
     render();
+    if (!shown) emit('run-state', { running: false, status: 'failed', elapsed: '' });
   };
 }
 
@@ -123,8 +157,8 @@ function startTicker() {
   stopTicker();
   const tick = () => {
     const now = Date.now();
-    $('#res-meta').textContent = metaText(now);
-    emit('run-state', { running: true, status: 'running', elapsed: fmtClock(now - view.startedAt) });
+    if (viewingActive()) $('#res-meta').textContent = metaText(now);
+    emit('run-state', { running: true, status: 'running', elapsed: fmtClock(now - active.startedAt) });
   };
   tick();
   ticker = setInterval(tick, 1000);
@@ -139,17 +173,25 @@ function stopTicker() {
 // ---------------------------------------------------------------------------
 async function loadReport(id) {
   const r = await api(`/api/run/${id}/report`);
-  if (!r.ok) { view.report = null; return null; }
-  view.report = r.data;
-  return r.data;
+  const rep = r.ok ? r.data : null;
+  // Nur in die Ansicht schreiben, wenn sie noch diesen Lauf zeigt.
+  if (view.runId === id) view.report = rep;
+  return rep;
 }
 
 /** Zeigt einen früheren Lauf aus der Historie. */
 export async function showRun(run) {
-  if (state.activeRunId && state.activeRunId !== run.id) {
-    toast(t('res.toast.activeRun'), 'info');
+  if (active.id && run.id === active.id) {
+    showActive();
+  } else {
+    await showPastRun(run);
   }
-  stopTicker();
+  if (location.hash !== '#/ergebnisse') location.hash = '#/ergebnisse';
+  $('#res-title').focus({ preventScroll: true });
+}
+
+async function showPastRun(run) {
+  // Der laufende Lauf läuft im Hintergrund weiter (Stream und Ticker bleiben).
   view.runId = run.id;
   view.status = run.status === 'running' ? 'running' : run.status || 'idle';
   view.startedAt = new Date(run.startedAt).getTime();
@@ -161,11 +203,11 @@ export async function showRun(run) {
   view.blocker = null;
   view.report = null;
   const rep = await loadReport(run.id);
+  if (view.runId !== run.id) return; // inzwischen ein anderer Lauf gewählt
   if (!rep) view.noticeKey = 'res.notice.noTable';
   else if (rep.blocker) showBlocker(rep.blocker, rep.blockerInfo);
   render();
-  if (location.hash !== '#/ergebnisse') location.hash = '#/ergebnisse';
-  $('#res-title').focus({ preventScroll: true });
+  emit('run-view', { id: run.id });
 }
 
 function showBlocker(text, info) {
@@ -238,8 +280,12 @@ function render() {
   $('#open-report').href = view.runId ? `/report/${view.runId}/` : '/report';
 
   const notice = $('#res-notice');
-  notice.hidden = !view.noticeKey;
-  notice.textContent = view.noticeKey ? t(view.noticeKey) : '';
+  const elsewhere = !!active.id && !viewingActive();
+  notice.hidden = !view.noticeKey && !elsewhere;
+  notice.innerHTML = [
+    view.noticeKey ? esc(t(view.noticeKey)) : '',
+    elsewhere ? `${esc(t('res.notice.activeElsewhere'))} <button type="button" class="btn btn-sm" id="res-back-active">${esc(t('res.notice.backToActive'))}</button>` : '',
+  ].filter(Boolean).join(' ');
   renderBlocker();
 
   $('#res-log').hidden = !view.live;
@@ -249,7 +295,8 @@ function render() {
   renderFilters(rows);
   renderGroups(rows);
 
-  emit('run-state', { running: st === 'running', status: st, elapsed: view.status === 'running' ? fmtClock(Date.now() - view.startedAt) : '' });
+  // Während eines Laufs meldet der Ticker den Zustand, nicht der angezeigte Lauf.
+  if (!active.id) emit('run-state', { running: st === 'running', status: st, elapsed: '' });
 }
 
 function renderCapture(rows) {
@@ -377,6 +424,11 @@ export function init() {
     renderGroups(view.report?.rows || []);
   });
   $('#res-cancel').addEventListener('click', cancelRun);
+  $('#res-notice').addEventListener('click', (e) => {
+    if (!e.target.closest('#res-back-active') || !active.id) return;
+    showActive();
+    $('#res-title').focus({ preventScroll: true });
+  });
   $('#run-capture').addEventListener('click', runCapture);
   on('lang-change', render);
   render();

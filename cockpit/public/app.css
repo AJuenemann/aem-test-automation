@@ -180,6 +180,8 @@ input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent);
 .step-label { font-weight: 650; font-size: var(--fs-lg); }
 .step-summary { color: var(--text-muted); margin-left: auto; text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .step[data-open="true"] .step-summary { visibility: hidden; }
+/* Zähler hinter „Tests auswählen": nur offen, geschlossen nennt die Zusammenfassung die Zahl. */
+.step:not([data-open="true"]) .step-count { display: none; }
 .chev { transition: transform 0.15s ease; color: var(--text-muted); }
 .step[data-open="true"] .chev { transform: rotate(90deg); }
 .step-body { padding: 0 var(--space-4) var(--space-4); }

@@ -87,14 +87,14 @@ in `tests/basics/`).
   zeigen sonst je nach Zeitpunkt andere Bilder (Flake im Test am 23.11.2026).
 - Regressionstest (bekannte Migrationsrisiken): Asset-Finder (Visitenkarten/Externe Links). Download-Asset-Feld:
   per Drag & Drop aus dem Asset-Finder setzen und ersetzen. Baum wiederherstellen:
-  Formular öffnen und abbrechen; gelöschte Unterseite wiederherstellen (OVL-6, DEV 23.11.2026).
+  Formular öffnen und abbrechen; gelöschte Unterseite wiederherstellen (OVL-6, DEV 23.11.2026; Befund 26.11.2026 siehe unten).
 
 Verifiziert gegen DEV und TEST, LDAP nur gegen TEST (siehe „Diag-Specs" und die Gesamtübersicht in
 `docs/TESTFAELLE.md`). Aktuell liegen keine Diag-Specs im Repo.
 
 Umfang: 113 AEM-Testfälle (13 Smoketest inkl. Login, 12 Basisfunktionen,
 54 Komponenten, 4 Integrationstest, 30 Regressionstest), dazu 27 Capture-Läufe, 9 Referenz-Erfassungen
-und 149 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
+und 151 Unit-Tests. Der Login (LOGIN-1, `auth.setup.ts`) zählt seit 19.11.2026
 als Testfall des Smoketests (einheitlich mit dem Testplan).
 
 **Datum:** Vor jeder Datumsangabe in Dokumenten und Meldungen `date` ausführen. Das Datum im Gesprächskontext kann veraltet
@@ -113,6 +113,9 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
 - Zeitplan laut JET (25.11.2026): DEV-Author wird am **26.11.2026** per In-Place-Upgrade aktualisiert (Ende des Tages,
   sofern kein Rollback), DEV dann den Großteil des Tages offline. Der Publisher folgt hoffentlich gleichzeitig,
   sonst am 27.11.2026. Der Termin für TEST ist offen.
+  **Verschoben (JET, 27.11.2026):** Die Pre-Upgrade-Tasks dauerten am 26.11. sehr lange (Repository 2,7 TB, allein der
+  Revision Cleanup mehrere Stunden). JET fährt DEV-Author am 27.11.2026 vormittags herunter, das Upgrade läuft ab dann.
+  Um 09:00 meldeten DEV und TEST noch AEM 6.5.25.0.
 - **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen den Tag vergleichen
   (`git diff vorher-stand-dev-20261126 -- tests/__snapshots__/dev fixtures`).
   **Erinnerung an den Nutzer am 26.11.2026 (Tag des DEV-Upgrades), bestellt am 25.11.2026:** Der Hook
@@ -125,10 +128,10 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
    TEST läuft wieder sauber (Veröffentlichung auf Publish, Samples auf Author und Publish, Paket-Upload). Dann
    Smoketest auf TEST, Baselines (`npm run baseline:visual` mit `AEM_ENV=test`) gegen den neuen Inhalt prüfen und bei
    Bedarf neu erzeugen, danach Gesamtlauf auf TEST und einen weiteren Tag `vorher-stand-test-<Datum>` setzen.
-2. **Manuelle Tests weiter reduzieren** (MAN-01 bis MAN-10, Stand 25.11.2026). Automatisiert sind inzwischen u. a. Optik
+2. **Manuelle Tests weiter reduzieren** (MAN-01 bis MAN-09, Stand 27.11.2026). Automatisiert sind inzwischen u. a. Optik
    echter Seiten (REAL-1..9), Event und Messe (EVT-1, REAL-7..9), RSS (FEED-1), Navigation, Kurs- und Downloadsuche
    (COURSE-1, DL-1), Hreflang, Bilder, Fehlerseiten, Visitenkartenimport, Asset verwenden, Baum wiederherstellen.
-   - **Zeitkritisch:** Tests mit „Vorher-Stand nötig = Ja" (MAN-02, 03, 07, 10; MAN-01 teilweise) brauchen den Stand vor dem
+   - **Zeitkritisch:** Tests mit „Vorher-Stand nötig = Ja" (MAN-02, 03, 07; MAN-01 teilweise) brauchen den Stand vor dem
      Upgrade. Auf DEV ist er nur bis zum Upgrade am 26.11.2026 erfassbar, auf TEST bis zu dessen Upgrade (Termin offen).
      Vor jedem Ausbau prüfen, ob die Umgebung noch AEM 6.5.25.0 meldet (`/system/console/status-productinfo.json`).
    - **Eingaben von Fraunhofer und JET** (Testplan Kapitel 12): Nr. 3 (produktive Nutzung), 4 (Komponenten), 6 (Suchbegriffe),
@@ -137,13 +140,16 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
    - Stufe 2: MAN-03 (zweiter Browser), MAN-07 (Suche: weitere Begriffe, Filter, Wartezeit, DEV).
    - Stufe 3: MAN-02 (weitere Komponenten), MAN-04 (Formular), MAN-05 und MAN-06 zusammenlegen (Mailversand, Double
      Opt-in).
-   - Ziel: manuell bleiben etwa MAN-01 (Redaktionsarbeit), MAN-10 (Social Media Wall) und ein Mailtest. MAN-08 und
+   - Ziel: manuell bleiben etwa MAN-01 (Redaktionsarbeit) und ein Mailtest. Social Media Wall: kein manueller Test (Entscheidung
+     mit JET 26.11.2026, der Dienst liefert auch in der Produktion keine Beiträge, Quelle nur Twitter/X; WALL-1 genügt). MAN-08 und
      MAN-09 (Asset-Version, Asset wiederherstellen) warten auf die Klärung mit JET (Testplan Kapitel 12, Nr. 13).
    - Kurssuche: `GET /bin/wcm/coursesearch/query`, der Parameter `currentPage` ist der **Seitenpfad**, keine Zahl (sonst 400).
      COURSE-1 prüft die Filter (Branche, Typ) nicht.
-3. **Befund OVL-6 auf DEV (26.11.2026, vor dem Upgrade):** „Baum wiederherstellen" ausführen ist auf DEV rot, auf TEST
-   grün. Details in `docs/TESTFAELLE.md` (OVL-6). Mit JET klären, bevor das Upgrade-Ergebnis bewertet wird: Ein Rot
-   nach dem Upgrade ist sonst keine Regression des Upgrades.
+3. **Befund OVL-6 (26.11.2026, vor dem Upgrade, DEV und TEST):** Beim Öffnen von „Baum wiederherstellen" wirft
+   AEM-Produktcode (`restoretree.min.js`, `fetchVersionsInfo`) einen JS-Fehler, danach bleibt die Ladeschicht liegen und
+   „Wiederherstellen" gesperrt. Der Test ist nur grün, wenn er vor dem fertigen Laden klickt (zeitabhängig, nicht
+   DEV-spezifisch). Details in `docs/TESTFAELLE.md` (OVL-6). Mit JET klären. Gleiches Verhalten nach dem Upgrade ist
+   keine Regression.
 4. **Enterprise Search auf DEV** ist laut JET (25.11.2026) dort nicht eingerichtet. `POST /bin/wcm/enterprisesearch/query` und
    `GET /bin/wcm/enterprisesearch/suggest` hängen auf DEV-Publish und DEV-Author (Verbindung in 0,13 s, danach 136 s nichts,
    dann `query` mit 504 Gateway Timeout und `suggest` mit 200). Auf TEST antworten beide in unter 1 s. SEARCH-1 läuft

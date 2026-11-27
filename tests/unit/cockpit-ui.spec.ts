@@ -62,6 +62,11 @@ let server: Server;
 let base = '';
 let posts: string[] = [];
 let serverStartId = 'srv-1';
+// Laufender Lauf: der Stream bleibt offen, bis der Test ihn beendet.
+const ACTIVE = { ...RUN, id: '22222222-2222-4222-8222-222222222222', status: 'running', summary: undefined,
+  startedAt: new Date(Date.now() + 60_000).toISOString() };
+let activeOn = false;
+let activeStream: import('node:http').ServerResponse | null = null;
 
 test.beforeAll(async () => {
   server = createServer(async (req, res) => {
@@ -71,8 +76,17 @@ test.beforeAll(async () => {
     switch (url.pathname) {
       case '/api/tests': return json(CATALOG);
       case '/api/environments': return json({ environments: ENVS, serverStartId });
-      case '/api/runs': return json({ runs: [RUN], totalSizeBytes: 2048 });
-      case '/api/status': return json({});
+      case '/api/runs':
+        return json({ runs: activeOn ? [ACTIVE, RUN] : [RUN], totalSizeBytes: 2048 });
+      case '/api/status':
+        return json(activeOn ? { activeRunId: ACTIVE.id, environment: ACTIVE.environment, startedAt: ACTIVE.startedAt } : {});
+      case `/api/run/${ACTIVE.id}/report`:
+        return json({ summary: { passed: 1, failed: 0, skipped: 0, flaky: 0, total: 1, durationMs: 100 }, rows: [REPORT.rows[0]] });
+      case `/api/run/${ACTIVE.id}/stream`:
+        res.writeHead(200, { 'content-type': 'text/event-stream', 'cache-control': 'no-cache' });
+        res.write('event: log\ndata: "Aktiv…\\n"\n\n');
+        activeStream = res;
+        return;
       case '/api/preview': return json({ preview: 'npx playwright test' });
       case '/api/baselines': return json({ environments: [], entries: [] });
       case '/api/cleanup/list':
@@ -102,7 +116,7 @@ test.beforeAll(async () => {
   base = `http://127.0.0.1:${typeof addr === 'object' && addr ? addr.port : 0}`;
 });
 test.afterAll(() => new Promise<void>((r) => server.close(() => r())));
-test.beforeEach(() => { posts = []; serverStartId = 'srv-1'; });
+test.beforeEach(() => { posts = []; serverStartId = 'srv-1'; activeOn = false; activeStream?.end(); activeStream = null; });
 
 async function open(page: Page, hash = '') {
   await page.goto(`${base}/${hash}`);
@@ -124,8 +138,10 @@ test.describe('Cockpit (neu): Testlauf', { tag: '@unit' }, () => {
     await open(page);
     await expect(page.locator('#run')).toBeDisabled();
     await expect(page.locator('#sb-count')).toHaveText('Noch nichts ausgewählt');
+    await expect(page.locator('#count-1')).toBeHidden();
     await selectTest(page, 'Smoketest', /Login geht/);
     await expect(page.locator('#sb-count')).toHaveText('1 Test gewählt');
+    await expect(page.locator('#count-1')).toHaveText('1 Test gewählt');
     await expect(page.locator('#sb-detail')).toHaveText('Wähle in Schritt 2 eine Umgebung.');
     await expect(page.locator('#run')).toBeDisabled();
     await page.getByRole('button', { name: 'Umgebung wählen' }).click();
@@ -357,6 +373,37 @@ test.describe('Cockpit (neu): Shell, Theme, Ergebnisse, Werkzeuge', { tag: '@uni
     await expect(rows).toHaveCount(1);
     await page.getByRole('button', { name: /^Fehlgeschlagen/ }).click();
     await expect(rows).toHaveCount(3);
+  });
+
+  test('Ergebnisse: früheren Lauf ansehen, während ein Lauf läuft, der aktive Lauf bleibt sichtbar', async ({ page }) => {
+    activeOn = true;
+    await open(page, '#/ergebnisse');
+    await expect(page.locator('#res-title')).toHaveText('Tests laufen…');
+    await expect(page.locator('#run-pill')).toBeVisible();
+    await expect.poll(() => activeStream !== null).toBe(true);
+    // Die Historie zeigt den laufenden Lauf.
+    await expect(page.locator('.run-entry')).toHaveCount(2);
+
+    await page.locator('.run-entry').nth(1).click();
+    await expect(page.locator('#res-title')).toHaveText('1 von 3 Tests fehlgeschlagen');
+    await expect(page.locator('#run-pill')).toBeVisible();
+    const back = page.getByRole('button', { name: 'Zum aktiven Lauf' });
+    await expect(back).toBeVisible();
+    await back.click();
+    await expect(page.locator('#res-title')).toHaveText('Tests laufen…');
+    await expect(page.locator('#log')).toContainText('Aktiv…');
+
+    // Lauf endet, während ein früherer Lauf angezeigt wird: die Ansicht bleibt, die Historie aktualisiert sich.
+    await page.locator('.run-entry').nth(1).click();
+    await expect(page.locator('#res-title')).toHaveText('1 von 3 Tests fehlgeschlagen');
+    activeOn = false;
+    activeStream!.end('event: done\ndata: {"status":"passed"}\n\n');
+    activeStream = null;
+    await expect(page.locator('#run-pill')).toBeHidden();
+    await expect(page.locator('#res-notice')).toBeHidden();
+    await expect(page.locator('#res-title')).toHaveText('1 von 3 Tests fehlgeschlagen');
+    await expect(page.locator('.trow')).toHaveCount(3);
+    await expect(page.locator('.run-entry')).toHaveCount(1);
   });
 
   test('Ergebnisse: Löschen verlangt Bestätigung, Abbrechen sendet nichts', async ({ page }) => {

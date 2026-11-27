@@ -204,6 +204,12 @@ async function rerunSelected() {
 
 export function init() {
   on('run-done', () => loadHistory().catch(() => {}));
+  on('run-started', () => loadHistory().catch(() => {}));
+  // Auswahl folgt der Ansicht (z. B. „Zum aktiven Lauf").
+  on('run-view', ({ id }) => {
+    shownRunId = id;
+    $$('.run-entry').forEach((li) => li.classList.toggle('selected', $('.run-cb', li)?.dataset.id === id));
+  });
   on('lang-change', renderList);
   // Der Katalog kommt oft nach der Historie: Bereiche erst dann auflösen.
   on('catalog-loaded', renderList);

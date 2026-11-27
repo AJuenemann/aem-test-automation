@@ -45,7 +45,7 @@ Bereich 5 bündelt nur die Prüfungen bekannter Einzelrisiken.
 ## Gesamtübersicht (Stand 23.11.2026)
 
 113 AEM-Testfälle inklusive Login (LOGIN-1), dazu 27 Capture-Läufe (COMP-CAP)
-und 9 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 149 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
+und 9 Referenz-Erfassungen (REF-CAP, nur auf Anforderung) und 151 Unit-Tests. „Verifiziert" nennt die Umgebungen mit
 grünem Lauf.
 
 | ID | Testname | Bereich | Datei | Verifiziert |
@@ -82,7 +82,7 @@ grünem Lauf.
 | OVL-1/2 | Asset-Finder-Suche "Visitenkarten" / "Externe Links" liefert Treffer | Regressionstest | `regression/asset-finder.spec.ts` | DEV (23.11.2026), TEST |
 | OVL-3 | Asset setzen (leer) und ersetzen (vorhanden) | Regressionstest | `regression/download-fileupload.spec.ts` | DEV (23.11.2026), TEST |
 | OVL-4 | Formular über die Timeline erreichbar und abbrechbar | Regressionstest | `regression/tree-restore.spec.ts` | DEV, TEST |
-| OVL-6 | Gelöschte Unterseite wird zum Zeitpunkt davor wiederhergestellt | Regressionstest | `regression/tree-restore.spec.ts` | TEST (26.11.2026); DEV seit 26.11.2026 rot (Befund) |
+| OVL-6 | Gelöschte Unterseite wird zum Zeitpunkt davor wiederhergestellt | Regressionstest | `regression/tree-restore.spec.ts` | DEV und TEST zeitabhängig grün oder rot (Befund 26.11.2026) |
 | OVL-5 | Fehlerseite (404) entspricht Baseline | Regressionstest | `regression/error-pages.spec.ts` | DEV (24.11.2026), TEST |
 | LANG-1/2 | Sprachwahl "English" / "Deutsch" öffnet die Gegenseite | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
 | LANG-3 | Hreflang: de- und en-Fassung verweisen gegenseitig aufeinander | Regressionstest | `regression/languages.spec.ts` | DEV, TEST |
@@ -580,7 +580,7 @@ Sprachversionen.
   Es wird keine Wiederherstellung ausgeführt.
 
 ### OVL-6 — Baum wiederherstellen ausführen (`tests/regression/tree-restore.spec.ts`)
-- **Testname**: „Gelöschte Unterseite wird zum Zeitpunkt davor wiederhergestellt". Gelöschte Assets sind über die UI nicht wiederherstellbar (manuell MAN-10).
+- **Testname**: „Gelöschte Unterseite wird zum Zeitpunkt davor wiederhergestellt". Gelöschte Assets sind über die UI nicht wiederherstellbar (manuell MAN-09).
 - **Schritte**: Testseite mit Unterseite `kind` in der Spielwiese anlegen. Von der Unterseite über die Timeline
   eine Version speichern (Redaktionsseiten haben Versionen aus dem Aktivieren, frische Testseiten nicht; ohne
   Version stellt AEM nichts her). Bis nach der nächsten vollen Minute B warten, Unterseite löschen. An der
@@ -590,11 +590,19 @@ Sprachversionen.
   Anlegen vor B und das Löschen nach B; Laufzeit etwa 4 Minuten. Cleanup löscht die Testseite samt Unterseite.
   DEV 23.11.2026: 3 Wiederholungen grün.
 
-- **Befund DEV 26.11.2026 (vor dem Upgrade, AEM 6.5.25.0)**: Auf DEV rot, auf TEST am selben Tag grün, Code seit 24.11.2026
-  unverändert (am 24.11. auf DEV dreimal grün). Das Formular öffnet (OVL-4 grün), die Vorschau zeigt „Keine
-  wiederherstellbaren Versionen", „Wiederherstellen" bleibt gesperrt, eine Ladeschicht (`foundation-ui-mask`) liegt
-  darüber. Die Unterseite hat ihre Version (Audit: `VersionCreated`), `/bin/wcm/versiontree.json` liefert sie für den
-  gewählten Zeitpunkt wie am 25.11.2026. Ursache offen; nicht weiter angepasst, um den Befund nicht zu verdecken.
+- **Befund 26.11.2026 (vor dem Upgrade, AEM 6.5.25.0, DEV und TEST)**: Der Test ist zeitabhängig, nicht DEV-spezifisch.
+  Am 26.11.2026 auf DEV wechselnd grün und rot (u. a. 1 von 3 rot). Diag mit Warten auf die fertige Vorschau:
+  DEV 4 von 4 rot, TEST 1 von 1 rot.
+  - Beim Öffnen des Formulars wirft AEM-Produktcode einen JS-Fehler: `TypeError: Cannot read properties of null
+    (reading 'addEventListener')` in `restoreTreeWizard.fetchVersionsInfo`
+    (`/libs/cq/gui/components/siteadmin/admin/restoretree/clientlibs/restoretree.min.js`), kein Fraunhofer-Overlay.
+  - Danach bleibt die Ladeschicht (`foundation-ui-mask`) liegen, „Wiederherstellen" ist gesperrt (90 s gewartet).
+    Alle Anfragen `/bin/wcm/versiontree.json` (`node=.`, `/`, `/kind`) antworten mit 200 in unter 0,1 s.
+  - „Keine wiederherstellbaren Versionen" steht auch in grünen Läufen in der Vorschau, ist also nicht die Ursache.
+  - Grün wird der Test nur, wenn er „Wiederherstellen" klickt, bevor die Vorschau fertig geladen ist. Ein Redakteur
+    in normalem Tempo kommt nach diesem Befund nicht so weit.
+  - Bewertung nach dem Upgrade: Gleiches Verhalten ist keine Regression. Funktioniert es danach, ist es eine
+    Verbesserung. Der Test wurde nicht angepasst, um den Befund nicht zu verdecken.
 ### OVL-5 — Fehlerseite (Publish, visuell) (`tests/regression/error-pages.spec.ts`)
 - **Testname**: „Fehlerseite (404) entspricht Baseline".
 - **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt; Baseline erzeugt. Pfad via
@@ -749,6 +757,9 @@ Sprachversionen.
   (0 Byte): Es werden keine Beiträge geliefert (Quelle laut Konfiguration u. a. Twitter, vermutlich ohne Zugang aus den
   Test-Umgebungen). Der Vorher-Stand ist also „leer". Der Test erkennt, wenn der Dienst nach dem Upgrade ausfällt
   (404, 500) oder plötzlich Inhalt liefert. Ob und wie Beiträge dargestellt werden, ist damit **nicht** geprüft.
+- **Entscheidung 26.11.2026 (mit JET)**: Kein manueller Test und keine eigenen Accounts. Die Wall bindet laut Dialog nur
+  Twitter/X an, und der Dienst liefert auch in der Produktion keine Beiträge (www.iws.fraunhofer.de, www.fep.fraunhofer.de:
+  HTTP 200, 0 Byte). WALL-1 bleibt der einzige Test der Wall.
 
 ### COURSE-1 — Kurssuche (`tests/regression/publish-reference.spec.ts`)
 - **Vorbedingung**: `AEM_PUBLISH_URL` gesetzt, Referenz `course-search.json`. Nur lesend, ohne Login.
@@ -876,9 +887,9 @@ Sprachversionen.
 - **Zweck**: prüft die Oberfläche im Browser gegen einen lokalen Server, der `cockpit/public`
   ausliefert und `/api/*` mit festen Daten beantwortet. Kein AEM, kein Login, kein echter Lauf;
   gelöscht oder gestartet wird nichts.
-- **Fälle** (19):
+- **Fälle** (20):
   - **Testlauf**: Start braucht mindestens einen Test und eine Umgebung; die Start-Leiste nennt,
-    was fehlt. „Zurücksetzen" leert Auswahl und Suchfeld und klappt die Kategorien zu; der Button
+    was fehlt. Hinter „Tests auswählen" steht die Zahl der gewählten Tests. „Zurücksetzen" leert Auswahl und Suchfeld und klappt die Kategorien zu; der Button
     erscheint nur, wenn es etwas zurückzusetzen gibt.
   - **Umgebung**: Nach dem Start des Dienstes ist keine Umgebung vorgewählt. Ein Reload behält die
     Wahl, ein Neustart des Dienstes (neue Start-Kennung) nicht; nach der ersten Wahl gilt wieder
@@ -898,6 +909,9 @@ Sprachversionen.
     ohne Wahl folgt die UI dem System.
   - **Ergebnisse**: Die Historie nennt Bereich und Kernaussage. Früherer Lauf zeigt Kernaussage, Fehlschlag zuerst, Filter wirkt;
     Löschen verlangt Bestätigung und sendet bei „Abbrechen" nichts.
+  - **Laufender Lauf** (ab 26.11.2026): Wer während eines Laufs einen früheren Lauf ansieht, behält Anzeige
+    „läuft" und Hinweis mit „Zum aktiven Lauf" (zurück mit Log). Endet der Lauf dabei, bleibt die Ansicht,
+    die Historie aktualisiert sich. Der laufende Lauf steht sofort in der Historie.
   - **Werkzeuge**: UI-Mode ist ohne Umgebung gesperrt. Aufräum-Suche listet Testseiten; Löschen
     fragt erst nach.
 - **Erwartet**: alle Fälle grün.
