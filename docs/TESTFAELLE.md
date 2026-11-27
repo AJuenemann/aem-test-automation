@@ -58,7 +58,7 @@ grünem Lauf.
 | SMOKE-9 | Alle OSGi-Bundles sind aktiv | Smoketest | `smoke.spec.ts` | DEV, TEST |
 | SMOKE-10 | Replication-Agents sind eingerichtet und nicht blockiert | Smoketest | `smoke.spec.ts` | DEV, TEST |
 | SMOKE-11 | Tag-Verwaltung lädt und enthält die Samples-Tags | Smoketest | `smoke.spec.ts` | DEV (23.11.2026), TEST (19.11.2026) |
-| SMOKE-12 | Samples-Inhalte liegen auf Author und Publish | Smoketest | `smoke.spec.ts` | DEV (24.11.2026); TEST offen (Samples fehlen) |
+| SMOKE-12 | Samples-Inhalte liegen auf Author und Publish | Smoketest | `smoke.spec.ts` | DEV (24.11.2026), TEST (27.11.2026) |
 | CRUD-1 | Seite anlegen, bearbeiten und löschen | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
 | CRUD-2 | Seite löschen über Tastatur-Shortcut (Backspace) | Basisfunktionen (L1) | `basics/page-crud.spec.ts` | DEV, TEST |
 | PAGE-1 | Seite kopieren und im selben Ordner einfügen | Basisfunktionen (L1) | `basics/page-actions.spec.ts` | DEV (23.11.2026), TEST |
@@ -112,6 +112,9 @@ Baseline „Newsroom" danach neu erzeugt (Reihenfolge nach Veröffentlichungsdat
 0 rot, 1 instabil (PAGE-4: `waitForURL` beim ersten Versuch im Timeout, beim zweiten grün), 20 übersprungen
 (Capture-Läufe, LDAP nur TEST, SEARCH-1 nur TEST). Lauf `5605f00e-698c-475e-96b0-b23900c56784` in `cockpit/runs/`
 (lokal, nicht im Repo). Dieser Stand ist als Git-Tag `vorher-stand-dev-20261125` gesichert.
+**Stand TEST 27.11.2026 (AEM 6.5.25.0):** Veröffentlichung läuft wieder (Publisher-Adresse korrigiert), Samples mit Tags
+auf Publish veröffentlicht (`docs/TEST-samples-veroeffentlicht-20261127.md`), Smoketest 13/13 grün.
+
 **Stand TEST (24.11.2026, 25.11.2026 unverändert: AEM 6.5.25.0):** wieder erreichbar, offenbar mit neuem Produktionsinhalt. Samples fehlen auf Author und
 Publish (404). Beide Replication-Agents (`publish_aem-publish1-test`, `flush_aem-publish1-dispatcher-test`) sind seit
 24.11.2026 09:08 MEZ blockiert (SMOKE-10 rot). Ursache laut Agent-Log: `aem-publish1-publisher-test.ws.fraunhofer.de`

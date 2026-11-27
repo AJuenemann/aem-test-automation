@@ -106,10 +106,11 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
 - Git-Tag **`vorher-stand-dev-20261126`** (maßgeblich): Baselines (inkl. 14 weitere Komponentenseiten), Dialog-Referenzen
   (27 Komponenten), Publish-Referenzen inkl. Feeds, Event/Messe, Social Media Wall, Kurs- und Downloadsuche, dazu die
   Bildvergleiche echter Seiten (REAL-1..9). Die Tags `vorher-stand-dev-20261125`, `…-2` und `…-3` sind unvollständig.
-- Git-Tag **`vorher-stand-test-20261126`** (maßgeblich): Publish-Referenzen inkl. Suche, Social Media Wall, Kurs- und
+- Git-Tag **`vorher-stand-test-20261127`** (maßgeblich seit 27.11.2026): wie `vorher-stand-test-20261126`, dazu alle
+  36 Baselines der Samples-Seiten auf TEST (Newsroom neu, 14 neu angelegt).
+- Git-Tag `vorher-stand-test-20261126` (bis 27.11.2026 maßgeblich): Publish-Referenzen inkl. Suche, Social Media Wall, Kurs- und
   Downloadsuche, dazu REAL-1..9. Die Dialog-Referenzen gelten für beide Umgebungen. Die Tags `vorher-stand-test-20261125`,
-  `…-2` und `…-3` sind unvollständig. **Nicht dabei:** Baselines der Samples-Seiten auf TEST
-  (Samples fehlen dort auf Author und Publish, die Baselines vom 17.11.2026 stammen vom alten Inhalt).
+  `…-2` und `…-3` sind unvollständig.
 - Zeitplan laut JET (25.11.2026): DEV-Author wird am **26.11.2026** per In-Place-Upgrade aktualisiert (Ende des Tages,
   sofern kein Rollback), DEV dann den Großteil des Tages offline. Der Publisher folgt hoffentlich gleichzeitig,
   sonst am 27.11.2026. Der Termin für TEST ist offen.
@@ -123,19 +124,25 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
   Laufzeit Java 21, der Fraunhofer-Code wird für Java 11 kompiliert (daher „Java 11" in FHGWCMS-2415). Nach dem
   Upgrade in der Systeminfo der Konsole gegenprüfen. Den genauen Text nach dem Upgrade hier eintragen.
 - **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen den Tag vergleichen
-  (`git diff vorher-stand-dev-20261126 -- tests/__snapshots__/dev fixtures`).
+  (`git diff vorher-stand-dev-20261126 -- tests/__snapshots__/dev fixtures`, für TEST `vorher-stand-test-20261127`).
 - **TEST-Replication (JET, 27.11.2026):** Blockiert, weil für den Publisher eine falsche URL konfiguriert ist (Publish
   selbst läuft). Vermutlich von Fraunhofer bewusst geändert, JET gibt es an Fraunhofer weiter. Stand 27.11.2026 09:30:
   `publish_aem-publish1-test` → `http://aem-publish1-publisher-test.ws.fraunhofer.de/bin/receive…`,
   `flush_aem-publish1-dispatcher-test` → `http://aem-publish1-dispatcher-flush-test.ws.fraunhofer.de/`, beide blockiert
   (je 50 Einträge). Nicht selbst ändern (außerhalb der Spielwiesen, Fraunhofer-Konfiguration).
+  **Behoben 27.11.2026 10:30:** beide Agents frei, Warteschlangen leer (Adressen im Agent unverändert, Korrektur lag
+  außerhalb). Smoketest, Publish-Referenzen und REAL-1..9 auf TEST danach grün (30 von 31), Referenzen
+  `vorher-stand-test-20261126` also weiter gültig. Rot nur SMOKE-12: Samples auf TEST-Author wieder da (200), auf
+  TEST-Publish nicht veröffentlicht (404). Behoben 27.11.2026 11:08 (siehe Aufgabe 1).
 - Fehlen die Samples auf TEST beim Upgrade, gilt der Vergleich gegen die DEV-Baselines (Entscheidung des Nutzers
   25.11.2026: unkritisch, mit Samples auf TEST aber sicherer).
 
-1. **TEST-Baselines der Samples-Seiten** (vor dem TEST-Upgrade, Testplan Kapitel 12, Nr. 12 und 14). Voraussetzung:
-   TEST läuft wieder sauber (Veröffentlichung auf Publish, Samples auf Author und Publish, Paket-Upload). Dann
-   Smoketest auf TEST, Baselines (`npm run baseline:visual` mit `AEM_ENV=test`) gegen den neuen Inhalt prüfen und bei
-   Bedarf neu erzeugen, danach Gesamtlauf auf TEST und einen weiteren Tag `vorher-stand-test-<Datum>` setzen.
+1. **TEST-Baselines der Samples-Seiten** (vor dem TEST-Upgrade, Testplan Kapitel 12, Nr. 12 und 14). **Stand
+   27.11.2026:** Tags nachgetragen, Samples auf TEST-Publish veröffentlicht (Freigabe Andreas Jünemann,
+   `docs/TEST-samples-veroeffentlicht-20261127.md`). Vorhandene 22 Baselines ohne Schreiben verglichen: alle grün außer
+   „Newsroom" (nur Reihenfolge der Pressemitteilungen, Layout gleich, mit Freigabe neu erzeugt). 14 fehlende Baselines
+   angelegt (nur `missing`). Gesamtlauf TEST grün (Netzwerk-Timeouts wiederholt, OVL-6 bekannt). **Erledigt**, Tag
+   `vorher-stand-test-20261127`.
 2. **Manuelle Tests weiter reduzieren** (MAN-01 bis MAN-09, Stand 27.11.2026). Automatisiert sind inzwischen u. a. Optik
    echter Seiten (REAL-1..9), Event und Messe (EVT-1, REAL-7..9), RSS (FEED-1), Navigation, Kurs- und Downloadsuche
    (COURSE-1, DL-1), Hreflang, Bilder, Fehlerseiten, Visitenkartenimport, Asset verwenden, Baum wiederherstellen.
