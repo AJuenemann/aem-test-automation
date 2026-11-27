@@ -119,9 +119,9 @@ sein (am 25.11.2026 führte das zu falschen Angaben zu „heute" und „morgen")
   Offline Compaction, laut JET evtl. erst nach dem 27.11. fertig. DEV-Publish antwortete um 09:14 noch (200).
 - **Versionsnummer nach dem Upgrade:** 6.5 LTS zählt die Service Packs neu (LTS GA, SP1, SP2, SP3 …), intern heißt es
   AEM 6.6 (UberJar `6.6.0`). Die Nummer ist also nicht zwingend „höher als 6.5.25.0". Upgrade erkennen an: Version
-  ungleich 6.5.25.0, Kennung LTS oder 6.6 (`/system/console/status-productinfo.json`). Java-Version in der
-  Systeminfo der Konsole ablesen, nicht voraussetzen: FHGWCMS-2415 nennt Java 11, Adobe nennt für 6.5 LTS nur
-  Java 17/21 als Laufzeit (Klärung mit JET offen, 27.11.2026). Den genauen Text nach dem Upgrade hier eintragen.
+  ungleich 6.5.25.0, Kennung LTS oder 6.6 (`/system/console/status-productinfo.json`). Java laut JET (27.11.2026):
+  Laufzeit Java 21, der Fraunhofer-Code wird für Java 11 kompiliert (daher „Java 11" in FHGWCMS-2415). Nach dem
+  Upgrade in der Systeminfo der Konsole gegenprüfen. Den genauen Text nach dem Upgrade hier eintragen.
 - **Nach dem Upgrade nichts neu erzeugen**, bei Abweichungen gegen den Tag vergleichen
   (`git diff vorher-stand-dev-20261126 -- tests/__snapshots__/dev fixtures`).
 - **TEST-Replication (JET, 27.11.2026):** Blockiert, weil für den Publisher eine falsche URL konfiguriert ist (Publish
