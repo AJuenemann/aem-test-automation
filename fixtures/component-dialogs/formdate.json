@@ -1,0 +1,75 @@
+{
+  "component": "Datumsfeld",
+  "dialogTitle": "Datumsfeld",
+  "tabs": [
+    "Standard",
+    "Erweitert",
+    "Bedingungen",
+    "Größe"
+  ],
+  "fields": [
+    {
+      "tab": "Standard",
+      "label": "Elementname *",
+      "name": "./name",
+      "value": "fields[5]",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Titel",
+      "name": "./jcr:title",
+      "value": "Geburtstag",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Beschreibung",
+      "name": "./jcr:description",
+      "value": "Test",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Nur Wert anzeigen",
+      "name": "./readOnly",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Erweitert",
+      "label": "Datumauswahltyp *",
+      "name": "./datepickerType",
+      "value": "Datum",
+      "empty": false
+    },
+    {
+      "tab": "Erweitert",
+      "label": "Darstellungsformat *",
+      "name": "./dateFormatView",
+      "value": "dd.mm.yyyy",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderlich",
+      "name": "./required",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderliche Nachricht",
+      "name": "./requiredMessage",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Größe",
+      "label": "Breite",
+      "name": "./width",
+      "value": "3 of 3 columns width",
+      "empty": false
+    }
+  ]
+}

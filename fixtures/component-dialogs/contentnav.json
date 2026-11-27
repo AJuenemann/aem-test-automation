@@ -1,0 +1,14 @@
+{
+  "component": "Contentnavigation",
+  "dialogTitle": "Contentnavigation",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Zu Beginn zugeklappt",
+      "name": "./closed",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

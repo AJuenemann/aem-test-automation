@@ -1,0 +1,38 @@
+{
+  "component": "Bilder-/Filmstrecke",
+  "dialogTitle": "Bilder-/Filmstrecke",
+  "tabs": [
+    "Eigenschaften",
+    "Text"
+  ],
+  "fields": [
+    {
+      "tab": "Eigenschaften",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Eigenschaften",
+      "label": "Ordner mit Bildern",
+      "name": "./path",
+      "value": "/content/dam/samples/images/gallery-mixed",
+      "empty": false
+    },
+    {
+      "tab": "Eigenschaften",
+      "label": "Trenner entfernen",
+      "name": "./removeSeperator",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Text",
+      "label": "./text",
+      "name": "./text",
+      "value": "",
+      "empty": true
+    }
+  ]
+}

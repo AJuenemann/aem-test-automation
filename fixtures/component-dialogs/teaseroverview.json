@@ -1,0 +1,42 @@
+{
+  "component": "Teaser-Übersicht",
+  "dialogTitle": "Teaser-Übersicht",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Trenner entfernen",
+      "name": "./removeSeperator",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Teaser reference (Überschrift)",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Text",
+      "name": "./text",
+      "value": "Duis ullamcorper ut mauris non fermentum. Curabitur venenatis gravida justo id scelerisque. Donec id lectus a dolor porta sagittis ut a ante. Aliquam at aliquet felis, vitae lobortis dolor. Aenean ullamcorper dolor in nisi vehicula vulputate. Nunc hendrerit at eros vel gravida. Aenean et sodales erat, a ornare augue. Nulla varius elit a ante feugiat faucibus. Donec molestie ante quis nibh dapibus laoreet non eu urna.\n\nTeaser reference: /content/samples/de/components/teasers/teaser-mixed/jcr:content/contentPar/teaser_overview/teaserPar",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Teaser auswählen",
+      "name": "./reference",
+      "value": "/content/samples/de/components/teasers/teaser-mixed/jcr:content/contentPar/teaser_overview/teaserPar",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Horizontale Anordnung",
+      "name": "./horizontalOrder",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

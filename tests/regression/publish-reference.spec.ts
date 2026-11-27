@@ -4,7 +4,7 @@ import {
   readReference, missingReferenceMessage, collectNavLinks, hreflangOf, collectImages, imagePatterns,
   type NavLink, type HreflangPair, IMAGE_PAGES, IMAGE_WIDTHS, NAV_PAGES,
   FEEDS, collectFeed, diffFeed, type FeedState, EVENT_LISTS, collectEventList, diffEventList, type EventListState,
-  SEARCH_TERMS, collectSearch, diffSearch, type SearchState,
+  SEARCH_CASES, searchKey, collectSearch, diffSearch, type SearchState,
   COURSE_TERMS, collectCourseSearch, DOWNLOAD_TERMS, collectDownloadSearch,
   WALL_PAGES, collectWall, diffWall, type WallState,
 } from '../../fixtures/publish-snapshots.js';
@@ -126,7 +126,11 @@ test.describe('Regression: Publish-Seiten wie vorher (Navigation, Sprachverweise
     const ref = readReference<Record<string, SearchState>>('search');
     expect(ref, missingReferenceMessage('search')).not.toBeNull();
     const problems: string[] = [];
-    for (const term of SEARCH_TERMS) problems.push(...diffSearch(term, ref![term], await collectSearch(page, base, term)));
+    for (const c of SEARCH_CASES) {
+      const key = searchKey(c);
+      if (!ref![key]) { problems.push(`Suche "${key}": keine Referenz (Vorher-Stand fehlt)`); continue; }
+      problems.push(...diffSearch(key, ref![key], await collectSearch(page, base, c)));
+    }
     expect(problems, `Abweichungen bei der Suche (${problems.length}).`).toEqual([]);
   });
 

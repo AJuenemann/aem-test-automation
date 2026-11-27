@@ -1,0 +1,61 @@
+{
+  "component": "Bühne Bild",
+  "dialogTitle": "Bühne Bild",
+  "tabs": [
+    "Slide Text",
+    "CTA Button",
+    "Bild",
+    "Bildeigenschaften"
+  ],
+  "fields": [
+    {
+      "tab": "Slide Text",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "First slide",
+      "empty": false
+    },
+    {
+      "tab": "Slide Text",
+      "label": "Text",
+      "name": "./text",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Slide Text",
+      "label": "Größe Textbox",
+      "name": "./captionSize",
+      "value": "Groß",
+      "empty": false
+    },
+    {
+      "tab": "CTA Button",
+      "label": "Ziel-URL",
+      "name": "./link/path",
+      "value": "/content/samples/de/pages/standard-page",
+      "empty": false
+    },
+    {
+      "tab": "CTA Button",
+      "label": "Hilfetext für Link",
+      "name": "./link/linkHelpText",
+      "value": "Blah blah",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bild Alternativ Text",
+      "name": "./image/alt",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright",
+      "name": "./image/copyright",
+      "value": "",
+      "empty": true
+    }
+  ]
+}

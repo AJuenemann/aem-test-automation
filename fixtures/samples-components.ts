@@ -78,6 +78,25 @@ export const EXTRA_COMPONENTS: SampleComponent[] = [
   { key: 'download', label: 'Herunterladen', pagePath: '/section/download-component', component: 'Herunterladen' },
   { key: 'imagerow', label: 'Bild-Leiste', pagePath: '/section/image-row', component: 'Bild-Leiste' },
   { key: 'parallelnav', label: 'Parallelnavigation', pagePath: '/navigations/parallel-navigation', component: 'Parallelnavigation' },
+  // MAN-02, 27.11.2026: weitere Beispielseiten (Overlay-Titel per Diag gegen TEST gelesen; DEV war im Upgrade).
+  // Mehrere Komponenten einer Seite: Bildvergleich nur einmal pro Seite (`visual: false` bei den übrigen).
+  { key: 'textinline', label: 'Text mit Inline-Bildern', pagePath: '/section/text-with-inline-images', component: 'Text mit Inline-Bildern' },
+  // Linkliste: Ihre Kind-Overlays „Link" füllen die ganze Fläche, der Dialog der Liste ist per Klick nicht erreichbar. Geprüft wird der erste Link.
+  { key: 'link', label: 'Link (Linkliste)', pagePath: '/section/linklist', component: 'Link' },
+  { key: 'wideimage', label: 'Breites Bild', pagePath: '/section/wide-image', component: 'Breites Bild' },
+  { key: 'teaseroverview', label: 'Teaser-Übersicht', pagePath: '/teasers/teaser-overview-reference', component: 'Teaser-Übersicht' },
+  { key: 'teasermixed', label: 'Teaser gemischt', pagePath: '/teasers/teaser-mixed', component: 'Teaser-Übersicht' },
+  { key: 'sliderbigslide', label: 'Slider groß, Bild-Slide', pagePath: '/sliders/slider-big-multiple', component: 'Slider groß - Bild-Slide' },
+  { key: 'filmstrip', label: 'Filmstrecke', pagePath: '/gallery/videos', component: 'Bilder-/Filmstrecke' },
+  { key: 'stage', label: 'Bühne', pagePath: '/stage', component: 'Bühne [Stamm]' },
+  { key: 'stageimage', label: 'Bühne Bild', pagePath: '/stage', component: 'Bühne Bild', visual: false },
+  { key: 'stagevideo', label: 'Bühne Video', pagePath: '/stage', component: 'Bühne Video', visual: false },
+  { key: 'contentnav', label: 'Contentnavigation', pagePath: '/navigations/content-navigation', component: 'Contentnavigation' },
+  { key: 'forminput', label: 'Formular: Texteingabe', pagePath: '/form/all-components', component: 'Texteingabe' },
+  { key: 'formdropdown', label: 'Formular: Dropdown-Feld', pagePath: '/form/all-components', component: 'Dropdown-Feld', visual: false },
+  { key: 'formdate', label: 'Formular: Datumsfeld', pagePath: '/form/all-components', component: 'Datumsfeld', visual: false },
+  { key: 'formcheckbox', label: 'Formular: Kontrollkästchen-Gruppe', pagePath: '/form/all-components', component: 'Kontrollkästchen-Gruppe', visual: false },
+  { key: 'formupload', label: 'Formular: Datei-Upload', pagePath: '/form/all-components', component: 'Datei-Upload', visual: false },
 ];
 
 /** Alle Komponenten der Dialog- und Darstellungstests. */

@@ -1,0 +1,42 @@
+{
+  "component": "Link",
+  "dialogTitle": "Link",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Ziel-URL",
+      "name": "./path",
+      "value": "/content/externallinklib/samples/de/FraunhoferIKTS",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Linktext",
+      "name": "./linkText",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Link Title",
+      "name": "./linkTitle",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Reiter-Id",
+      "name": "./tabpanelid",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "In neuem Fenster öffnen",
+      "name": "./linkTarget",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "component": "Slider groß - Bild-Slide",
+  "dialogTitle": "Slider groß - Bild-Slide",
+  "tabs": [
+    "Slide Text",
+    "Bild",
+    "Bildeigenschaften"
+  ],
+  "fields": [
+    {
+      "tab": "Slide Text",
+      "label": "Titel *",
+      "name": "./headline",
+      "value": "Slide 11",
+      "empty": false
+    },
+    {
+      "tab": "Slide Text",
+      "label": "Kategorie",
+      "name": "./category",
+      "value": "Test Bilder",
+      "empty": false
+    },
+    {
+      "tab": "Slide Text",
+      "label": "Beschreibung",
+      "name": "./text",
+      "value": "Lorem ipsum",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright übernehmen",
+      "name": "./image/properties/usecopyright",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright Angabe",
+      "name": "./image/properties/meta",
+      "value": "Bild Copyright",
+      "empty": false
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "component": "Breites Bild",
+  "dialogTitle": "Breites Bild",
+  "tabs": [
+    "Allgemein",
+    "Bild",
+    "Bildeigenschaften"
+  ],
+  "fields": [
+    {
+      "tab": "Allgemein",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Lorem ipsum (Überschrift)",
+      "empty": false
+    },
+    {
+      "tab": "Allgemein",
+      "label": "Zusammenfassung",
+      "name": "./summary",
+      "value": "Proin in placerat tellus, ut congue urna. Maecenas gravida mi elit, eget laoreet quam porta ut. Nulla a mi turpis. Fusce dignissim nulla quam, ac congue nisi tempor nec. Etiam ornare dolor neque, id sagittis erat ullamcorper a. Nam in justo ante. Duis pulvinar viverra mauris non sodales. ",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Titel",
+      "name": "./imageComponent/image/properties/title",
+      "value": "Cras sagittis nunc",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bild Alternativ Text",
+      "name": "./imageComponent/image/properties/alt",
+      "value": "Proin vestibulum sit amet",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Beschreibung übernehmen",
+      "name": "./imageComponent/image/properties/usedescription",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bildbeschreibung",
+      "name": "./imageComponent/image/properties/caption",
+      "value": "<b>Mauris</b> congue mi lectus, non finibus purus suscipit a. Nunc et lacus porttitor, rhoncus neque non, placerat elit. Sed a dolor sit amet sapien tempus tincidunt porttitor vitae erat. Nam varius scelerisque dui, ac blandit neque lobortis at. Curabitur auctor imperdiet libero pellentesque vehicula. Proin vestibulum sit amet ante ac interdum. Nullam odio augue, facilisis euismod enim et, scelerisque posuere dolor. Curabitur vitae iaculis sapien, at feugiat diam. Proin ut mauris at turpis bibendum semper. Cras sagittis nunc et dolor imperdiet, ac tristique nulla mattis. Morbi vehicula aliquet venenatis. (Bildbeschreibung)",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright übernehmen",
+      "name": "./imageComponent/image/properties/usecopyright",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright Angabe",
+      "name": "./imageComponent/image/properties/meta",
+      "value": "Fusce dignissim nulla quam",
+      "empty": false
+    }
+  ]
+}

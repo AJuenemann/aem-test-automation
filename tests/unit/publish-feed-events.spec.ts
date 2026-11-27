@@ -53,6 +53,11 @@ test.describe('Publish-Referenzen: Feeds und Event-Listen (Logik)', { tag: '@uni
     expect(diffSearch('x', was, { total: 850, top: hits(0) })[0]).toContain('850 Treffer, vorher 1000');
     expect(diffSearch('x', was, { total: 1000, top: hits(4) })[0]).toContain('nur 6 der 10 Spitzentreffer');
     expect(diffSearch('x', was, { total: 0, top: [] })[0]).toContain('keine Treffer');
+    // Wartezeit: erst mehr als doppelt so lange und mindestens 5 s mehr ist spürbar; ohne Vorher-Messung keine Prüfung.
+    const timed: SearchState = { ...was, durationMs: 2000 };
+    expect(diffSearch('x', timed, { ...was, durationMs: 6900 })).toEqual([]);
+    expect(diffSearch('x', timed, { ...was, durationMs: 7100 })[0]).toContain('7.1 s bis zur Trefferliste, vorher 2 s');
+    expect(diffSearch('x', was, { ...was, durationMs: 60_000 })).toEqual([]);
   });
 
   test('Liste: vergangene Einträge dürfen fehlen, laufende nicht, neue und geänderte werden gemeldet', () => {

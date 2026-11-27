@@ -1,0 +1,118 @@
+{
+  "component": "Texteingabe",
+  "dialogTitle": "Texteingabe",
+  "tabs": [
+    "Standard",
+    "Erweitert",
+    "Bedingungen",
+    "Größe",
+    "Double Opt-In"
+  ],
+  "fields": [
+    {
+      "tab": "Standard",
+      "label": "Elementname *",
+      "name": "./name",
+      "value": "fields[1]",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Titel",
+      "name": "./jcr:title",
+      "value": "E-Mail",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Beschreibung",
+      "name": "./jcr:description",
+      "value": "* Pflichtfeld",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Platzhalter",
+      "name": "./placeholder",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Standard",
+      "label": "Nur Wert anzeigen",
+      "name": "./readOnly",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Erweitert",
+      "label": "Standardwert",
+      "name": "./defaultValue",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderlich",
+      "name": "./required",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderliche Nachricht",
+      "name": "./requiredMessage",
+      "value": "Bitte füllen Sie das Pflichtfeld aus.",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Bedingung",
+      "name": "./constraintType",
+      "value": "E-Mail",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Nachricht bei Verstoß",
+      "name": "./constraintMessage",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Größe",
+      "label": "Zeilen",
+      "name": "./rows",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Größe",
+      "label": "Max symbols allowed",
+      "name": "./maxlength",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Größe",
+      "label": "Breite",
+      "name": "./width",
+      "value": "3 of 3 columns width",
+      "empty": false
+    },
+    {
+      "tab": "Double Opt-In",
+      "label": "Email an Formular Antragsteller",
+      "name": "./sendEmail",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Double Opt-In",
+      "label": "Double Opt-In",
+      "name": "./doubleOptIn",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

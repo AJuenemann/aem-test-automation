@@ -1,9 +1,9 @@
 import { test } from '../../fixtures/test-fixtures.js';
 import { titleEn, describeEn } from '../../fixtures/titles.js';
 import {
-  CAPTURE_MODE, writeReference, collectNavLinks, findHreflangPairs, collectImages, imagePatterns,
+  CAPTURE_MODE, writeReference, readReference, collectNavLinks, findHreflangPairs, collectImages, imagePatterns,
   IMAGE_PAGES, IMAGE_WIDTHS, NAV_PAGES, FEEDS, collectFeed, EVENT_LISTS, collectEventList,
-  SEARCH_TERMS, collectSearch, COURSE_TERMS, collectCourseSearch, DOWNLOAD_TERMS, collectDownloadSearch,
+  SEARCH_CASES, searchKey, collectSearch, extendReference, COURSE_TERMS, collectCourseSearch, DOWNLOAD_TERMS, collectDownloadSearch,
   WALL_PAGES, collectWall, type FeedState, type EventListState, type SearchState, type WallState,
 } from '../../fixtures/publish-snapshots.js';
 import { getAemConfig } from '../../config/env.js';
@@ -60,12 +60,15 @@ test.describe('Regression: Referenzen erfassen (Vorher-Stand)', { tag: ['@toolin
     test.skip(getAemConfig().env !== 'test', 'Die Enterprise Search ist nur auf TEST eingerichtet (auf DEV nicht, JET 25.11.2026).');
     test.setTimeout(240_000);
     const base = publishPage.config().url;
+    // Vorhandene Begriffe bleiben unverändert (Vorher-Stand), nur neue Fälle werden ergänzt.
+    const existing = readReference<Record<string, SearchState>>('search') ?? {};
     const ref: Record<string, SearchState> = {};
-    for (const term of SEARCH_TERMS) {
-      ref[term] = await collectSearch(page, base, term);
-      if (ref[term].total === 0 || ref[term].top.length < 10) throw new Error(`Suche "${term}": ${ref[term].total} Treffer, ${ref[term].top.length} auf der ersten Seite. Nicht als Vorher-Stand geeignet.`);
+    for (const c of SEARCH_CASES.filter((x) => !(searchKey(x) in existing))) {
+      const key = searchKey(c);
+      ref[key] = await collectSearch(page, base, c);
+      if (ref[key].total === 0 || ref[key].top.length < 10) throw new Error(`Suche "${key}": ${ref[key].total} Treffer, ${ref[key].top.length} auf der ersten Seite. Nicht als Vorher-Stand geeignet.`);
     }
-    writeReference('search', ref);
+    globalThis.console.log(`[CAPTURE] Suche: ergänzt ${extendReference('search', ref).join(', ') || 'nichts'}`);
   });
 
   test('Social Media Wall erfassen', titleEn('Capture the social media wall'), async ({ page, publishPage }) => {

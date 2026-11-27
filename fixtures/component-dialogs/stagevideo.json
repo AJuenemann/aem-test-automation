@@ -1,0 +1,76 @@
+{
+  "component": "Bühne Video",
+  "dialogTitle": "Bühne Video",
+  "tabs": [
+    "Slide Text",
+    "CTA Button",
+    "Vorschaubild für Video",
+    "Fallback-Bild",
+    "Video Eigenschaften"
+  ],
+  "fields": [
+    {
+      "tab": "Slide Text",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Dam Video with Preview Image",
+      "empty": false
+    },
+    {
+      "tab": "Slide Text",
+      "label": "Text",
+      "name": "./text",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Slide Text",
+      "label": "Größe Textbox",
+      "name": "./captionSize",
+      "value": "Mittel",
+      "empty": false
+    },
+    {
+      "tab": "CTA Button",
+      "label": "Ziel-URL",
+      "name": "./link/path",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "CTA Button",
+      "label": "Hilfetext für Link",
+      "name": "./link/linkHelpText",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Video Eigenschaften",
+      "label": "Youtube ID",
+      "name": "./video/youtubeId",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Video Eigenschaften",
+      "label": "Youtube-Vorschaubild erlauben",
+      "name": "./video/allowYoutubeThumbnail",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Video Eigenschaften",
+      "label": "Autoplay",
+      "name": "./video/autoplay",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Video Eigenschaften",
+      "label": "Stumm",
+      "name": "./video/mute",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

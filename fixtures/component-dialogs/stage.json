@@ -1,0 +1,21 @@
+{
+  "component": "Bühne [Stamm]",
+  "dialogTitle": "Bühne",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Geschwindigkeit",
+      "name": "./playSpeed",
+      "value": "5000",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Übergangszeit",
+      "name": "./transTime",
+      "value": "1000",
+      "empty": false
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "component": "Datei-Upload",
+  "dialogTitle": "Datei-Upload",
+  "tabs": [
+    "Allg. Angaben",
+    "Bedingungen",
+    "Größe"
+  ],
+  "fields": [
+    {
+      "tab": "Allg. Angaben",
+      "label": "Elementname *",
+      "name": "./name",
+      "value": "upload_field",
+      "empty": false
+    },
+    {
+      "tab": "Allg. Angaben",
+      "label": "Titel",
+      "name": "./jcr:title",
+      "value": "Upload Data",
+      "empty": false
+    },
+    {
+      "tab": "Allg. Angaben",
+      "label": "Beschreibung",
+      "name": "./jcr:description",
+      "value": "Datei hochladen",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderlich",
+      "name": "./required",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderliche Nachricht",
+      "name": "./requiredMessage",
+      "value": "Sie müssen eine Datei hochladen",
+      "empty": false
+    },
+    {
+      "tab": "Größe",
+      "label": "Layout",
+      "name": "./cssGridClass",
+      "value": "1 of 3 columns width",
+      "empty": false
+    },
+    {
+      "tab": "Größe",
+      "label": "Breite",
+      "name": "./width",
+      "value": "",
+      "empty": true
+    }
+  ]
+}

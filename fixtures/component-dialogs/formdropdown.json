@@ -1,0 +1,82 @@
+{
+  "component": "Dropdown-Feld",
+  "dialogTitle": "Dropdown-Feld",
+  "tabs": [
+    "Standard",
+    "Erweitert",
+    "Bedingungen",
+    "Größe"
+  ],
+  "fields": [
+    {
+      "tab": "Standard",
+      "label": "Elementname *",
+      "name": "./name",
+      "value": "fields[2]",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Titel",
+      "name": "./jcr:title",
+      "value": "Anrede geändert",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Beschreibung",
+      "name": "./jcr:description",
+      "value": "Ein Drop-Down zur Auswahl der Anrede",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Platzhalter Dropdown *",
+      "name": "./placeholder",
+      "value": "Please choose",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Mehrfach auswählbar",
+      "name": "./multiSelection",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Elemente",
+      "name": "./options",
+      "value": "Herr=Herr",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Ladepfad für Elemente",
+      "name": "./loadPath",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderlich",
+      "name": "./required",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderliche Nachricht",
+      "name": "./requiredMessage",
+      "value": "Bitte füllen Sie das Pflichtfeld aus.",
+      "empty": false
+    },
+    {
+      "tab": "Größe",
+      "label": "Breite",
+      "name": "./width",
+      "value": "3 of 3 columns width",
+      "empty": false
+    }
+  ]
+}

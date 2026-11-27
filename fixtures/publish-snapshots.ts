@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { APIRequestContext, Page } from '@playwright/test';
+import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { getAemConfig } from '../config/env.js';
 
 /**
@@ -27,6 +27,23 @@ export function readReference<T>(name: string): T | null {
 export const missingReferenceMessage = (name: string): string =>
   `Referenz "${name}" fehlt für AEM_ENV=${getAemConfig().env}. Vorher-Stand erfassen: ` +
   `CAPTURE_REFERENCES=1 npm run capture-references (nur vor dem Upgrade).`;
+
+/**
+ * Ergänzt eine vorhandene Referenz um neue Einträge (z. B. weitere Suchbegriffe). Vorhandene Einträge bleiben
+ * unverändert, auch mit CAPTURE_REFERENCES=overwrite nicht. Gibt die Schlüssel der neuen Einträge zurück.
+ */
+export function extendReference(name: string, data: Record<string, unknown>): string[] {
+  const existing = readReference<Record<string, unknown>>(name);
+  if (!existing) {
+    writeReference(name, data);
+    return Object.keys(data);
+  }
+  const added = Object.keys(data).filter((k) => !(k in existing));
+  if (added.length) {
+    fs.writeFileSync(referenceFile(name), JSON.stringify({ ...existing, ...Object.fromEntries(added.map((k) => [k, data[k]])) }, null, 2) + '\n', 'utf-8');
+  }
+  return added;
+}
 
 export function writeReference(name: string, data: unknown): void {
   const file = referenceFile(name);
@@ -329,26 +346,100 @@ export function diffEventList(name: string, was: EventListState, now: EventListS
 
 // --- Globale Suche --------------------------------------------------------------------------
 
-/** Typische Begriffe: häufig, selten, Umlaut. Vorläufige Auswahl, bis Fraunhofer Begriffe nennt (Testplan Kapitel 12, Nr. 6). */
-export const SEARCH_TERMS = ['Energie', 'Quantencomputer', 'Müller'];
+/**
+ * Filter der erweiterten Suche auf der Ergebnisseite. Gesetzt wie von einem Nutzer über das Formular „Erweiterte
+ * Suche"; als Query-Parameter der Ergebnisseite wirken sie nicht (TEST 27.11.2026: gleiche Trefferzahlen).
+ */
+export interface SearchFilter {
+  /** Lesbare Kennung, Teil des Referenz-Schlüssels. */
+  label: string;
+  /** „Mit mindestens einem der Wörter" (or) oder „Mit der genauen Wortgruppe" (phrase); sonst „Mit allen Wörtern". */
+  logic?: 'or' | 'phrase';
+  /** „Ohne die Wörter". */
+  exclude?: string;
+  /** „Nur Ergebnisse in". */
+  language?: 'en' | 'all';
+  /** Nur diese Dokumenttypen (Webseite, PDF-Dokument, Text). */
+  docTypes?: Array<'Webseite' | 'PDF-Dokument' | 'Text'>;
+}
+/**
+ * Suchfälle: Begriff plus optional Filter. Vorschlag (Testplan Kapitel 12, Nr. 6): häufig, selten, Umlaut, Wortgruppe,
+ * Englisch, Filter. Die ersten drei stammen vom 25.11.2026, die übrigen vom 27.11.2026 (nur TEST).
+ */
+export interface SearchCase {
+  term: string;
+  filter?: SearchFilter;
+}
+export const SEARCH_CASES: SearchCase[] = [
+  { term: 'Energie' },
+  { term: 'Quantencomputer' },
+  { term: 'Müller' },
+  { term: 'Wasserstoff' },
+  { term: 'Jahresbericht' },
+  { term: 'Datenschutz' },
+  { term: 'Künstliche Intelligenz', filter: { label: 'genaue Wortgruppe', logic: 'phrase' } },
+  { term: 'Künstliche Intelligenz', filter: { label: 'mindestens ein Wort', logic: 'or' } },
+  { term: 'Energie', filter: { label: 'nur PDF', docTypes: ['PDF-Dokument'] } },
+  { term: 'Energie', filter: { label: 'alle Sprachen', language: 'all' } },
+  { term: 'Energie', filter: { label: 'ohne Solar', exclude: 'Solar' } },
+  { term: 'hydrogen', filter: { label: 'Englisch', language: 'en' } },
+];
+/** Schlüssel in der Referenz (ohne Filter wie bisher nur der Begriff). */
+export const searchKey = (c: SearchCase): string => (c.filter ? `${c.term} [${c.filter.label}]` : c.term);
+
+/** Setzt die Filter über „Erweiterte Suche" und sucht erneut. Gibt die Wartezeit ab dem Klick auf „Suchen" zurück. */
+async function applySearchFilter(page: Page, f: SearchFilter): Promise<number> {
+  const adv = page.locator('#advanced-search');
+  if (!(await adv.isVisible())) await page.locator('a.advanced-search').first().click();
+  await adv.waitFor({ state: 'visible', timeout: 15_000 });
+  if (f.logic) await adv.locator(`input[name="searchLogic"][value="${f.logic}"]`).check();
+  if (f.exclude) await adv.locator('input[name="exclusionString"]').fill(f.exclude);
+  if (f.language) await adv.locator('select[name="language"]').selectOption(f.language);
+  if (f.docTypes) {
+    for (const t of ['Webseite', 'PDF-Dokument', 'Text'] as const) {
+      const box = adv.getByLabel(t, { exact: true });
+      if (f.docTypes.includes(t)) await box.check(); else await box.uncheck();
+    }
+  }
+  // Stand vor dem Absenden: Danach auf die neu gezeichnete Liste warten, nicht die alte lesen.
+  const snapshot = () => page.evaluate(() => `${document.querySelector('.search-results h2')?.textContent ?? ''}|${document.querySelector('.search-results ul.articles-list > li a')?.getAttribute('href') ?? ''}`);
+  const before = await snapshot();
+  const answer = page.waitForResponse((r) => r.url().includes('/enterprisesearch/query') && r.request().method() === 'POST', { timeout: 60_000 });
+  const started = Date.now();
+  await page.locator('form.section-form button[type="submit"]').first().click();
+  await answer;
+  // Gleiche Trefferzahl und gleicher erster Treffer sind möglich: dann nach kurzer Frist weiter.
+  await expect.poll(snapshot, { timeout: 5_000 }).not.toBe(before).catch(() => undefined);
+  await page.locator('.search-results ul.articles-list > li').first().waitFor({ state: 'attached', timeout: 30_000 });
+  return Date.now() - started;
+}
 
 export interface SearchState {
   total: number;
   /** Erste Trefferseite (10 Treffer) in Reihenfolge. */
   top: { href: string; title: string }[];
+  /** Wartezeit bis zur Trefferliste in ms (ab 27.11.2026 erfasst). */
+  durationMs?: number;
 }
 
 /**
  * Ergebnisseite der globalen Suche, wie sie das Suchformular der Startseite aufruft (GET mit `queryString`).
  * Die Treffer lädt die Seite per Skript vom Such-Dienst nach, daher auf die Überschrift „N Ergebnisse für …" warten.
  */
-export async function collectSearch(page: Page, base: string, term: string): Promise<SearchState> {
-  const url = `${base}/content/zv/de/suche.html?_charset_=UTF-8&numberResults=10&page=1&lang=de&queryString=${encodeURIComponent(term)}`;
+export async function collectSearch(page: Page, base: string, c: SearchCase): Promise<SearchState> {
+  const url = `${base}/content/zv/de/suche.html?_charset_=UTF-8&numberResults=10&page=1&lang=de&queryString=${encodeURIComponent(c.term)}`;
+  const started = Date.now();
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   // Erst die Überschrift mit der Trefferzahl (vorher steht dort ein leerer Platzhalter), dann die Liste.
   const heading = page.locator('.search-results h2', { hasText: /\d+\s+Ergebnis/ }).first();
   await heading.waitFor({ state: 'visible', timeout: 60_000 });
   await page.locator('.search-results ul.articles-list > li').first().waitFor({ state: 'attached', timeout: 30_000 });
+  let durationMs = Date.now() - started;
+  if (c.filter) {
+    durationMs = await applySearchFilter(page, c.filter);
+    // Die Überschrift mit der Trefferzahl wird neu gesetzt; kurz auf den neuen Stand warten.
+    await heading.waitFor({ state: 'visible', timeout: 30_000 });
+  }
   const total = Number(/([\d.]+)\s+Ergebnis/.exec(await heading.innerText())?.[1]?.replace(/\./g, '') ?? 0);
   const top = await page.evaluate(() =>
     Array.from(document.querySelectorAll('.search-results ul.articles-list > li')).map((li) => {
@@ -356,7 +447,7 @@ export async function collectSearch(page: Page, base: string, term: string): Pro
       return { href: a?.getAttribute('href') ?? '', title: ((a as HTMLElement | null)?.innerText ?? '').replace(/\s+/g, ' ').trim() };
     }),
   );
-  return { total, top };
+  return { total, top, durationMs };
 }
 
 /**
@@ -368,6 +459,10 @@ export function diffSearch(term: string, was: SearchState, now: SearchState): st
   const out: string[] = [];
   if (now.total === 0 || !now.top.length) return [`Suche "${term}": keine Treffer (vorher ${was.total})`];
   if (now.total < was.total * 0.9) out.push(`Suche "${term}": ${now.total} Treffer, vorher ${was.total}`);
+  // Spürbar länger: mehr als doppelt so lange und mindestens 5 s mehr. shortcut: Einzelmessung, bei Ausreißern wiederholen
+  if (was.durationMs && now.durationMs && now.durationMs > Math.max(2 * was.durationMs, was.durationMs + 5000)) {
+    out.push(`Suche "${term}": ${Math.round(now.durationMs / 100) / 10} s bis zur Trefferliste, vorher ${Math.round(was.durationMs / 100) / 10} s`);
+  }
   const nowHrefs = new Set(now.top.map((t) => t.href));
   const missing = was.top.filter((t) => !nowHrefs.has(t.href));
   if (was.top.length - missing.length < Math.min(7, was.top.length)) {

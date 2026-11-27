@@ -1,0 +1,204 @@
+{
+  "component": "Text mit Inline-Bildern",
+  "dialogTitle": "Text mit Inline-Bildern",
+  "tabs": [
+    "Allgemein",
+    "Bild 1",
+    "Bildeigenschaften",
+    "Bild 2",
+    "Bildeigenschaften",
+    "Bild 3",
+    "Bildeigenschaften"
+  ],
+  "fields": [
+    {
+      "tab": "Allgemein",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "Maecenas imperdiet augue (Überschrift)",
+      "empty": false
+    },
+    {
+      "tab": "Allgemein",
+      "label": "Zusammenfassung",
+      "name": "./summary",
+      "value": "Duis mollis est in lacus posuere tempus. Integer porta enim vel vehicula venenatis. Duis vel turpis id magna euismod tincidunt et a orci. (Zusammenfassung)",
+      "empty": false
+    },
+    {
+      "tab": "Allgemein",
+      "label": "Fließtext",
+      "name": "./content",
+      "value": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vel luctus neque. Pellentesque consectetur neque eget sem aliquet, fringilla fringilla dui interdum. Integer sodales semper ex, eget tempus est tempor in. Integer id dui nec nisi tempor finibus sit amet sed metus. Maecenas malesuada hendrerit urna, a aliquet enim aliquet accumsan. Integer sed ipsum pulvinar, auctor sapien vel, mattis metus. Nunc eget nisl vel nunc euismod porta. Aliquam sed odio eu nisi lobortis laoreet. In a consectetur mi. Sed et mattis sem. Nunc ac placerat orci. Nunc tempor sem ex, nec porta mi ultricies ac. Ut dapibus sapien non ipsum faucibus blandit. Duis odio dui, malesuada eu felis sagittis, imperdiet fringilla dui. Cras et odio ac mi cursus euismod. Sed dui lectus, volutpat nec urna ut, interdum tristique orci. Maecenas imperdiet augue vel suscipit scelerisque. Duis mollis est in lacus posuere tempus. Integer porta enim vel vehicula venenatis. Duis vel turpis id magna euismod tincidunt et a orci. Etiam id vulputate eros. Duis mi felis, elementum id erat vitae, auctor placerat leo. Proin id pretium ante. Praesent eu euismod metus, sit amet tincidunt felis. Curabitur in libero vel est pharetra pharetra commodo non lectus. Duis ullamcorper ut mauris non fermentum. Curabitur venenatis gravida justo id scelerisque. Donec id lectus a dolor porta sagittis ut a ante. Aliquam at aliquet felis, vitae lobortis dolor. Aenean ullamcorper dolor in nisi vehicula vulputate. Nunc hendrerit at eros vel gravida. Aenean et sodales erat, a ornare augue. Nulla varius elit a ante feugiat faucibus. Donec molestie ante quis nibh dapibus laoreet non eu urna. Phasellus iaculis libero arcu, a sagittis ipsum efficitur id. Nulla mollis, nunc et volutpat rhoncus, purus neque pellentesque magna, at interdum velit ante et lorem. Nam nisl nulla, volutpat in eleifend eget, facilisis quis dolor. Nam quam turpis, tempus vitae ipsum in, iaculis dictum mi. Duis sit amet aliquet elit. Cras vel euismod orci, luctus dictum metus. Aenean et felis id est dictum vulputate nec at sapien. Interdum et malesuada fames ac ante ipsum primis in faucibus. Maecenas accumsan nulla ex. Sed in ex ligula. Cras vitae ornare leo. Vestibulum vel nisi ac nisi faucibus tempor ac sit amet justo. Quisque interdum tempus neque at fringilla. Aliquam erat volutpat. Vestibulum eu velit magna. Morbi luctus nibh sed mauris porta, vel congue risus posuere. Sed eget neque eget urna convallis pretium sit amet vel urna. Curabitur ullamcorper ligula id dignissim euismod. Donec tempus ante non orci efficitur, sit amet faucibus ex feugiat. Aenean id consequat erat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultrices tellus a aliquet tincidunt. Pellentesque eleifend laoreet ipsum ut maximus. Pellentesque semper sagittis nisi, quis sagittis ex lacinia non. In id arcu convallis, tempus lectus non, suscipit urna. (Fließtext)",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Titel",
+      "name": "./imageComponent1/image/properties/title",
+      "value": "Lorem ipsum (Titel)",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bild Alternativ Text",
+      "name": "./imageComponent1/image/properties/alt",
+      "value": "Pellentesque consectetur (Bild Alternativ Text)",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Beschreibung übernehmen",
+      "name": "./imageComponent1/image/properties/usedescription",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bildbeschreibung",
+      "name": "./imageComponent1/image/properties/caption",
+      "value": "blah blah\n",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright übernehmen",
+      "name": "./imageComponent1/image/properties/usecopyright",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright Angabe",
+      "name": "./imageComponent1/image/properties/meta",
+      "value": "Lorem ipsum generator",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Lightbox verwenden",
+      "name": "./imageComponent1/image/properties/lightbox",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Download-Button ausblenden",
+      "name": "./imageComponent1/image/properties/denyDownload",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Titel",
+      "name": "./imageComponent1/image/properties/title",
+      "value": "Lorem ipsum (Titel)",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bild Alternativ Text",
+      "name": "./imageComponent1/image/properties/alt",
+      "value": "Pellentesque consectetur (Bild Alternativ Text)",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Beschreibung übernehmen",
+      "name": "./imageComponent1/image/properties/usedescription",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bildbeschreibung",
+      "name": "./imageComponent1/image/properties/caption",
+      "value": "blah blah\n",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright übernehmen",
+      "name": "./imageComponent1/image/properties/usecopyright",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright Angabe",
+      "name": "./imageComponent1/image/properties/meta",
+      "value": "Lorem ipsum generator",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Lightbox verwenden",
+      "name": "./imageComponent1/image/properties/lightbox",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Download-Button ausblenden",
+      "name": "./imageComponent1/image/properties/denyDownload",
+      "value": "unchecked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Titel",
+      "name": "./imageComponent1/image/properties/title",
+      "value": "Lorem ipsum (Titel)",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bild Alternativ Text",
+      "name": "./imageComponent1/image/properties/alt",
+      "value": "Pellentesque consectetur (Bild Alternativ Text)",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Beschreibung übernehmen",
+      "name": "./imageComponent1/image/properties/usedescription",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Bildbeschreibung",
+      "name": "./imageComponent1/image/properties/caption",
+      "value": "blah blah\n",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright übernehmen",
+      "name": "./imageComponent1/image/properties/usecopyright",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Copyright Angabe",
+      "name": "./imageComponent1/image/properties/meta",
+      "value": "Lorem ipsum generator",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Lightbox verwenden",
+      "name": "./imageComponent1/image/properties/lightbox",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bildeigenschaften",
+      "label": "Download-Button ausblenden",
+      "name": "./imageComponent1/image/properties/denyDownload",
+      "value": "unchecked",
+      "empty": false
+    }
+  ]
+}

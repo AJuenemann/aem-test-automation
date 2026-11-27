@@ -1,0 +1,81 @@
+{
+  "component": "Kontrollkästchen-Gruppe",
+  "dialogTitle": "Kontrollkästchen-Gruppe",
+  "tabs": [
+    "Standard",
+    "Erweitert",
+    "Bedingungen"
+  ],
+  "fields": [
+    {
+      "tab": "Standard",
+      "label": "Elementname *",
+      "name": "./name",
+      "value": "fields[17]",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Titel",
+      "name": "./jcr:title",
+      "value": "Checkbox Beschriftung aus OptinSetup",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Rich Text Editor aktivieren",
+      "name": "./rteEnabled",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Beschreibung",
+      "name": "./jcr:description",
+      "value": "Teilnahmebedingungen akzeptieren",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Elemente",
+      "name": "./options",
+      "value": "true=Ich willige ein, dass mich das Fraunhofer IPT in regelmäßigen Abständen kostenlos über seine Forschungstätigkeiten und sein Leistungsangebot per E-Mail, Post oder Telefon informiert. Ich habe die <a href=\"https://www.ipt.fraunhofer.de/de/datenschutzerklaerung.html\" target=\"_blank\">Datenschutzerkl&auml;rung</a> gelesen und akzeptiert. Ich kann meine Einwilligung jederzeit ohne Angabe von Gründen per E-Mail an <a href=\"mailto:kontakt@ipt.fraunhofer.de?subject=Kundendaten\">kontakt@ipt.fraunhofer.de</a>  widerrufen. ",
+      "empty": false
+    },
+    {
+      "tab": "Standard",
+      "label": "Ladepfad für Elemente",
+      "name": "./loadPath",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "Erweitert",
+      "label": "Standardwerte",
+      "name": "./defaultOptions",
+      "value": "dfdsfs",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderlich",
+      "name": "./required",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Erforderliche Nachricht",
+      "name": "./requiredMessage",
+      "value": "Please complete the required field.",
+      "empty": false
+    },
+    {
+      "tab": "Bedingungen",
+      "label": "Layout",
+      "name": "./cssGridClass",
+      "value": "3 of 3 columns width",
+      "empty": false
+    }
+  ]
+}

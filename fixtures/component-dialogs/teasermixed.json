@@ -1,0 +1,42 @@
+{
+  "component": "Teaser-Übersicht",
+  "dialogTitle": "Teaser-Übersicht",
+  "tabs": [],
+  "fields": [
+    {
+      "tab": "",
+      "label": "Trenner entfernen",
+      "name": "./removeSeperator",
+      "value": "checked",
+      "empty": false
+    },
+    {
+      "tab": "",
+      "label": "Überschrift",
+      "name": "./headline",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Text",
+      "name": "./text",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Teaser auswählen",
+      "name": "./reference",
+      "value": "",
+      "empty": true
+    },
+    {
+      "tab": "",
+      "label": "Horizontale Anordnung",
+      "name": "./horizontalOrder",
+      "value": "checked",
+      "empty": false
+    }
+  ]
+}
